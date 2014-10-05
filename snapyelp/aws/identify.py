@@ -31,10 +31,10 @@ def update_route_53(instance, region):
                 hz.add_mx(hz.name, "20 " + instance.public_dns_name, ttl=300, identifier=None, comment='Mail for:' + hz.name)
             if hz.find_records(tagname,'CNAME'):
                 print 'update cname'
-                hz.update_cname(hz.name, instance.public_dns_name, ttl=300, identifier=None, comment='Webserver for:' + hz.name)
+                hz.update_a(hz.name, instance.ip_address, ttl=300, identifier=None, comment='Webserver for:' + hz.name)
             else:
                 print 'add a'
-                hz.add_cname(hz.name, instance.public_dns_name, ttl=300, identifier=None, comment='Webserver for:' + hz.name)
+                hz.add_a(hz.name, instance.ip_address, ttl=300, identifier=None, comment='Webserver for:' + hz.name)
                 
     reactor.stop()
 
