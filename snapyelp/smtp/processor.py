@@ -91,7 +91,7 @@ class Postman:
         return {'status': status}                    
 
     def check_domain(self, domain_name):
-        print 'check_domain:', domain_name
+        print 'check_domain:', domain_name, self.public_dns
         if domain_name == self.public_dns:
             return defer.succeed(True)
         def printresult(records):

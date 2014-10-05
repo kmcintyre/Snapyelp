@@ -23,13 +23,14 @@ def update_route_53(instance, region):
     for hz in instance_route.get_zones():
         if hz.name[:-1] == tagname:
             print hz.find_records(tagname,'MX')
-            print 'ip address:', instance.ip_address
+            print 'ip address:', instance.ip_address, 'public dns:', instance.public_dns_name
             if hz.find_records(tagname,'MX'):
                 print 'update mx'
-                hz.update_mx(hz.name, "20 " + instance.ip_address, ttl=300, identifier=None, comment='Mail for:' + hz.name)
+                hz.update_mx(hz.name, "20 " + instance.public_dns_name, ttl=300, identifier=None, comment='Mail for:' + hz.name)
             else:
                 print 'add mx'
-                hz.add_mx(hz.name, "20 " + instance.ip_address, ttl=300, identifier=None, comment='Mail for:' + hz.name)
+                hz.add_mx(hz.name, "20 " + instance.public_dns_name, ttl=300, identifier=None, comment='Mail for:' + hz.name)
+    reactor.stop()
 
 def add_instance(region):
     for r in boto.ec2.regions():
