@@ -26,7 +26,7 @@ from snapyelp.qt import qt5reactor
 qt5reactor.install()
 if __name__ == '__main__':
     from twisted.internet import reactor
-    from snapyelp.qt5 import BaseWindow
+    from snapyelp.base import BaseWindow
     sw = BaseWindow()
     sw.xmlrpc_toggle()
     import sys
