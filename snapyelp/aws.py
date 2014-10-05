@@ -1,40 +1,59 @@
+
 from boto.route53.connection import Route53Connection
-
 from twisted.web.client import Agent
-from twisted.internet import reactor
+from twisted.internet import reactor, defer
 
+import boto.ec2
 
 from snapyelp import fixed_twisted
 
 agent_browser = Agent(reactor)
 
-def set_mx_domain(mail_dns):
-    conn = Route53Connection()
-    for hz in conn.get_zones():
-        print hz.name
-        print hz.id
-        #mx = hz.get_mx(hz.name)
-        try:
-            hz.update_mx(hz.name, "20 " + mail_dns, ttl=300, identifier=None, comment='Mail for:' + hz.name)
-            print 'good:', hz.name
-        except:
-            print 'bad:', hz.name
-        #hz.update_mx('ec2-107-22-104-72.compute-1.amazonaws.com', 20)
-        #print hz
-        #print hz.id
-        #for r in hz.get_records():
-        #    if r.type == 'MX':
-        #        print r
-        #        print '    ', r.type, r.name, r.identifier
-        #        r.add_change('identifier',mail_dns)
-        #        r.commit()
+def update_route_53(instance, region):
+    print 'instance:', instance
 
-
-def printint(ans):
-    print ans
-
-def get_instance():
-    d = agent_browser.request('http://169.254.169.254/latest/meta-data/instance-id')
-    d.addCallback(fixed_twisted.get_body)
+    conn = boto.ec2.connect_to_region(region)
+    reservations = conn.get_all_instances(instance_ids=[instance])
+    instance = reservations[0].instances[0]
     
+    tagname = instance.tags['Name']
+    print 'site:', tagname
+    route53 = Route53Connection()
+    for hz in route53.get_zones():
+	print 'hz:', hz.name[:-1]
+	if hz.name[:-1] == tagname:
+	    print hz.find_records(tagname,'MX')
+	    print 'ip address:', instance.ip_address
+	    if hz.find_records(tagname,'MX'):
+		print 'update mx'
+	        hz.update_mx(hz.name, "20 " + instance.ip_address, ttl=300, identifier=None, comment='Mail for:' + hz.name)
+	    else:
+		print 'add mx'
+	        hz.add_mx(hz.name, "20 " + instance.ip_address, ttl=300, identifier=None, comment='Mail for:' + hz.name)
+
+
+def add_instance(region):
+    print 'region:', region
+	
+    for r in boto.ec2.regions():
+	if r.name in region:
+	    region = r.name
+
+    print 'region:', region
+    d = agent_browser.request('GET', 'http://169.254.169.254/latest/meta-data/instance-id')
+    d.addCallback(fixed_twisted.get_body)
+    d.addCallback(update_route_53, region)
+
+def get_region():
+    d = agent_browser.request('GET', 'http://169.254.169.254/latest/meta-data/placement/availability-zone')
+    d.addCallback(fixed_twisted.get_body)
+    return d
+
+def selfie():
+    d = get_region()
+    d.addCallback(add_instance)
+
+
+
+reactor.callWhenRunning(selfie)    
 reactor.run()
