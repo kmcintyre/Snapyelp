@@ -1,8 +1,13 @@
-
 from twisted.internet import defer, protocol    
 from twisted.web.client import ResponseDone
+from twisted.web.template import Element, flattenString
 
 import StringIO
+
+class GenericElement(Element):
+    
+    def flat(self):
+        return flattenString(None, self)
 
 class StringIOResponse(protocol.Protocol): 
     
