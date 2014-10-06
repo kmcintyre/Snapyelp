@@ -141,7 +141,9 @@ class PerminentHtmlS3:
              str(ee.broadcast_dict['file_dest'] + '.html'), 
              ee.summary, 
              None,
-             'text/html'
+             'text/html',
+             'public-read',
+             ee.broadcast_dict.items()
         )
 
     def __repr__(self):        

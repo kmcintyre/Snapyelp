@@ -1,6 +1,6 @@
 from twisted.internet import reactor
 
-from snapyelp.smtp.processor import MemoryBag, PerminentHtmlS3, PerminentJsonS3, Attachments, BrowserPreview, BagIt
+from snapyelp.smtp.processor import MemoryBag, PerminentHtmlS3, Attachments, BrowserPreview, BagIt
 from snapyelp.smtp.base import BaseSMTPServerFactory
 from snapyelp.smtp.ws import PostmanWSServerFactory
 
@@ -26,7 +26,6 @@ postman = PostmanWSServerFactory(url="ws://localhost:%s" % str(ws_port))
 set_public_dns(postman)
 postman.bag = MemoryBag()    
 postman.routes.append(PerminentHtmlS3())
-postman.routes.append(PerminentJsonS3())
 postman.routes.append(BrowserPreview())
 postman.routes.append(BagIt())
 postman.routes.append(Attachments())
