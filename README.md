@@ -5,9 +5,24 @@ Work for instagator:
 
 This is a python twisted project utilizing qthread and pyqt to coordinate bookings within opentable.com system.
 
+# twisted 14.0.2
+# python 2.7
+# pyqt 5.3.2
+
+The back-end service is a websocket accepting json encoded messages format TBD.  Further endpoints i.e. restful will be required.
+
 This project intent is the initial bunble for instagator.com
 
-AMI provisioning script - we're working off ubuntu (moving to PyQT 5.3.2)
+## Assumptions
+
+* service is not scrape but rather stateful browser operating as booking agent
+* booking agent exposes commands that can be reduced to a series of page visits and form submissions
+* booking agent is a unique email endpoint
+* booking agent 
+
+## Phase
+
+* Worst first. Random button reservation
 
 ## Folders
 
@@ -15,3 +30,5 @@ AMI provisioning script - we're working off ubuntu (moving to PyQT 5.3.2)
 * etc/init/ # upstart configs
 * html # static-content for thin client demo client
 * snapyelp # source
+
+### AMI provisioning 
