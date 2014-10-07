@@ -21,7 +21,7 @@ The back-end service is a websocket accepting json encoded messages format TBD. 
 
 * Worst first, but still non-pollutive to opentable environment.
 
-The goal is to demo to the team a 1-button reservation generator, with cancel by hand.
+The goal is to demo to the team a 1-button reservation generator.  The fulfillment of which will be provided via a series of automated steps via a browser.  In opentable system a user booking a table must 1) be logged in 2) select an metro area or "mn" parameter before conducting a "find" and "reserve".  At a minimum the service must be able to perform those tasks as a series.  The end-product being a opentable reservation id.
 
 #### Assumptions
 
