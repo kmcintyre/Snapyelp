@@ -26,7 +26,8 @@ The back-end service is a websocket accepting json encoded messages format TBD. 
 
 ### Phase
 
-* Worst first. Random button reservation
+* Worst first.
+* Random button reservation, with delayed cancellation.
 
 ### Folders
 
