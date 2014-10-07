@@ -27,8 +27,7 @@ The goal is to demo to the team a random button reservation generator, with canc
 
 * service is not scrape but rather stateful browser operating as booking agent
 * service exposes commands as reduced to a series of page visits and form submissions
-* service is a unique email endpoint
-* booking agent 
+* service is a unique email endpoint registered as a booking agent with opentable system
 
 #### Folder Structure
 
