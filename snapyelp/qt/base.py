@@ -60,7 +60,8 @@ class SimpleQWebPage(QWebPage):
         self.loader = { 'percentage' : 0, 'replies' : []}
     
     def _page_finished(self, ok):
-        print 'page finished:', str(ok), self.loader['percentage'], self.view().url().toString(), len(self.page_finished_deferred)
+        
+        print 'page finished:', str(ok), self.loader['percentage'], (self.view().url().toString() if self.view() else 'No URL'), len(self.page_finished_deferred)
         for d in self.page_finished_deferred:
             if not d.called:
                 #print self.percentage, self.view().url().toString()

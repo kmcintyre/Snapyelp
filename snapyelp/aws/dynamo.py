@@ -38,7 +38,7 @@ class CommonTable(Table):
 class OpenTable(CommonTable):
 
     def __init__(self, *args, **kwargs):
-        super(OpenTable, self).__init__('opentable_user')
+        super(OpenTable, self).__init__('opentable')
         try:
             print 'opentable count:', self.count()
         except:
