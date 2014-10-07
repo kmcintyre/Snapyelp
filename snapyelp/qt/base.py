@@ -60,16 +60,14 @@ class SimpleQWebPage(QWebPage):
         self.loader = { 'percentage' : 0, 'replies' : []}
     
     def _page_finished(self, ok):
-        #print 'page finished:', str(ok), self.view().url().toString()
-        if self.page_finished_deferred is None:
-            print 'no finished deferred'            
-        elif not self.page_finished_deferred.called:
-            #print self.percentage, self.view().url().toString()
-            self.page_finished_deferred.callback(ok)
-        else:
-            pass            
-            # print 'finished already called', self.page_finished_deferred
-
+        print 'page finished:', str(ok), self.loader['percentage'], self.view().url().toString(), len(self.page_finished_deferred)
+        for d in self.page_finished_deferred:
+            if not d.called:
+                #print self.percentage, self.view().url().toString()
+                d.callback(ok)
+                return  
+        print 'not ready for finish' 
+        
     def _page_url_change(self, url):
         #print '_url_change:', str(url.toString()), self.percentage
         pass
@@ -106,7 +104,7 @@ class SimpleQWebPage(QWebPage):
         d.addCallback(delay_response)
         d.addErrback(page_error)
         
-        self.page_finished_deferred = d                
+        self.page_finished_deferred.append(d)                
         self.view().load(QUrl(gather['URI']))            
         return d
 

@@ -18,9 +18,9 @@ email_filename = '(.*?)"(.*?)"'
 
 NO_SUBJECT = "(no subject)"
 
-def simplify_to_id(inp):
-    step1 = re.sub(r" ", r"_", inp.lower().replace('.', ''))
-    return re.sub(r"-", r"_", step1)
+def simplify_to_id(inp):    
+    step1 = re.sub(r" ", r"_", inp.strip().lower().replace('.', '').replace('/', '').replace(',', '').replace('-', ' ').replace('  ', ' '))
+    return re.sub(r"__", r"_", step1)
 
 def simpleurl(url):
     from urlparse import urlparse
