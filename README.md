@@ -20,14 +20,14 @@ The back-end service is a websocket accepting json encoded messages format TBD. 
 ### Assumptions
 
 * service is not scrape but rather stateful browser operating as booking agent
-* booking agent exposes commands that can be reduced to a series of page visits and form submissions
-* booking agent is a unique email endpoint
+* service exposes commands as reduced to a series of page visits and form submissions
+* service is a unique email endpoint
 * booking agent 
 
 ### Phase
 
-* Worst first.
-* Random button reservation, with delayed cancellation.
+* Worst first, but still non-pollutive to opentable environment.
+* Random button reservation, with cancel by hand.
 
 ### Folders
 
