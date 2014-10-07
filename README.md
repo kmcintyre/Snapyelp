@@ -21,7 +21,7 @@ The back-end service is a websocket accepting json encoded messages format TBD. 
 
 * Worst first, but still non-pollutive to opentable environment.
 
-The goal is to demo to the team a random button reservation generator, with cancel by hand.
+The goal is to demo to the team a 1-button reservation generator, with cancel by hand.
 
 #### Assumptions
 
