@@ -17,17 +17,18 @@ python twisted project utilizing qthread and pyqt to coordinate bookings within 
 
 The back-end service is a websocket accepting json encoded messages format TBD.  Further endpoints i.e. restful will be required.
 
+## Phase
+
+* Worst first, but still non-pollutive to opentable environment.
+
+The goal is to demo to the team a random button reservation generator, with cancel by hand.
+
 #### Assumptions
 
 * service is not scrape but rather stateful browser operating as booking agent
 * service exposes commands as reduced to a series of page visits and form submissions
 * service is a unique email endpoint
 * booking agent 
-
-#### Phase
-
-* Worst first, but still non-pollutive to opentable environment.
-* Random button reservation, with cancel by hand.
 
 #### Folder Structure
 
