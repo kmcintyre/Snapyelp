@@ -5,9 +5,9 @@ Work for instagator:
 
 This is a python twisted project utilizing qthread and pyqt to coordinate bookings within opentable.com system.
 
-# twisted 14.0.2
-# python 2.7
-# pyqt 5.3.2
+* twisted 14.0.2
+* python 2.7
+* pyqt 5.3.2
 
 The back-end service is a websocket accepting json encoded messages format TBD.  Further endpoints i.e. restful will be required.
 
