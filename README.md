@@ -12,10 +12,12 @@ python twisted project utilizing qthread and pyqt to coordinate bookings within 
 * twisted 14.0.2
 * python 2.7
 * pyqt 5.3.2
+* boto AWS library for python
 
 ## Design
 
-The back-end service is a websocket accepting json encoded messages format TBD.  Further endpoints i.e. restful will be required.
+The back-end service is a websocket accepting json encoded messages format TBD.  Further endpoints - rest may be required.
+
 
 ## Phase
 
@@ -36,4 +38,3 @@ Provided via a series of automated steps via a browser on the back-end.  In open
 * etc # upstart configs, and install scripts
 * html # static-content for thin client demo client
 * snapyelp # source
-
