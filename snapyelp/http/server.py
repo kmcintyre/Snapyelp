@@ -40,9 +40,12 @@ class RootResource(resource.Resource):
         
 root = RootResource()
 site = server.Site(root)
-port = 8000
+port = 80
 if len(sys.argv) > 1:
-    port = int(sys.argv[1])        
+    try:
+        port = int(sys.argv[1])
+    except:
+        print 'bad pro?:', port        
     
 if __name__ == '__main__':    
     reactor.listenTCP(port, site)
