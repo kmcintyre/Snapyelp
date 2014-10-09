@@ -31,7 +31,9 @@ class RootResource(resource.Resource):
         print request
         html = "<html>"        
         for ot in dynamo.OpenTable().scan():
-            html += str(fixed.item_to_dict(ot))
+            ag = fixed.item_to_dict(ot)
+            del ag['citypassword']
+            html += str(ag)
             html += "<br><br>"
         html += "</html>"
         request.write(html)
