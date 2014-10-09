@@ -7,6 +7,24 @@ tmp_dir = '/tmp/'
 
 def digest(d):
     return hashlib.sha224(d).hexdigest()
+
+def item_to_dict(item_or_items, filter_key = None):
+    def single_element(item):
+        def check_value(value):
+            if isinstance(value, decimal.Decimal):
+                return int(value)
+            if isinstance(value, set):
+                return list(value)
+            return value
+        try:
+            return dict((key, check_value(item[key])) for key in [key for key in item.keys() if filter_key is None or key in filter_key])
+        except AttributeError as e:
+            # print 'warning item to dict'
+            return {}
+    if isinstance(item_or_items, list):
+        return [single_element(item) for item in item_or_items]
+    else:
+        return single_element(item_or_items)
  
 
 # mail format - critical but discoverable 

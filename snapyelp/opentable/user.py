@@ -38,7 +38,7 @@ def populate_account(res, window):
             fn = cf.documentElement().findFirst('input[id="ucName_txtFirstName"]')
             if fn.hasAttributes():            
                 for i, opt in enumerate(cf.documentElement().findAll('select[id="cboCity"] option').toList()[1:]):
-                    city = fixed.simplify_to_id(opt.toInnerXml())
+                    city = fixed.simplify_to_id(opt.toInnerXml()).encode('ascii',errors='replace')
                     select_value = opt.attribute('value')
                     try:
                         print 'check city:', city

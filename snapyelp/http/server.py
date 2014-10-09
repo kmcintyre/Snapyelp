@@ -4,6 +4,9 @@ from twisted.web import server, resource
 from twisted.internet import reactor
 
 
+from snapyelp.aws import dynamo
+from snapyelp import fixed
+
 class LoadingResource(resource.Resource):
     
     def render_GET(self, request):
@@ -25,7 +28,15 @@ class RootResource(resource.Resource):
             return resource.NoResource()
         
     def render_GET(self, request):
-        return "<html>Snapyelp</html>"
+        print request
+        html = "<html>"        
+        for ot in dynamo.OpenTable().scan():
+            html += str(fixed.item_to_dict(ot))
+            html += "<br><br>"
+        html += "</html>"
+        request.write(html)
+        request.finish()
+        return server.NOT_DONE_YET
         
 root = RootResource()
 site = server.Site(root)
