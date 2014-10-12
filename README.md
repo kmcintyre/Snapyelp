@@ -40,9 +40,3 @@ Provided via a series of automated steps via a browser on the back-end.  In open
 * service is not scrape but rather stateful browser operating as booking agent
 * service exposes commands as reduced to a series of page visits and form submissions
 * service is a unique email endpoint registered as a booking agent with opentable system
-
-#### Folder Structure
-
-* etc # upstart configs, and install scripts
-* html # static-content for thin client demo client
-* snapyelp # source
