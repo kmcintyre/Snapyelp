@@ -1,3 +1,13 @@
+'''
+Created on Oct 12, 2014
+
+@author: kevin
+
+updates route53 (amazon dns) 
+with amazon public dns  
+set MX mail recond and service CNAME
+'''
+
 from twisted.web.client import Agent
 from twisted.internet import reactor
 

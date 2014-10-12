@@ -1,3 +1,11 @@
+'''
+Created on Oct 12, 2014
+
+@author: kevin
+
+Module for distributing email to connect websocket clients
+'''
+
 from autobahn.twisted.websocket import WebSocketClientProtocol, WebSocketClientFactory
 import json
 
@@ -13,7 +21,7 @@ class TwitterRetrieveClientProtocol(WebSocketClientProtocol):
     def onMessage(self, payload, isBinary):
         if not isBinary:
             incoming = json.loads(payload);
-            href = 'http://www.Base.com/' + incoming["file_dest"] + '.html'
+            href = 'http://service.snapyelp.com/' + incoming["file_dest"] + '.html'
         else:
             print 'non-binary skipped'        
 

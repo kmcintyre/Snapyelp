@@ -1,3 +1,11 @@
+'''
+Created on Oct 12, 2014
+
+@author: kevin
+
+Explority module to opentable herokuapp 
+'''
+
 from twisted.internet import reactor, defer
 from twisted.web.client import Agent
 

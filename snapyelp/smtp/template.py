@@ -1,3 +1,11 @@
+'''
+Created on Oct 12, 2014
+
+@author: kevin
+
+Module for converting email to html  
+'''
+
 import StringIO
 from bs4 import BeautifulSoup
 from email.header import decode_header

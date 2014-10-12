@@ -1,3 +1,11 @@
+'''
+Created on Oct 12, 2014
+
+@author: kevin
+
+Websocket module for serving incoming email to connect clients
+'''
+
 from autobahn.twisted.websocket import WebSocketServerProtocol, WebSocketServerFactory
 import json
 from twisted.internet import reactor

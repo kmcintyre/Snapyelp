@@ -1,3 +1,12 @@
+'''
+Created on Oct 12, 2014
+
+@author: kevin
+
+User module mapping login and register functions in opentable 
+'''
+
+
 from snapyelp.qt import browser
 print browser.version 
 

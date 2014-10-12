@@ -7,8 +7,8 @@ A "email service" that:
 
 Then re-broadcasting via www.amazon.com/mail and ws://mail.amazon.com
 
-twistd -ny snapyelp/smtp.snapyelp
-python snapyelp/smtp.snapyelp 
+twistd -ny snapyelp/smtp.py
+python snapyelp/smtp.py 
 """
 
 from autobahn.twisted.websocket import WebSocketClientFactory, WebSocketClientProtocol

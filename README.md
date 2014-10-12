@@ -14,6 +14,14 @@ python twisted project utilizing qthread and pyqt to coordinate bookings within 
 * pyqt 5.3.2
 * boto AWS library for python
 
+## Folder Structure
+
+* build - scripts necessary to push demo client to cloudfront
+* etc/ami - script for building instance
+* etc/init - upstart scripts
+* etc/templates - templates for publishing within twisted
+* snapyelp - source code
+
 ## Design
 
 The back-end service is a websocket accepting json encoded messages format TBD.  Further endpoints - rest may be required.

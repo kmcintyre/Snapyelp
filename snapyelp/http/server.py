@@ -3,7 +3,6 @@ import sys
 from twisted.web import server, resource
 from twisted.internet import reactor
 
-
 from snapyelp.aws import dynamo
 from snapyelp import fixed
 

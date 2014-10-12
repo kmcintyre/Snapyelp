@@ -1,3 +1,12 @@
+'''
+Created on Oct 12, 2014
+
+@author: kevin
+
+Module for email processing.  
+'''
+
+
 import json
 import re
 import time

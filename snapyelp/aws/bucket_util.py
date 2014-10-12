@@ -1,4 +1,13 @@
+'''
+Created on Oct 12, 2014
+
+@author: kevin
+
+Utility module for writing files to S3
+'''
+
 import boto
+
 
 def check_key(bucket, filename):
     possible_key = bucket.get_key(filename)

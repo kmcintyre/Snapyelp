@@ -1,3 +1,11 @@
+'''
+Created on Oct 12, 2014
+
+@author: kevin
+
+Extended QT modules to enable XML-RPC commands  
+'''
+
 from PyQt5.QtCore import QUrl, QSize, Qt, QPoint
 from PyQt5.QtWebKitWidgets import QWebPage, QWebView
 from PyQt5.QtWebKit import QWebSettings

@@ -1,3 +1,12 @@
+'''
+Created on Oct 12, 2014
+
+@author: kevin
+
+Utitlity functions and static values
+'''
+
+
 import decimal
 import hashlib 
 import re

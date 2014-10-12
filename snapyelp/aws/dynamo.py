@@ -1,3 +1,11 @@
+'''
+Created on Oct 12, 2014
+
+@author: kevin
+
+http server for end-points related to build out
+'''
+
 from boto.dynamodb2.fields import HashKey, RangeKey
 from boto.dynamodb2.table import Table, Item
 

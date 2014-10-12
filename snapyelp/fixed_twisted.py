@@ -4,6 +4,7 @@ from twisted.web.template import Element, flattenString
 
 import StringIO
 
+# add inline non-deferred capacity
 class GenericElement(Element):
     
     def flat(self):
@@ -26,7 +27,10 @@ class StringIOResponse(protocol.Protocol):
         else:
             if (not self.respone_deferred.called):
                 self.respone_deferred.errback(reason)
-                
+
+"""
+utility deferred with body contents  
+"""                 
 def get_body(response):
     finished = defer.Deferred()
     response.deliverBody(StringIOResponse(finished))

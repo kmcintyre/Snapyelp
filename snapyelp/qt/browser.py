@@ -1,3 +1,12 @@
+'''
+Created on Oct 12, 2014
+
+@author: kevin
+
+Wrapper for QApplication  
+'''
+
+
 print 'Using QT'
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtGui import QKeyEvent, QMouseEvent

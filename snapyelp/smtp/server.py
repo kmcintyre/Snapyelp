@@ -1,3 +1,11 @@
+'''
+Created on Oct 12, 2014
+
+@author: kevin
+
+Multi-service SMTP server and web socket server  
+'''
+
 from twisted.internet import reactor
 
 from snapyelp.smtp.processor import MemoryBag, PerminentHtmlS3, Attachments, BrowserPreview, BagIt
