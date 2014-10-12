@@ -1,7 +1,15 @@
+'''
+Created on Oct 12, 2014
+
+@author: kevin
+
+http server for end-points necessary for demo client
+'''
 import sys
 
 from twisted.web import server, resource
 from twisted.internet import reactor
+
 
 from snapyelp.aws import dynamo
 from snapyelp import fixed

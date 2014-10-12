@@ -1,3 +1,11 @@
+'''
+Created on Oct 12, 2014
+
+@author: kevin
+
+Utitlity functions that are twisted specific
+'''
+
 from twisted.internet import defer, protocol    
 from twisted.web.client import ResponseDone
 from twisted.web.template import Element, flattenString
