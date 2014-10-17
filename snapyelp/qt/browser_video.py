@@ -17,7 +17,8 @@ import os
 os.environ['LIBOVERLAY_SCROLLBAR'] = '0'
 os.putenv('DISPLAY', ':0')
 
-#from pyscewpt import fixed
+
+from snapyelp import fixed
 
 target_video = 'video.avi'
 video_bucket = None
@@ -104,5 +105,5 @@ if __name__ == '__main__':
     sw = BaseWindow()
     sw.xmlrpc_toggle()
     app.isReady()
-    d = w.web_page.page_deferred({'URI':fixed.simpleurl(url)})
+    d = sw.web_page.page_deferred({'URI':fixed.simpleurl(url)})
     reactor.run()

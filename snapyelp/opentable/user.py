@@ -5,16 +5,14 @@ Created on Oct 12, 2014
 
 User module mapping login and register functions in opentable 
 '''
-
-
-from snapyelp.qt import browser
-print browser.version 
+from snapyelp.qt import browser_video
+#print browser.version 
 
 from snapyelp.qt.base import BaseWindow
 from snapyelp.aws import dynamo
 from snapyelp import fixed
 
-opentable = dynamo.OpenTable()
+opentable_db = dynamo.OpenTable()
 
 domain = 'snapyelp.com'
 lastname = 'Snapyelp'
@@ -36,7 +34,7 @@ def login_done(res, window):
 def register_done(res, city, cityname, cityemail, citypassword, window):
     if res:
         print 'register_done:', res, city, cityname, cityemail
-        opentable.furnish({'city': city, 'cityname': cityname, 'cityemail':cityemail, 'citypassword' : citypassword})        
+        opentable_db.furnish({'city': city, 'cityname': cityname, 'cityemail':cityemail, 'citypassword' : citypassword})        
         return defer.succeed("registered")
     else:
         return defer.fail("populate_account")
@@ -47,14 +45,17 @@ def populate_account(res, window):
             fn = cf.documentElement().findFirst('input[id="ucName_txtFirstName"]')
             if fn.hasAttributes():            
                 for i, opt in enumerate(cf.documentElement().findAll('select[id="cboCity"] option').toList()[1:]):
+                    opt.parent().toOuterXml()
                     city = fixed.simplify_to_id(opt.toInnerXml()).encode('ascii',errors='replace')
                     select_value = opt.attribute('value')
                     try:
                         print 'check city:', city
-                        item = opentable.get_item(city=city)
+                        item = opentable_db.get_item(city=city)
                         print 'item:', item
                         if 'city_id' not in item:
                             print 'need to add city_id', select_value
+                            item['city_id'] = select_value
+                            item.save()
                         else:
                             print item                            
                     except ItemNotFound as e:
@@ -82,10 +83,12 @@ def populate_account(res, window):
                         window.web_page.page_finished_deferred.append(post_click)
                         post_click.addCallback(register_done, city, cityname, cityemail, citypassword, window)                        
                         return post_click 
-                    except Exception as e:
-                        print 'populate account exception:', e
+                    
+                    print 'all cities covered!'
+                    reactor.stop()
+                    
     else:
-        return defer.fail("click_create_account")
+        return defer.fail(Exception("click_create_account"))
             
 
 def click_create_account(res, window):
@@ -102,16 +105,16 @@ def click_create_account(res, window):
         return defer.fail('click_sign_in')
 
 
-def populate_login_and_enter(res, window):
+def populate_login_and_enter(res, window, city):
     print 'populate_login'
     if res:
         for cf in window.web_page.mainFrame().childFrames():
             input_email = cf.documentElement().findFirst('input[id="txtUserEmail"]')
             if input_email.hasAttributes():
                 input_email.evaluateJavaScript('this.focus()')
-                QTest.keyClicks(window.web_page.view(), 'kevin70@yahoo.com', Qt.NoModifier, 20)
+                QTest.keyClicks(window.web_page.view(), city['cityemail'], Qt.NoModifier, 20)
                 cf.documentElement().findFirst('input[id="txtUserPassword"]').evaluateJavaScript('this.focus()')
-                QTest.keyClicks(window.web_page.view(), 'tererdfcvO1', Qt.NoModifier, 20)
+                QTest.keyClicks(window.web_page.view(), city['citypassword'], Qt.NoModifier, 20)
                 cf.documentElement().findFirst('span[id="lblMember"]').evaluateJavaScript('this.focus()')
                 post_click = defer.Deferred()
                 post_click.addCallback(login_done, window)

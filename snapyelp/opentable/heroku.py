@@ -19,6 +19,7 @@ agent_browser = Agent(reactor)
 url = 'http://opentable.herokuapp.com/api'
 
 def printit(body):
+    print len(body)
     print body
 
 def api(endpoint='stats'):
@@ -39,13 +40,15 @@ def city_loop(cities):
     except Exception as e:
         print e
         return defer.SUCCESS
-        
 
-if __name__ == '__main__':
+def get_cities():        
     d = api('cities')
     d.addCallback(json.loads)
-    d.addCallback(lambda cities_rep: city_loop(cities_rep['cities']) )
-    d.addBoth(lambda ign: reactor.stop())
+    return d
+
+if __name__ == '__main__':
+    d = get_cities()
+    d.addCallback(printit)
     reactor.run()
 
 

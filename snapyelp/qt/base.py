@@ -84,8 +84,6 @@ class SimpleQWebPage(QWebPage):
     def page_deferred(self, gather):
         #self.networkAccessManager().finished.connect( self.networkFinished )        
         print 'page_deferred', gather['URI']
-        if self.page_finished_deferred and not self.page_finished_deferred.called:
-            print 'previous deferred not called' 
         #print 'all cookies', self.networkAccessManager().cookieJar().allCookies()
         def cancel_timeout_and_forward(reply, timer):
             if not timer.called:
