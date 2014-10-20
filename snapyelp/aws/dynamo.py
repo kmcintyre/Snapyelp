@@ -60,3 +60,8 @@ class OpenTable(CommonTable):
             }, indexes=[
             ])
             print 'creating dynamo opentable table'
+    
+    def get_active(self):
+        for city in self.view():
+            if 'active' in city and city['active'] == "True":
+                return city

@@ -5,8 +5,8 @@ Created on Oct 12, 2014
 
 User module mapping login and register functions in opentable 
 '''
-from snapyelp.qt import browser_video
-#print browser.version 
+from snapyelp.qt import browser
+print browser.version 
 
 from snapyelp.qt.base import BaseWindow
 from snapyelp.aws import dynamo
