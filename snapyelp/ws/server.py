@@ -37,9 +37,9 @@ class SnapyelpServerProtocol(WebSocketServerProtocol):
                 incoming = json.loads(payload.decode('utf8'))
                 if 'operator' in incoming and 'reservation' in incoming:
                     print 'reservation response:', incoming
+                    del self.user['busy']
                     instagator = self.factory.get_clients(incoming['reservation'])                    
                     instagator.jsonMessage({ 'reservation':  incoming['rn'] + ' ' + incoming['ri'] + ' reserved by:' + incoming['dn']})
-                    del self.user['busy']
                 elif 'operator' in incoming:
                     print 'set operator'
                     self.user['operator'] = incoming['operator']                    
