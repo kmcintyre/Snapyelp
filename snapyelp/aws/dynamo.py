@@ -63,7 +63,7 @@ class OpenTable(CommonTable):
             print 'creating dynamo opentable table'
     
     def get_active(self):
-        city = random.choice(self.view)
+        city = random.choice(self.view())
         if 'no_good' not in city:
             return city
         else:
