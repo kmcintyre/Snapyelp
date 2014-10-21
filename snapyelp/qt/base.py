@@ -248,7 +248,7 @@ class BaseWindow(XMLRPC, QMainWindow):
         try:
             d = defer.Deferred() 
             d.addCallback(lambda ign: self.web_page.save_png( ("preview_html_" + suffix if suffix else "preview_html") ))            
-            self.web_page.page_finished_deferred = d
+            self.web_page.page_finished_deferred.append(d)
             self.web_page.mainFrame().setHtml(html)            
             return d
         except Exception as e:
