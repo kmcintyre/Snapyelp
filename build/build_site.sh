@@ -20,13 +20,13 @@ if [ "$1" == "true" ]; then
 		python ~/6998159/s3copy.py -b snapyelp.com -f ~/Snapyelp/build/index.js -t index.js -p public-read -e gzip			
 		python ~/6998159/s3copy.py -b snapyelp.com -f ~/Snapyelp/html/require.js -t require.js -p public-read -e gzip
 		
-		python snapyelp/aws/invalidate.py		
+		python snapyelp/aws/invalidate.py
 
-		python ~/6998159/s3copy.py -b snapyelp.com -f ~/Snapyelp/html/inbox/ws.js -t inbox/ws.js -p public-read
-		python ~/6998159/s3copy.py -b snapyelp.com -f ~/Snapyelp/html/inbox/index.css -t inbox/index.css -p public-read
-		python ~/6998159/s3copy.py -b snapyelp.com -f ~/Snapyelp/html/inbox/index.html -t inbox/index.html -p public-read
-		python ~/6998159/s3copy.py -b snapyelp.com -f ~/Snapyelp/html/inbox/font.css -t inbox/font.css -p public-read
-		python ~/6998159/s3copy.py -b snapyelp.com -f ~/Snapyelp/html/inbox/font.woff -t inbox/font.woff -p public-read
+		python ~/6998159/s3copy.py -b snapyelp.com -f ~/Snapyelp/html/smtp.js -t smtp.js -p public-read
+		python ~/6998159/s3copy.py -b snapyelp.com -f ~/Snapyelp/html/inbox.css -t inbox.css -p public-read
+		python ~/6998159/s3copy.py -b snapyelp.com -f ~/Snapyelp/html/inbox.html -t inbox.html -p public-read
+		python ~/6998159/s3copy.py -b snapyelp.com -f ~/Snapyelp/html/font.css -t font.css -p public-read
+		python ~/6998159/s3copy.py -b snapyelp.com -f ~/Snapyelp/html/font.woff -t font.woff -p public-read
 				    	
 else
 	echo 'will not publish'

@@ -40,6 +40,8 @@ define(["jquery","playbook"], function($,playbook) {
 				}
 			} catch (err) {
 				playbook.swkey = evt.data;
+				$('#randombutton').attr('disabled',null);
+				$('#randombutton').html('Random Reserve');
 				console.log('set swkey:' + playbook.swkey);
 				websocket.send(JSON.stringify(playbook));					
 			}
