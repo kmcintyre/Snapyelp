@@ -60,21 +60,20 @@ class OperatorClientProtocol(WebSocketClientProtocol):
         print 'close:', self.peer, wasClean, code, reason
 
 def new_protocol(protocol, window):
-    print protocol, window
+    print 'new_protocol:', protocol, window
     protocol.autostart({'operator':'opentable'})
     protocol.window = window
     user.do_login(window)
     return window
 
 def run_operate(window):
-    print 'window:', window
+    print 'run operate:', window
     point = TCP4ClientEndpoint(reactor, "service.snapyelp.com", 8081)
     operator = OperatorClientProtocol()
     operator.factory = client_factory
     d = connectProtocol(point, operator)
     d.addCallback(new_protocol, window)            
     return d
-
 
 if __name__ == '__main__':
     reactor.callWhenRunning(run_operate, user.create_window()) 
