@@ -108,7 +108,7 @@ def click_create_account(res, window):
 def populate_login_and_enter(res, window):
     print 'populate_login_and_enter:', res, window
     if res:
-        opentable_db.get_active()
+        city = opentable_db.get_active()
         for cf in window.web_page.mainFrame().childFrames():
             input_email = cf.documentElement().findFirst('input[id="txtUserEmail"]')
             if input_email.hasAttributes():                            
