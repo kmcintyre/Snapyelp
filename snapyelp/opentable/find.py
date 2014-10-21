@@ -37,7 +37,9 @@ def cancel_reservation(res, window):
         print 'dinner name:', dn
         return (rn,ri,dn)
     else:
-        defer.fail()
+        print 'cancel_reservation fail'
+        reactor.stop()        
+
 
 def reservation_result(res, window):
     print 'reservation_result', res
@@ -50,7 +52,9 @@ def reservation_result(res, window):
         cancel_anchor.evaluateJavaScript('this.click()')
         return click_cancel
     else:
-        defer.fail()
+        print 'reservation_result fail'
+        reactor.stop()        
+
         
 def populate_reservation(res, window):
     print 'populate_reservation result', res
@@ -64,7 +68,8 @@ def populate_reservation(res, window):
         window.web_page.mainFrame().documentElement().findFirst('input[id="btnContinueReservation"]').evaluateJavaScript('this.click()')                
         return click_reservation 
     else:
-        defer.fail()
+        print 'populate_reservation fail'
+        reactor.stop()        
 
 '''
 def populate_signin(res, window):
@@ -115,7 +120,8 @@ def find_result(res, window):
                 return d
         #return window
     else:
-        defer.fail()
+        print 'find_result fail'
+        reactor.stop()        
 
 
 def interim_result(res, window):
@@ -126,7 +132,8 @@ def interim_result(res, window):
         window.web_page.page_finished_deferred.append(find_deferred)
         return find_deferred
     else:
-        defer.fail()
+        print 'interim_result fail'
+        reactor.stop()
 
 def toggle_by_restuarant(window):
     print 'toggle_by_restuarant'
@@ -161,7 +168,9 @@ def click_find(res, window):
         window.web_page.mainFrame().documentElement().findFirst('input[id="SearchNav_btnFindTable"]').evaluateJavaScript('this.click()')
         return interim_deferred
     else:
-        defer.fail()
+        print 'click_find fail'
+        reactor.stop()
+
 def pick_city(res,window,city=None):
     if res:
         city_anchors = []
@@ -174,7 +183,8 @@ def pick_city(res,window,city=None):
         d.addCallback(click_find, window)
         return d
     else:
-        return defer.fail()
+        print 'pick_city fail'
+        reactor.stop()
 
 def do_find(bw):
     if bw.web_page.view().url().toString() != 'http://www.opentable.com/start/home':

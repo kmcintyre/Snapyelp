@@ -14,7 +14,7 @@ from autobahn.twisted.websocket import WebSocketClientProtocol
 import json
 
 click_period = 60 * 5
-client_factory = WebSocketClientFactory("ws://localhost:8081", debug = False)
+client_factory = WebSocketClientFactory("ws://service.snapyelp.com:8081", debug = False)
 
 
 class OperatorClientProtocol(WebSocketClientProtocol):
@@ -68,7 +68,7 @@ def new_protocol(protocol, window):
 
 def run_operate(window):
     print 'window:', window
-    point = TCP4ClientEndpoint(reactor, "localhost", 8081)
+    point = TCP4ClientEndpoint(reactor, "service.snapyelp.com", 8081)
     operator = OperatorClientProtocol()
     operator.factory = client_factory
     d = connectProtocol(point, operator)

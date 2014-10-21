@@ -36,7 +36,8 @@ def register_done(res, city, cityname, cityemail, citypassword, window):
         opentable_db.furnish({'city': city, 'cityname': cityname, 'cityemail':cityemail, 'citypassword' : citypassword})        
         return defer.succeed("registered")
     else:
-        return defer.fail()
+        print 'register_done fail'
+        reactor.stop()        
 
 def populate_account(res, window):
     if res:
@@ -87,7 +88,8 @@ def populate_account(res, window):
                     reactor.stop()
                     
     else:
-        return defer.fail()
+        print 'populate_account fail'
+        reactor.stop()        
             
 
 def click_create_account(res, window):
@@ -101,7 +103,8 @@ def click_create_account(res, window):
                 anchor.evaluateJavaScript('this.click()')
         return post_click
     else:
-        return defer.fail()
+        print 'click_create_account fail'
+        reactor.stop()
 
 
 def populate_login_and_enter(res, window):
@@ -124,7 +127,8 @@ def populate_login_and_enter(res, window):
                 cf.documentElement().findFirst('span[id="lblMember"]').evaluateJavaScript('this.click()')
                 return post_click
     else:
-        defer.fail()
+        print 'populate_login_and_enter fail'
+        reactor.stop()
     
 def click_sign_in(ans, callback, window):
     print 'click sign in', callback, window
