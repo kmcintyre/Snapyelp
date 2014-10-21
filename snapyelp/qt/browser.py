@@ -3,7 +3,10 @@ Created on Oct 12, 2014
 
 @author: kevin
 
-Wrapper for QApplication  
+Wrapper for QApplication
+
+if run as python snapyelp/qt/browser.py <url> 
+xmlrpc is started on 8001  
 '''
 
 

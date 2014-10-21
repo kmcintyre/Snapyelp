@@ -135,10 +135,4 @@ class PostmanWSServerFactory(Postman, BaseWSServerFactory):
     def pulse(self):
         print 'pulse'
         self.heartbeat(None);
-        reactor.callLater(60, self.pulse)
-
-if __name__ == '__main__':    
-    print 'start websocket factory'    
-    factory = PostmanWSServerFactory(url="ws://localhost:8080")        
-    reactor.listenTCP(8080, factory)
-    reactor.run()    
+        reactor.callLater(60, self.pulse)        

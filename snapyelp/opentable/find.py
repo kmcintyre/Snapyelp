@@ -7,40 +7,48 @@ User module mapping login and register functions in opentable
 '''
 from snapyelp.opentable import user
 
+
 from twisted.internet import reactor, defer
     
 import datetime
 import random
 
-def cancel_result(res, window):
-    print 'cancel_result:', res
-    if res:
-        print 'auto cancel done:', window
-        reactor.stop()
-    else:
-        defer.fail()
+#def cancel_result(res, window):
+#    print 'cancel_result:', res, window
+#    return (rn,ri,dn)
+    #return window
+    
+    #if res:
+    #    print 'auto cancel done:', window
+    #    reactor.stop()
+    #else:
+    #    defer.fail()
     
 
 def cancel_reservation(res, window):
-    print 'cancel_reservation result', res
+    print 'cancel_reservation', res, window
     if res:
-        print 'auto cancel'
-        do_cancel = defer.Deferred()
-        do_cancel.addCallback(cancel_result, window)
-        window.web_page.page_finished_deferred.append(do_cancel)
-        window.web_page.mainFrame().documentElement().findFirst('a[id="cancelAction"]').evaluateJavaScript('this.click()')        
+        window.web_page.mainFrame().documentElement().findFirst('a[id="cancelAction"]').evaluateJavaScript('this.click()')                
+        rn = window.web_page.mainFrame().documentElement().findFirst('li[id="restaurantName"]').toInnerXml()
+        print 'restuarant name:', rn
+        ri = window.web_page.mainFrame().documentElement().findFirst('li[id="reservationInfo"] span').toInnerXml()
+        print 'restuarant info:', ri
+        dn = window.web_page.mainFrame().documentElement().findFirst('li[id="dinerName"]').toPlainText().split(":")[1]
+        print 'dinner name:', dn
+        return (rn,ri,dn)
     else:
         defer.fail()
 
 def reservation_result(res, window):
-    print 'reservation_result result', res
+    print 'reservation_result', res
     if res:
         cancel_anchor = window.web_page.mainFrame().documentElement().findFirst('a[id="linkCancelReservation"]')        
-        print cancel_anchor.attribute('href')
+        print 'CANCELING!:', cancel_anchor.attribute('href')
         click_cancel = defer.Deferred()
         click_cancel.addCallback(cancel_reservation, window)
         window.web_page.page_finished_deferred.append(click_cancel)
         cancel_anchor.evaluateJavaScript('this.click()')
+        return click_cancel
     else:
         defer.fail()
         
@@ -54,10 +62,11 @@ def populate_reservation(res, window):
         click_reservation.addCallback(reservation_result, window)
         window.web_page.page_finished_deferred.append(click_reservation)
         window.web_page.mainFrame().documentElement().findFirst('input[id="btnContinueReservation"]').evaluateJavaScript('this.click()')                
-        
+        return click_reservation 
     else:
         defer.fail()
 
+'''
 def populate_signin(res, window):
     print 'populate_signin result', res
     if res:
@@ -89,9 +98,9 @@ def signin(res, window):
         #return window
     else:
         defer.fail()
-
+'''
 def find_result(res, window):
-    print 'find_result result', res
+    print 'find_result:', res, window
     if res:
         found_available = False
         reservation_table = window.web_page.mainFrame().documentElement().findFirst('table[id="search_results_table"]')
@@ -102,14 +111,15 @@ def find_result(res, window):
                 print 'tr:', rn, rb.attribute('href')
                 found_available = True
                 d = window.xmlrpc_goto_url('http://www.opentable.com' + rb.attribute('href'))
-                d.addCallback(signin, window)
+                d.addCallback(populate_reservation, window)
+                return d
         #return window
     else:
         defer.fail()
 
 
-def interim(res, window):
-    print 'interim result', res
+def interim_result(res, window):
+    print 'interim_result', res
     if res:
         find_deferred = defer.Deferred()
         find_deferred.addCallback(find_result, window)        
@@ -119,12 +129,12 @@ def interim(res, window):
         defer.fail()
 
 def toggle_by_restuarant(window):
-    print 'nextstep'
+    print 'toggle_by_restuarant'
     window.web_page.mainFrame().documentElement().findFirst('span[id="SearchNav_lblTabText_RestaurantName"]').evaluateJavaScript('this.click()')
     return window        
 
 def select_date(window, dt = None):
-    print 'select date'
+    print 'select_date'
     se = window.web_page.mainFrame().documentElement().findFirst('input[name="SearchNav$OTSimpleSearch$OTDateSearch$theOTDate"]')
     if dt is None:
         dt = datetime.datetime.strptime(se.attribute('value'), "%m/%d/%Y")  + datetime.timedelta(days=7)
@@ -132,7 +142,7 @@ def select_date(window, dt = None):
     #<input class="DatePickerControlDateEdit DatePickerControlDateEdit" data-container-selector=".FieldContainer" data-date-format="MM/DD/YYYY" value="10/16/2014" id="SearchNav_OTSimpleSearch_OTDateSearch_theOTDate" name="SearchNav$OTSimpleSearch$OTDateSearch$theOTDate">
 
 def select_time(window, st = None):
-    print 'select date'
+    print 'select_time'
     te = window.web_page.mainFrame().documentElement().findFirst('select[name="SearchNav$OTSimpleSearch$OTDateSearch$cboHourList"]')
     if st is None:
         st = '8:00 PM'
@@ -140,13 +150,13 @@ def select_time(window, st = None):
         if st == opt.attribute('value'):
             opt.evaluateJavaScript('this.selected=true')
 
-def clickfind(res, window):
-    print 'clickfind'
+def click_find(res, window):
+    print 'click_find'
     if res:
         select_date(window)
         select_time(window)     
         interim_deferred = defer.Deferred()
-        interim_deferred.addCallback(interim, window)        
+        interim_deferred.addCallback(interim_result, window)        
         window.web_page.page_finished_deferred.append(interim_deferred)
         window.web_page.mainFrame().documentElement().findFirst('input[id="SearchNav_btnFindTable"]').evaluateJavaScript('this.click()')
         return interim_deferred
@@ -161,15 +171,18 @@ def pick_city(res,window,city=None):
         random_city = random.choice(city_anchors)
         print random_city.attribute('href')
         d = window.xmlrpc_goto_url(random_city.attribute('href'))
-        d.addCallback(clickfind, window)
+        d.addCallback(click_find, window)
         return d
     else:
         return defer.fail()
 
 def do_find(bw):
-    d = bw.xmlrpc_goto_url('http://opentable.com')
-    d.addCallback(pick_city,bw)
-    return d
+    if bw.web_page.view().url().toString() != 'http://www.opentable.com/start/home':
+        d = bw.xmlrpc_goto_url('http://www.opentable.com/start/home')
+        d.addCallback(pick_city,bw)
+        return d
+    else:
+        return pick_city(True,bw) 
     
 if __name__ == '__main__':
 

@@ -21,15 +21,14 @@ from twisted.internet import reactor, defer
 
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtTest import QTest
-    
+
+import random    
 
 from boto.dynamodb2.exceptions import ItemNotFound
 
 def login_done(res, window):
-    if res:
-        defer.succeed(window)
-    else:
-        return defer.fail("populate_login_and_enter")
+    print 'login done:', res, window
+    return window
 
 def register_done(res, city, cityname, cityemail, citypassword, window):
     if res:
@@ -37,7 +36,7 @@ def register_done(res, city, cityname, cityemail, citypassword, window):
         opentable_db.furnish({'city': city, 'cityname': cityname, 'cityemail':cityemail, 'citypassword' : citypassword})        
         return defer.succeed("registered")
     else:
-        return defer.fail("populate_account")
+        return defer.fail()
 
 def populate_account(res, window):
     if res:
@@ -88,7 +87,7 @@ def populate_account(res, window):
                     reactor.stop()
                     
     else:
-        return defer.fail(Exception("click_create_account"))
+        return defer.fail()
             
 
 def click_create_account(res, window):
@@ -102,27 +101,30 @@ def click_create_account(res, window):
                 anchor.evaluateJavaScript('this.click()')
         return post_click
     else:
-        return defer.fail('click_sign_in')
+        return defer.fail()
 
 
-def populate_login_and_enter(res, window, city):
-    print 'populate_login'
+def populate_login_and_enter(res, window):
+    print 'populate_login_and_enter:', res, window
     if res:
+        city = random.choice(opentable_db.view())
         for cf in window.web_page.mainFrame().childFrames():
             input_email = cf.documentElement().findFirst('input[id="txtUserEmail"]')
-            if input_email.hasAttributes():
+            if input_email.hasAttributes():                            
                 input_email.evaluateJavaScript('this.focus()')
                 QTest.keyClicks(window.web_page.view(), city['cityemail'], Qt.NoModifier, 20)
                 cf.documentElement().findFirst('input[id="txtUserPassword"]').evaluateJavaScript('this.focus()')
                 QTest.keyClicks(window.web_page.view(), city['citypassword'], Qt.NoModifier, 20)
-                cf.documentElement().findFirst('span[id="lblMember"]').evaluateJavaScript('this.focus()')
+                
+                
                 post_click = defer.Deferred()
                 post_click.addCallback(login_done, window)
                 window.web_page.page_finished_deferred.append(post_click)                
-                QTest.keyClick(window.web_page.view(), Qt.Key_Enter, Qt.NoModifier, 250)
+                #QTest.keyClick(window.web_page.view(), Qt.Key_Enter, Qt.NoModifier, 250)
+                cf.documentElement().findFirst('span[id="lblMember"]').evaluateJavaScript('this.click()')
                 return post_click
     else:
-        defer.fail("click_sign_in")
+        defer.fail()
     
 def click_sign_in(ans, callback, window):
     print 'click sign in', callback, window
@@ -133,15 +135,14 @@ def click_sign_in(ans, callback, window):
     anchor.evaluateJavaScript('this.click()')
     return post_click
 
-
 def create_window():
     bw = BaseWindow()
     bw.show()
     return bw
 
-def do_login(city, bw):    
+def do_login(bw):    
     d = bw.xmlrpc_goto_url('http://opentable.com')
-    d.addCallback(click_sign_in, populate_login_and_enter)
+    d.addCallback(click_sign_in, populate_login_and_enter, bw)
     return d
 
 def do_registration(bw):
@@ -153,5 +154,5 @@ def do_registration(bw):
     
 if __name__ == '__main__':
 
-    reactor.callWhenRunning(do_registration, create_window())
+    reactor.callWhenRunning(do_login, create_window())
     reactor.run()

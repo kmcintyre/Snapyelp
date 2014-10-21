@@ -3,7 +3,10 @@ Created on Oct 12, 2014
 
 @author: kevin
 
-Extended QT modules to enable XML-RPC commands  
+Extended QT modules to enable XML-RPC commands
+
+As a rule of thumb these are kept away from browser.py & browser_video.py
+  
 '''
 
 from PyQt5.QtCore import QUrl, QSize, Qt, QPoint
@@ -262,11 +265,10 @@ class BaseWindow(XMLRPC, QMainWindow):
             return self.hide()
         else:
             return self.show()
-
                 
     def xmlrpc_goto_url(self, url):
         url = fixed.simpleurl(url)
-        print 'goto:', url, ' from:', self.web_page.view().url()
+        print 'goto:', url, ' from:', self.web_page.view().url().toString()
         d = self.web_page.page_deferred({'URI':url})
         return d
 

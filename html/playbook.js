@@ -33,7 +33,7 @@ define(function() {
 				return lookup_array[x].value;
 			}
 		}
-		return no_key;
+		return null;
 	}	
 
 	function get_connection_for(ws_url) {		
@@ -53,17 +53,15 @@ define(function() {
 	}
 	
 	function connection(ws_url) {
-		if ( lookup('connection') == no_key ) {			
-			return 'ws://stream.' + this.site + ':8080'; 
+		if ( !lookup('connection') ) {			
+			return 'ws://service.' + this.site + ':8081'; 
 		} else {
 			return get_connection_for(ws_url) 
 		}
 	}
 		
 	return { 
-		loaded : false,
 		swkey : null,
-		reconnect : reconnect_timeout,
 		consume: consume,		
 		lookup : lookup,
 		site : javascript_site.substring(javascript_site.indexOf('.')+1),
