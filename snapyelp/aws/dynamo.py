@@ -10,6 +10,7 @@ from boto.dynamodb2.fields import HashKey, RangeKey
 from boto.dynamodb2.table import Table, Item
 
 import time
+import random
 from snapyelp import fixed
 
 allow_overwrite = True
@@ -62,6 +63,8 @@ class OpenTable(CommonTable):
             print 'creating dynamo opentable table'
     
     def get_active(self):
-        for city in self.view():
-            if 'active' in city and city['active'] == "True":
-                return city
+        city = random.choice(self.view)
+        if 'no_good' not in city:
+            return city
+        else:
+            return self.get_active()

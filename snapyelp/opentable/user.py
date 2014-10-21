@@ -22,8 +22,6 @@ from twisted.internet import reactor, defer
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtTest import QTest
 
-import random    
-
 from boto.dynamodb2.exceptions import ItemNotFound
 
 def login_done(res, window):
@@ -110,7 +108,7 @@ def click_create_account(res, window):
 def populate_login_and_enter(res, window):
     print 'populate_login_and_enter:', res, window
     if res:
-        city = random.choice(opentable_db.view())
+        opentable_db.get_active()
         for cf in window.web_page.mainFrame().childFrames():
             input_email = cf.documentElement().findFirst('input[id="txtUserEmail"]')
             if input_email.hasAttributes():                            
