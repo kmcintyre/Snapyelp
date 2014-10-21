@@ -141,8 +141,6 @@ class BrowserPreview:
         
 class PerminentHtmlS3:
         
-    version = 'm2'
-    
     def route_email(self, ee):
         print 'route email perm'   
         bucket_util.save_s3( 
@@ -150,27 +148,12 @@ class PerminentHtmlS3:
              str(ee.broadcast_dict['file_dest'] + '.html'), 
              ee.summary, 
              None,
-             'text/html',
-             'public-read',
-             ee.broadcast_dict.items()
+             'text/html'
         )
 
     def __repr__(self):        
         return 'Store Html in S3'
 
-
-class PerminentJsonS3:
-    
-    def route_email(self, ee):
-        bucket_util.save_s3( 
-             bucket_util.snapyelp_bucket('mail', 'snapyelp.com'),
-             str(ee.broadcast_dict['file_dest'] + '.json'), 
-             json.dumps(ee.broadcast_dict), 
-             None,
-             'application/json'
-        )
-    def __repr__(self):
-        return 'Store JSON in S3'
 
 class Attachments:
     
