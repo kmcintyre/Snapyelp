@@ -51,7 +51,7 @@ class SnapyelpServerProtocol(WebSocketServerProtocol):
                         self.jsonMessage({ 'reservation': 'Agent Busy' })
                     
                 elif 'site' in incoming:
-                    self.user['site']  = incoming['site']                                    
+                    self.user['site']  = incoming['site']
                 else:
                     print 'wtf?:', self.peer, incoming
             except ValueError as e:

@@ -28,7 +28,7 @@ import random
 def cancel_reservation(res, window):
     print 'cancel_reservation', res, window
     if res:
-        window.web_page.mainFrame().documentElement().findFirst('a[id="cancelAction"]').evaluateJavaScript('this.click()')                
+        #window.web_page.mainFrame().documentElement().findFirst('a[id="cancelAction"]').evaluateJavaScript('this.click()')                
         rn = window.web_page.mainFrame().documentElement().findFirst('li[id="restaurantName"]').toInnerXml()
         print 'restuarant name:', rn
         ri = window.web_page.mainFrame().documentElement().findFirst('li[id="reservationInfo"] span').toInnerXml()
@@ -71,39 +71,6 @@ def populate_reservation(res, window):
         print 'populate_reservation fail'
         reactor.stop()        
 
-'''
-def populate_signin(res, window):
-    print 'populate_signin result', res
-    if res:
-        active_user = user.opentable_db.get_active()
-        print 'active_user:', active_user
-        email = window.web_page.mainFrame().documentElement().findFirst('input[id="txtUserEmail"]')
-        email.evaluateJavaScript('this.value="' + active_user['cityemail'] + '"')
-        password = window.web_page.mainFrame().documentElement().findFirst('input[id="txtUserPassword"]')
-        password.evaluateJavaScript('this.value="' + active_user['citypassword'] + '"')
-        anchor = window.web_page.mainFrame().documentElement().findFirst('span[id="lblMember"]').parent()
-
-        signin_click = defer.Deferred()
-        signin_click.addCallback(populate_reservation, window)
-        window.web_page.page_finished_deferred.append(signin_click)
-        anchor.evaluateJavaScript('this.click()')
-                
-    else:
-        defer.fail()
-
-def signin(res, window):
-    print 'signin result', res
-    if res:
-        click_signin = defer.Deferred()
-        click_signin.addCallback(populate_signin, window)        
-        window.web_page.page_finished_deferred.append(click_signin)        
-        anchor = window.web_page.mainFrame().documentElement().findFirst('a[id="linkSignIn"]')
-        print 'anchor:', anchor, anchor.isNull()
-        anchor.evaluateJavaScript('this.click()')
-        #return window
-    else:
-        defer.fail()
-'''
 def find_result(res, window):
     print 'find_result:', res, window
     if res:
@@ -140,16 +107,22 @@ def toggle_by_restuarant(window):
     window.web_page.mainFrame().documentElement().findFirst('span[id="SearchNav_lblTabText_RestaurantName"]').evaluateJavaScript('this.click()')
     return window        
 
+#[id="SearchNav$OTSimpleSearch$OTDateSearch$theOTDate"]
+#
 def select_date(window, dt = None):
-    print 'select_date'
-    se = window.web_page.mainFrame().documentElement().findFirst('input[name="SearchNav$OTSimpleSearch$OTDateSearch$theOTDate"]')
-    if dt is None:
-        dt = datetime.datetime.strptime(se.attribute('value'), "%m/%d/%Y")  + datetime.timedelta(days=7)
-    se.evaluateJavaScript('this.value="' + datetime.datetime.strftime(dt, "%m/%d/%Y") + '"') 
+    print 'select_date', window
+    for inp in window.web_page.mainFrame().documentElement().findAll('input'):
+        print 'se:', inp.toOuterXml()
+    
+    #se = window.web_page.mainFrame().documentElement().find('input[id="SearchNav$OTSimpleSearch$OTDateSearch$theOTDate"]')
+    #print 'se:', se.toOuterXml()
+    #if dt is None:        
+    #    dt = datetime.datetime.strptime(se.attribute('value'), "%m/%d/%Y")  + datetime.timedelta(days=7)
+    #se.evaluateJavaScript('this.value="' + datetime.datetime.strftime(dt, "%m/%d/%Y") + '"') 
     #<input class="DatePickerControlDateEdit DatePickerControlDateEdit" data-container-selector=".FieldContainer" data-date-format="MM/DD/YYYY" value="10/16/2014" id="SearchNav_OTSimpleSearch_OTDateSearch_theOTDate" name="SearchNav$OTSimpleSearch$OTDateSearch$theOTDate">
 
 def select_time(window, st = None):
-    print 'select_time'
+    print 'select_time', window
     te = window.web_page.mainFrame().documentElement().findFirst('select[name="SearchNav$OTSimpleSearch$OTDateSearch$cboHourList"]')
     if st is None:
         st = '8:00 PM'
@@ -158,7 +131,7 @@ def select_time(window, st = None):
             opt.evaluateJavaScript('this.selected=true')
 
 def click_find(res, window):
-    print 'click_find'
+    print 'click_find', window
     if res:
         select_date(window)
         select_time(window)     
@@ -178,8 +151,14 @@ def pick_city(res,window,city=None):
             if 'See other' not in c.toPlainText().strip():
                 city_anchors.append(c)                
         random_city = random.choice(city_anchors)
-        print random_city.attribute('href')
-        d = window.xmlrpc_goto_url(random_city.attribute('href'))
+        print 'random city:', random_city.attribute('href')
+        #pick_deferred = defer.Deferred()
+        #window.web_page.page_finished_deferred.append(pick_deferred)
+        #pick_deferred.addCallback()    
+        #random_city.evaluateJavaScript('this.click()')                
+        #return pick_deferred
+        d = window.xmlrpc_goto_url('http://www.google.com')
+        d.addCallback(lambda ign: window.xmlrpc_goto_url( random_city.attribute('href') ) )
         d.addCallback(click_find, window)
         return d
     else:
@@ -192,6 +171,7 @@ def do_find(bw):
         d.addCallback(pick_city,bw)
         return d
     else:
+        print 'already there'
         return pick_city(True,bw) 
     
 if __name__ == '__main__':

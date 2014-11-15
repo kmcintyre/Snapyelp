@@ -97,7 +97,7 @@ class SimpleQWebPage(QWebPage):
         def delay_response(reply):
             d2 = defer.Deferred()
             d2.addCallback(lambda ign: reply)
-            reactor.callLater(2.5, d2.callback, reply)
+            reactor.callLater(1, d2.callback, reply)
             return d2
         def timeout(timed_deferred):
             if not timed_deferred.called:

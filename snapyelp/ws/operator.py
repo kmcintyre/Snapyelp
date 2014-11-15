@@ -38,15 +38,15 @@ class OperatorClientProtocol(WebSocketClientProtocol):
                 incoming = json.loads(payload.decode('utf8'))
                 print 'incoming:', incoming
                 if 'reserve' in incoming:
-                    def reservation_result(res):
-                        print 'reservation_result:', res
+                    def reservation_result(res, win):
+                        print 'reservation_result:', res, win
                         reservation_msg = {'rn': res[0], 'ri': res[1], 'dn': res[2], 'reservation' : incoming['reserve_key']}
                         reservation_msg.update(self.connect_message)
                         self.sendMessage(json.dumps(reservation_msg))
-    		    window = user.create_window()
-    		    user.do_login(window)
-                    d = find.do_find(window)
-                    d.addCallback(reservation_result)
+                    window = user.create_window()
+                    d = user.do_login(window)
+                    d.addCallback(lambda ign: find.do_find(window))
+                    d.addCallback(reservation_result, window)
             except ValueError as e:
                 if isinstance(payload, str):
                     self.swkey = payload
