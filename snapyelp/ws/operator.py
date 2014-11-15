@@ -23,7 +23,6 @@ class OperatorClientProtocol(WebSocketClientProtocol):
         self.swkey = None
         self.awaiting_message = None
         self.connect_message = None
-        self.window = None
         
     def autostart(self, message):
         print 'autostart', message
@@ -44,7 +43,9 @@ class OperatorClientProtocol(WebSocketClientProtocol):
                         reservation_msg = {'rn': res[0], 'ri': res[1], 'dn': res[2], 'reservation' : incoming['reserve_key']}
                         reservation_msg.update(self.connect_message)
                         self.sendMessage(json.dumps(reservation_msg))
-                    d = find.do_find(self.window)
+    		    window = user.create_window()
+    		    user.do_login(window)
+                    d = find.do_find(window)
                     d.addCallback(reservation_result)
             except ValueError as e:
                 if isinstance(payload, str):
@@ -59,22 +60,19 @@ class OperatorClientProtocol(WebSocketClientProtocol):
     def onClose(self, wasClean, code, reason):
         print 'close:', self.peer, wasClean, code, reason
 
-def new_protocol(protocol, window):
-    print 'new_protocol:', protocol, window
+def new_protocol(protocol):
+    print 'new_protocol:', protocol
     protocol.autostart({'operator':'opentable'})
-    protocol.window = window
-    user.do_login(window)
-    return window
 
-def run_operate(window):
-    print 'run operate:', window
+def run_operate():
+    print 'run operate:'
     point = TCP4ClientEndpoint(reactor, "service.snapyelp.com", 8081)
     operator = OperatorClientProtocol()
     operator.factory = client_factory
     d = connectProtocol(point, operator)
-    d.addCallback(new_protocol, window)            
+    d.addCallback(new_protocol)            
     return d
 
 if __name__ == '__main__':
-    reactor.callWhenRunning(run_operate, user.create_window()) 
+    reactor.callWhenRunning(run_operate) 
     reactor.run()

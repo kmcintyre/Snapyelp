@@ -60,7 +60,7 @@ def populate_reservation(res, window):
     print 'populate_reservation result', res
     if res:
         window.web_page.mainFrame().documentElement().findFirst('input[id="radFirstTimeDiningYes"]').evaluateJavaScript('this.click()')
-        window.web_page.mainFrame().documentElement().findFirst('input[id="PhoneEntry1_txtPhone1"]').evaluateJavaScript('this.value="718 249 5058"')
+        window.web_page.mainFrame().documentElement().findFirst('input[id="PhoneEntry1_txtPhone1"]').evaluateJavaScript('this.value="212 754-9494"')
         
         click_reservation = defer.Deferred()
         click_reservation.addCallback(reservation_result, window)
