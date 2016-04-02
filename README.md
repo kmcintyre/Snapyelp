@@ -3,7 +3,7 @@ snapyelp
 
 ## Scope
 
-This project intent is the initial bundle for instagator.com
+This project intent is the initial bundle
 
 ## Stack
 
