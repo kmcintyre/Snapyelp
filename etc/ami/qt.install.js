@@ -21,7 +21,8 @@ Controller.prototype.TargetDirectoryPageCallback = function() {
     gui.clickButton(buttons.NextButton);
 }
 Controller.prototype.ComponentSelectionPageCallback = function() {
-	gui.currentPageWidget().selectAll();
+	gui.currentPageWidget().selectAll();	
+	gui.currentPageWidget().deselectComponent("qt.592.src");
 	gui.clickButton(buttons.NextButton);    
 }
 Controller.prototype.LicenseAgreementPageCallback = function() {
