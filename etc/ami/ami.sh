@@ -19,6 +19,7 @@ sudo cp etc/systemd/swap.service /etc/systemd/system
 sudo cp etc/systemd/identify.service /etc/systemd/system
 	
 cd /etc/systemd/system/
+
 sudo systemctl enable xvfb
 sudo systemctl enable swap
 sudo systemctl enable identify
