@@ -1,0 +1,10 @@
+[Unit]
+Description=Create Swapfile
+
+[Service]
+Type=oneshot
+User=ubuntu
+ExecStart=/home/ubuntu/scewpt/etc/bin/create_swapfile.sh
+
+[Install]
+WantedBy=multi-user.target
