@@ -35,21 +35,21 @@ chmod +x qt-opensource-linux-x64-5.9.2.run
 export DISPLAY=:2
 ./qt-opensource-linux-x64-5.9.2.run --script ~/Snapyelp/etc/ami/qt.install.js
 
-wget https://www.riverbankcomputing.com/static/Downloads/sip/sip-4.19.1.dev1701101411.tar.gz
-gzip -df sip-4.19.1.dev1701101411.tar.gz
-tar -xvf sip-4.19.1.dev1701101411.tar
-rm sip-4.19.1.tar
-cd sip-4.19.1
+wget https://www.riverbankcomputing.com/static/Downloads/sip/sip-4.19.4.dev1709181706.tar.gz
+gzip -df sip-4.19.4.dev1709181706.tar.gz
+tar -xvf sip-4.19.4.dev1709181706.tar
+rm *.tar
+cd sip-4.19.4.dev1709181706
 python configure.py
 make
 sudo make install
 cd ..
 
-wget https://www.riverbankcomputing.com/static/Downloads/PyQt5/PyQt5_gpl-5.7.2.dev1701131704.tar.gz
-gzip -df PyQt5_gpl-5.7.2.dev1701131704.tar.gz
-tar -xvf PyQt5_gpl-5.7.2.dev1701131704.tar 
-rm PyQt5_gpl-5.7.2.dev1701131704.tar 
-cd PyQt5_gpl-5.7.2.dev1701131704
+wget https://www.riverbankcomputing.com/static/Downloads/PyQt5/PyQt5_gpl-5.9.1.dev1710071532.tar.gz
+gzip -df PyQt5_gpl-5.9.1.dev1710071532.tar.gz
+tar -xvf PyQt5_gpl-5.9.1.dev1710071532.tar
+rm PyQt5_gpl-5.9.1.dev1710071532.tar 
+cd PyQt5_gpl-5.9.1.dev1710071532
 python configure.py --qmake=/home/ubuntu/Qt/5.7/gcc_64/bin/qmake 
 make
 sudo make install

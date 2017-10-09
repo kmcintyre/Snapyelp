@@ -21,7 +21,8 @@ Controller.prototype.TargetDirectoryPageCallback = function() {
     gui.clickButton(buttons.NextButton);
 }
 Controller.prototype.ComponentSelectionPageCallback = function() {
-    gui.clickButton(buttons.NextButton);    
+	gui.currentPageWidget().selectAll();
+	gui.clickButton(buttons.NextButton);    
 }
 Controller.prototype.LicenseAgreementPageCallback = function() {
     gui.currentPageWidget().AcceptLicenseRadioButton.setChecked(true);
