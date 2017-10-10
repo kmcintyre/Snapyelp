@@ -4,4 +4,4 @@ sudo rm /swapfile
 cd /home/ubuntu/Snapyelp
 git pull
 export PYTHONPATH=`pwd`
-python pyscewpt/amazon/ami.py
+python snapyelp/aws/ami.py
