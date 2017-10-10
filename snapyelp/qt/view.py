@@ -86,33 +86,8 @@ class ChromeView(QWebEngineView):
                 deferred.callback(ok)
                 return
     
-    def league_initialize(self):
-        try:          
-            self.league = Entity().get_item(league=self.role[1], profile='league:' + self.role[1])
-            print 'league initialize complete:', self.league[keys.entity_league]
-        except Exception as e:
-            print 'league initialize exception:', e    
-    
-    def twitter_initialize(self, available = False):        
-        self.available = available
-        print 'twitter initialize:', self.role[1], 'available:', self.available        
-        try:
-            if available:
-                self.user = UserAvailable().get_by_role(self.role[1], keys.entity_twitter)
-            else:
-                self.user = User().get_by_role(self.role[1], keys.entity_twitter)
-            print 'twitter initialiaze user:', self.user[keys.user_role], self.user[keys.user_username], self.user[keys.user_password]
-        except Exception as e:
-            print 'twitter initialize user exception:', e            
-        try:            
-            self.curator = User().get_curator(self.role[1])
-            print 'twitter initialize curator:', self.curator[keys.user_role]
-        except Exception as e:
-            print 'twitter initialize curator exception:', e
-        self.league_initialize()
-    
     @defer.inlineCallbacks
-    def to_html(self, ok = None, dumpit = None):
+    def to_html(self, ok = None):
         if ok is not None:
             #print 'to_html ok?:', ok, self.page().url().toString()
             pass
@@ -120,8 +95,6 @@ class ChromeView(QWebEngineView):
         d.addCallback(etree.HTML)
         self.page().toHtml(lambda h: d.callback(h))
         html = yield d
-        if dumpit:
-            fixed.dumpit(html, dumpit)
         defer.returnValue(html)
         
     @defer.inlineCallbacks
@@ -192,8 +165,8 @@ class ChromeView(QWebEngineView):
                     clean_cite = cite.encode("utf8")
                 except:
                     qt5.app.clipboard().setText(cite)
-                    clean_cite = qt5.app.clipboard().text()                                        
-                simple_cite = fixed.simpleurl(clean_cite.encode("utf8"))
+                    clean_cite = qt5.app.clipboard().text()                                                            
+                simple_cite = urlparse.urlparse(clean_cite.encode("utf8")).scheme
                 if domain is None or urlparse.urlparse(simple_cite).netloc == domain:
                     if exclude:
                         for pe in exclude:
@@ -220,6 +193,13 @@ class ChromeView(QWebEngineView):
         self.page().load(qurl)
         return d
 
+
+    def csstext(self, e):
+        for br in e.xpath("*//br"):
+            br.tail = "\n" + br.tail if br.tail else "\n"
+        t = etree.tostring(e, method='text', encoding='utf8').strip()    
+        t = t.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ')
+        return re.sub(' +',' ', t) 
     trans_focus = """
         document.querySelector('textarea[id="tw-source-text-ta"]').focus()    
     """    
@@ -231,7 +211,7 @@ class ChromeView(QWebEngineView):
         d.addCallback(lambda res: self.page().triggerAction(QWebEnginePage.Paste)   )
         d.addCallback(lambda res: task.deferLater(reactor, 1, defer.succeed, res) )
         d.addCallback(self.to_html)
-        d.addCallback(lambda trans_html: fixed.csstext(trans_html.cssselect('div[id="tw-target-text-container"][class="tw-ta-container tw-nfl"] pre[data-placeholder="Translation"] span')[0]))
+        d.addCallback(lambda trans_html: self.csstext(trans_html.cssselect('div[id="tw-target-text-container"][class="tw-ta-container tw-nfl"] pre[data-placeholder="Translation"] span')[0]))
         return d 
 
     def error_view(self, err, err2 = None):
