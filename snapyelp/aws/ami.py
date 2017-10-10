@@ -14,7 +14,7 @@ def region_instance(region_instance_seq):
         region = region[:-1]
         print 'change to:', region
     print 'region:', region
-    if region == app_util.app_name:
+    if region == app_util.app_region:
         print 'connect to:', region
         conn = boto.ec2.connect_to_region(region)
         for image in conn.get_all_images(owners=['self'], filters={'name': app_util.app_name}):
@@ -30,7 +30,7 @@ def region_instance(region_instance_seq):
         print 'ami response:', ami_response
     else:
         print 'region mismatch'
-    reactor.callLater(reactor.stop)        
+    reactor.callLater(0, reactor.stop)        
 
 def ami_save():
     dl = defer.DeferredList([identify.get_region(), identify.get_instance()])
