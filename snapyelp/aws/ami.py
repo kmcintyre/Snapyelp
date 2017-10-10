@@ -20,15 +20,15 @@ def region_instance(region_instance_seq):
             try:
                 print 'de-register images:', image
                 image.deregister()
-                print 'wait 60 seconds'
-                yield task.deferLater(reactor, 60, defer.succeed, True)        
+                print 'wait 20 seconds'
+                yield task.deferLater(reactor, 20, defer.succeed, True)        
             except Exception as e:
                 print 'de-register error:', e
         print 'create image:', app_util.app_name
         r_conn = boto.ec2.connect_to_region(region)
         try:
             ami_response = r_conn.create_image(instance, app_util.app_name)
-            print 'ami response:', ami_response.state
+            print 'ami response:', ami_response
             has_tag = False
             while not has_tag:
                 print 'waiting ami'
