@@ -9,8 +9,9 @@ def region_instance(region_instance_seq):
     print region_instance_seq
     print 'ans:', region_instance_seq[0], region_instance_seq[1]
     region = region_instance_seq[0]
-    while region[-1:].isalpha():
+    while region[-1:].isalpha():        
         region = region[:-1]
+    print 'region'
     if region == app_util.app_name:
         print 'connect to:', region
         conn = boto.ec2.connect_to_region(region)
