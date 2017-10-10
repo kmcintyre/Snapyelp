@@ -25,15 +25,19 @@ def region_instance(region_instance_seq):
             except Exception as e:
                 print 'de-register error:', e
         print 'create image:', app_util.app_name
-        ami_response = boto.ec2.connect_to_region(region).create_image(instance, app_util.app_name)
-        print 'ami response:', ami_response.state
-        has_tag = False
-        while not has_tag:
-            print 'waiting ami'
-            yield task.deferLater(reactor, 10, defer.succeed, True)
-            for image in all_instances(region):
-                print 'found image:', image.id, 'state:', image.state
-                has_tag = True       
+        r_conn = boto.ec2.connect_to_region(region)
+        try:
+            ami_response = r_conn.create_image(instance, app_util.app_name)
+            print 'ami response:', ami_response.state
+            has_tag = False
+            while not has_tag:
+                print 'waiting ami'
+                yield task.deferLater(reactor, 10, defer.succeed, True)
+                for image in all_instances(region):
+                    print 'found image:', image.id, 'state:', image.state
+                    has_tag = True
+        except Exception as e:
+            print 'exception:', e       
     else:
         print 'region mismatch'
     reactor.callLater(0, reactor.stop)        
