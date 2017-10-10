@@ -4,6 +4,9 @@ import boto.ec2
 from snapyelp.aws import app_util
 from snapyelp.aws import identify
 
+def all_instances(region):    
+    return boto.ec2.connect_to_region(region).get_all_images(owners=['self'], filters={'name': app_util.app_name})
+
 @defer.inlineCallbacks
 def region_instance(region_instance_seq):
     region = region_instance_seq[0]
@@ -13,8 +16,7 @@ def region_instance(region_instance_seq):
     print 'region:', region
     if region == app_util.app_region:
         print 'connect to:', region
-        conn = boto.ec2.connect_to_region(region)
-        for image in conn.get_all_images(owners=['self'], filters={'name': app_util.app_name}):
+        for image in all_instances(region):
             try:
                 print 'de-register images:', image
                 image.deregister()
@@ -23,8 +25,16 @@ def region_instance(region_instance_seq):
             except Exception as e:
                 print 'de-register error:', e
         print 'create image:', app_util.app_name
-        ami_response = conn.create_image(region_instance_seq[1], app_util.app_name)
+        ami_response = boto.ec2.connect_to_region(region).create_image(region_instance_seq[1], app_util.app_name)
         print 'ami response:', ami_response.state
+        has_tag = False
+        while not has_tag:
+            print 'waiting ami'
+            yield task.deferLater(reactor, 10, defer.succeed, True)
+            for image in all_instances(region):
+                print 'found image:', image.id, 'state:', image.state
+                image.add_tag('App', app_util.app_name)
+                has_tag = True            
     else:
         print 'region mismatch'
     reactor.callLater(0, reactor.stop)        
