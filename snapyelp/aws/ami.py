@@ -8,16 +8,22 @@ from snapyelp.aws import identify
 def region_instance(region_instance_seq):
     print region_instance_seq
     print 'ans:', region_instance_seq[0], region_instance_seq[1]
-    conn = boto.ec2.connect_to_region(region_instance_seq[0])
-    #for image in conn.get_all_images(owners=['self'], filters={'name': bucket_util.snapyelpbucket}):
-    #    try:
-    #        print 'de-register images:', image
-    #        image.deregister()
-    #    except Exception as e:
-    #        print 'de-register error:', e
+    region = region_instance_seq[0]
+    while region[-1:].isalpha():
+        region = region[:-1]
+    print 'connect to:', region
+    conn = boto.ec2.connect_to_region(region)
+    for image in conn.get_all_images(owners=['self'], filters={'name': bucket_util.snapyelpbucket}):
+        try:
+            print 'de-register images:', image
+            image.deregister()
+        except Exception as e:
+            print 'de-register error:', e
+    print 'wait 60 seconds'
     yield task.deferLater(reactor, 60, defer.succeed, True)
-    #print 'create image:', bucket_util.snapyelpbucket
-    #conn.create_image(region_instance_seq[1], bucket_util.snapyelpbucket)
+    print 'create image:', bucket_util.snapyelpbucket
+    ami_response = conn.create_image(region_instance_seq[1], bucket_util.snapyelpbucket)
+    print 'ami response:', ami_response
 
 def ami():
     dl = defer.DeferredList([identify.get_region(), identify.get_instance()])
