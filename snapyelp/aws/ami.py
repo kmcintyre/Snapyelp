@@ -6,11 +6,8 @@ from snapyelp.aws import identify
 
 @defer.inlineCallbacks
 def region_instance(region_instance_seq):
-    print region_instance_seq
-    print 'ans:', region_instance_seq[0], region_instance_seq[1]
     region = region_instance_seq[0]
     while region[-1:].isalpha():      
-          
         region = region[:-1]
         print 'change to:', region
     print 'region:', region
@@ -21,13 +18,13 @@ def region_instance(region_instance_seq):
             try:
                 print 'de-register images:', image
                 image.deregister()
+                print 'wait 60 seconds'
+                yield task.deferLater(reactor, 60, defer.succeed, True)        
             except Exception as e:
                 print 'de-register error:', e
-        print 'wait 60 seconds'
-        yield task.deferLater(reactor, 60, defer.succeed, True)
         print 'create image:', app_util.app_name
         ami_response = conn.create_image(region_instance_seq[1], app_util.app_name)
-        print 'ami response:', ami_response
+        print 'ami response:', ami_response.state
     else:
         print 'region mismatch'
     reactor.callLater(0, reactor.stop)        
