@@ -11,8 +11,8 @@ if os.environ.get('QTDISPLAY'):
     print '    DISPLAY=', os.environ.get('QTDISPLAY')
     os.putenv('DISPLAY', os.environ.get('QTDISPLAY'))
 else:
-    print 'WTF?'
-    os.putenv('DISPLAY', ':0')
+    print '    DISPLAY=', ':2'
+    os.putenv('DISPLAY', ':2')
 from PyQt5 import QtCore
 qt_version = QtCore.qVersion()
 print 'version:', qt_version 
