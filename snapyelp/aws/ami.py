@@ -16,8 +16,8 @@ def region_instance(region_instance_seq):
     #    except Exception as e:
     #        print 'de-register error:', e
     yield task.deferLater(reactor, 60, defer.succeed, True)
-    print 'create image:', bucket_util.snapyelpbucket
-    conn.create_image(region_instance_seq[1], bucket_util.snapyelpbucket)
+    #print 'create image:', bucket_util.snapyelpbucket
+    #conn.create_image(region_instance_seq[1], bucket_util.snapyelpbucket)
 
 def ami():
     dl = defer.DeferredList([identify.get_region(), identify.get_instance()])
