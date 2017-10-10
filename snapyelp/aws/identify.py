@@ -21,5 +21,6 @@ def selfie():
     dl.addErrback(self_error)
     return dl
 
-reactor.callWhenRunning(selfie)    
-reactor.run()
+if __name__ == '__main__':
+    reactor.callWhenRunning(selfie)    
+    reactor.run()
