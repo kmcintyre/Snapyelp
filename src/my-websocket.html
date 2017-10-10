@@ -1,0 +1,69 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="my-websocket">
+   <template>
+      <style>
+         :host {
+         }   
+      </style>
+      <div>
+      websocket: {{ readyState }}
+      </div>
+   </template>
+   <script>
+		class MyWebsocket extends Polymer.Element {
+		  static get is() { return 'my-websocket'; }
+		  static get properties() {
+			  return {
+	              url: {
+	                  type: String,
+	                  reflectToAttribute: true,
+	                  value: 'ws://dev.athleets.com:8080'
+	              },
+	              readyState: {
+	              	type: Number,
+	              	reflectToAttribute: true
+	              },
+	              socket: {
+	            	  type: Object
+	              }
+			  }		  
+		  }
+		  
+	      requestsChanged(requests) {
+	    	  if ( requests && this.socket.readyState == 1 ) {
+		    	  console.log('send:', requests[requests.length -1])
+		    	  this.socket.send( JSON.stringify(requests[requests.length -1]) );	    		  
+	    	  }
+	      };
+		  
+	      onError(error) {
+	          this.fire('onerror', error);
+	      };
+	      onOpen(event) {
+	    	  //this.dispatch('websocketReady', this.socket.readyState)
+	    	  console.log('open:', event, this.ws)
+	    	  this.readyState = this.socket.readyState
+	          //this.socket.send( JSON.stringify({
+	       	  // 	website: nativeDomain()
+	          //}));    	  
+	      };
+	      onMessage(event) {
+	   	   	  //this.dispatch('websocketMessage', JSON.parse(event.data))
+	          //document.querySelector('my-app').dispatchEvent(new CustomEvent('onmessage', {detail: data} ));
+	      }
+	      ready() {
+	    	  super.ready();
+			  this.socket = new WebSocket(this.url, this.protocol);
+	          this.socket.onerror = this.onError.bind(this);
+	          this.socket.onopen = this.onOpen.bind(this);
+	          this.socket.onmessage = this.onMessage.bind(this);
+	          this.socket.onclose = this.onClose.bind(this);
+	      }
+	      onClose(event) {	    	  
+	    	  //this.dispatch('websocketReady', this.socket.readyState)
+	      }
+		}            
+      	customElements.define(MyWebsocket.is, MyWebsocket);      
+   </script>
+</dom-module>
