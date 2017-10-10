@@ -1,0 +1,24 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-index">
+   <template>
+      <style include="shared-styles">
+         :host {  
+         }
+      </style>
+      	<div>
+      	index
+      	</div>
+   </template>
+   
+   <script>
+		class MyIndex extends Polymer.Element {
+		  static get is() { return 'my-index'; }
+		  static get properties() {
+			  return {}
+		  }
+		}            
+      	customElements.define(MyIndex.is, MyIndex);      
+   </script>
+</dom-module>

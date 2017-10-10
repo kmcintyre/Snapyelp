@@ -1,0 +1,12 @@
+{
+  "name": "snapyelp...",
+  "authors": [
+    "me"
+  ],
+  "license": "https://polymer.github.io/LICENSE.txt",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.0"
+  },
+  "devDependencies": {},
+  "private": true
+}

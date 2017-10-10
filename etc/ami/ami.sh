@@ -1,95 +1,56 @@
-# echo "[Credentials]" > .boto
-# echo "aws_access_key_id = <key> " >> .boto
-# echo "aws_secret_access_key = <pass>" >> .boto
+echo "[Credentials]" > .boto
+echo "aws_access_key_id = <key> " >> .boto
+echo "aws_secret_access_key = <pass>" >> .boto
 
 sudo apt-get update
-sudo apt-get -y install git python-setuptools python-lxml python-opencv libav-tools xvfb vnc4server openbox gcc g++ make python-dev qt5-default
 
-sudo easy_install pip
-sudo pip install service_identity
-sudo pip install boto --upgrade
-sudo pip install beautifulsoup4
-sudo pip install pyvirtualdisplay
-sudo easy_install autobahn
+sudo apt-get -y install alsa-base ant gcc git glances imagemagick libfreetype6-dev libgles2-mesa-dev libjpeg-dev libmagickwand-dev libnss3 libgl1-mesa-dev libssl-dev libx11-dev libx11-xcb-dev libxcb-glx0-dev libxcb1-dev libxext-dev libxfixes-dev libxi-dev libxrender-dev libxslt1-dev monit nginx python-dev python-lxml python-opencv python-pip python-setuptools unzip xvfb 
 
+sudo pip install --upgrade pip
+sudo pip install --upgrade autobahn boto cssselect lxml Pillow pyopenssl requests service_identity simplejson Twisted Wand psutil 
 
-wget http://sourceforge.net/projects/pyqt/files/sip/sip-4.16.3/sip-4.16.3.tar.gz
-gzip -df sip-4.16.3.tar.gz
-tar -xvf sip-4.16.3.tar
+git clone https://github.com/kmcintyre/Snapyelp -b demo
 
-wget http://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.3.2/PyQt-gpl-5.3.2.tar.gz
-gzip -df PyQt-gpl-5.3.2.tar.gz
-tar -xvf PyQt-gpl-5.3.2.tar
+cd Snapyelp
+git config credential.helper 'store'
 
-wget http://download.qt-project.org/official_releases/qt/5.3/5.3.2/qt-opensource-linux-x64-5.3.2.run
-chmod +x qt-opensource-linux-x64-5.3.2.run
-
-if [[ `twistd --version` =~ .*14.0.2* ]]
-then
-    echo 'Twisted installed'
-else
-    echo 'Install Twisted'
-    sudo apt-get -y install gcc python-dev
-	wget https://pypi.python.org/packages/source/T/Twisted/Twisted-14.0.2.tar.bz2
-	bunzip2 Twisted-14.0.2.tar.bz2
-	tar -xvf Twisted-14.0.2.tar
+sudo cp etc/systemd/xvfb.service /etc/systemd/system
+sudo cp etc/systemd/swap.service /etc/systemd/system
+sudo cp etc/systemd/identify.service /etc/systemd/system
 	
-	cd Twisted-14.0.2
-	sudo python setup.py install
-	cd ..
-	sudo rm -f Twisted-14.0.2.tar    
-	sudo rm -rf Twisted-14.0.2 	
-fi
+cd /etc/systemd/system/
 
-git clone https://github.com/kmcintyre/snapyelp
+sudo systemctl enable xvfb
+sudo systemctl enable swap
+sudo systemctl enable identify
 
-#
-# Next part is to get PyQt5.3.2 installed
-#
+sudo systemctl start xvfb
+sudo systemctl start swap
 
-vnc4server
-#setup password
-vnc4server -kill :1
-screen
-sudo cp snapyelp/etc/xvfb.conf /etc/init/
-sudo start xvfb
+cd
 
+wget http://download.qt.io/official_releases/qt/5.9/5.9.2/qt-opensource-linux-x64-5.9.2.run
 
-#new screen
-vi .vnc/xstartup
-# comment out "x-window-manager &" 
-# add new line:openbox-session &
-export DISPLAY=:0
-openbox-session &
+chmod +x qt-opensource-linux-x64-5.9.2.run
+export DISPLAY=:2
+./qt-opensource-linux-x64-5.9.2.run --script ~/Snapyelp/etc/ami/qt.install.js
 
-# new screen
-vnc4server # should start on 5901
-
-# connect with RDC
-
-export DISPLAY=:1
-./qt-opensource-linux-x64-5.3.2.run
-
-
-### You can kill vnc openbox
-
-cd sip-4.16.3
+wget https://www.riverbankcomputing.com/static/Downloads/sip/sip-4.19.4.dev1709181706.tar.gz
+gzip -df sip-4.19.4.dev1709181706.tar.gz
+tar -xvf sip-4.19.4.dev1709181706.tar
+rm *.tar
+cd sip-4.19.4.dev1709181706
 python configure.py
 make
 sudo make install
 cd ..
 
-cd PyQt-gpl-5.3.2
-python configure.py --qmake=/home/ubuntu/Qt5.3.2/5.3/gcc_64/bin/qmake
-sudo ln -s /usr/include/python2.7 /usr/local/include/python2.7
+wget https://www.riverbankcomputing.com/static/Downloads/PyQt5/PyQt5_gpl-5.9.1.dev1710071532.tar.gz
+gzip -df PyQt5_gpl-5.9.1.dev1710071532.tar.gz
+tar -xvf PyQt5_gpl-5.9.1.dev1710071532.tar
+rm PyQt5_gpl-5.9.1.dev1710071532.tar 
+cd PyQt5_gpl-5.9.1.dev1710071532
+python configure.py --qmake=/home/ubuntu/Qt/5.7/gcc_64/bin/qmake 
 make
 sudo make install
-
-python configure.py --qmake=/home/ubuntu/Qt5.3.2/5.3/gcc_64/bin/qmake -e QtWebKit
-make
-sudo make install
-python configure.py --qmake=/home/ubuntu/Qt5.3.2/5.3/gcc_64/bin/qmake -e QtWebKitWidgets
-make
-sudo make install
-
-sudo apt-get install gstreamer0.10
+cd ..

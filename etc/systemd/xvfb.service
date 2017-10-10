@@ -1,0 +1,10 @@
+[Unit]
+Description=Xvfb Server
+
+[Service]
+ExecStart=/usr/bin/Xvfb :2 -screen 0 1024x768x24
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

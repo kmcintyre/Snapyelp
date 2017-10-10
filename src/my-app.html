@@ -1,0 +1,34 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="shared-styles.html">
+
+<link rel="import" href="my-index.html">
+<link rel="import" href="my-websocket.html">
+
+<dom-module id="my-app">
+   <template>
+      <style include="shared-styles">
+         :host {             
+         }
+      </style>
+      <my-websocket></my-websocket>
+      <my-index></my-index>
+   </template>
+   <script> 	    
+   class MyApp extends Polymer.Element {
+       static get is() {
+           return 'my-app';
+       }
+       
+       static get properties() {
+           return {
+         }
+       }
+
+       ready() {
+           super.ready();
+       }     	       
+   }
+   customElements.define(MyApp.is, MyApp);
+   </script>
+</dom-module>
