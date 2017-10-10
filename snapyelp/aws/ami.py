@@ -9,12 +9,12 @@ def region_instance(region_instance_seq):
     print region_instance_seq
     print 'ans:', region_instance_seq[0], region_instance_seq[1]
     conn = boto.ec2.connect_to_region(region_instance_seq[0])
-    for image in conn.get_all_images(owners=['self'], filters={'name': bucket_util.snapyelpbucket}):
-        try:
-            print 'de-register images:', image
-            image.deregister()
-        except Exception as e:
-            print 'de-register error:', e
+    #for image in conn.get_all_images(owners=['self'], filters={'name': bucket_util.snapyelpbucket}):
+    #    try:
+    #        print 'de-register images:', image
+    #        image.deregister()
+    #    except Exception as e:
+    #        print 'de-register error:', e
     yield task.deferLater(reactor, 60, defer.succeed, True)
     print 'create image:', bucket_util.snapyelpbucket
     conn.create_image(region_instance_seq[1], bucket_util.snapyelpbucket)
