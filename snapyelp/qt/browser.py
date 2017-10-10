@@ -16,6 +16,7 @@ import os
 os.putenv('DISPLAY', ':2')
 from PyQt5 import QtCore
 qt_version = QtCore.qVersion()
+print 'version:', qt_version 
 class Browser(QApplication):
     pass
     '''
