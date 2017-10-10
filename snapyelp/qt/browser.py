@@ -12,11 +12,10 @@ xmlrpc is started on 8001
 
 print 'Using QT'
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtGui import QKeyEvent, QMouseEvent
 import os
-os.environ['LIBOVERLAY_SCROLLBAR'] = '0'
-os.putenv('DISPLAY', ':0')
-version = '5.3.1'
+os.putenv('DISPLAY', ':2')
+from PyQt5 import QtCore
+qt_version = QtCore.qVersion()
 class Browser(QApplication):
     pass
     '''

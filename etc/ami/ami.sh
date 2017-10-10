@@ -35,11 +35,11 @@ chmod +x qt-opensource-linux-x64-5.9.2.run
 export DISPLAY=:2
 ./qt-opensource-linux-x64-5.9.2.run --script ~/Snapyelp/etc/ami/qt.install.js
 
-wget https://www.riverbankcomputing.com/static/Downloads/sip/sip-4.19.4.dev1709181706.tar.gz
-gzip -df sip-4.19.4.dev1709181706.tar.gz
-tar -xvf sip-4.19.4.dev1709181706.tar
+wget https://www.riverbankcomputing.com/static/Downloads/sip/sip-4.19.4.dev1710092233.tar.gz
+gzip -df sip-4.19.4.dev1710092233.tar.gz
+tar -xvf sip-4.19.4.dev1710092233.tar
 rm *.tar
-cd sip-4.19.4.dev1709181706
+cd sip-4.19.4.dev1710092233
 python configure.py
 make
 sudo make install
