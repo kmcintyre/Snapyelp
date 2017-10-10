@@ -25,6 +25,8 @@ class App(QApplication):
         self.video = None
         self.frameCount = 0
         
+'''
+
     def frame(self):
         print  'asdf'
         #self.video, self.opengl
@@ -40,8 +42,7 @@ class App(QApplication):
                 self.frameCount += 1                
             except Exception as e:
                 print '    OH no!', e
-                
-'''    
+                    
     def toVideo(self, fps=24, location = '/home/ubuntu/Desktop/capture.avi', jpg_location = '/tmp/capture.jpg'):
         fixed.filesubpath(location)
         fixed.filesubpath(jpg_location)

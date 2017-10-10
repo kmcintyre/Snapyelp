@@ -1,13 +1,9 @@
-from snapyelp.qt import qt5reactor
+from snapyelp.qt import qt5
 print 'view:', qt5.qt_version
  
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineProfile, QWebEngineSettings
 from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtCore import QUrl
-
-from pyscewpt.amazon.dynamo import User, Entity, UserAvailable
-
-from pyscewpt import fixed, keys
 
 from lxml import etree
 from lxml.cssselect import CSSSelector
@@ -34,8 +30,8 @@ class ChromeView(QWebEngineView):
         if fresh:
             if not storage_subdir:
                 storage_subdir = ''.join(random.choice(string.ascii_lowercase) for _ in range(6))
-            cache = '/' + fixed.tmp_disk + '/' + storage_subdir + '/cache'
-            storage = '/' + fixed.tmp_disk + '/' + storage_subdir + '/storage'  
+            cache = '/tmp/' + storage_subdir + '/cache'
+            storage = '/tmp/' + storage_subdir + '/storage'  
             os.makedirs(storage)
             os.makedirs(cache)
             self.page().profile().setPersistentCookiesPolicy(QWebEngineProfile.NoPersistentCookies)
