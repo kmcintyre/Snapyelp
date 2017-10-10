@@ -29,17 +29,12 @@ def region_instance(region_instance_seq):
         try:
             ami_response = r_conn.create_image(instance, app_util.app_name)
             print 'ami response:', ami_response
-            has_tag = False
-            while not has_tag:
-                print 'waiting ami'
-                yield task.deferLater(reactor, 10, defer.succeed, True)
-                for image in all_instances(region):
-                    print 'found image:', image.id, 'state:', image.state
-                    has_tag = True
         except Exception as e:
             print 'exception:', e       
     else:
         print 'region mismatch'
+    yield task.deferLater(reactor, 1, defer.succeed, True)    
+    print 'complete'
     reactor.callLater(0, reactor.stop)        
 
 def ami_save():
