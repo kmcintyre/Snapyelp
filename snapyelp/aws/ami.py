@@ -13,7 +13,7 @@ def region_instance(region_instance_seq):
           
         region = region[:-1]
         print 'change to:', region
-    print 'region'
+    print 'region:', region
     if region == app_util.app_name:
         print 'connect to:', region
         conn = boto.ec2.connect_to_region(region)
