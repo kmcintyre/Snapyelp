@@ -1,18 +1,19 @@
-def do_invalidate(paths, origin):
+from snapyelp.aws import cloudfront
+from snapyelp.aws import publish
+
+def do_invalidate():
     import boto
     c = boto.connect_cloudfront()
     for d in c.get_all_distributions():
-        if d.origin.dns_name == origin:
-            print d.id, d.domain_name, d.status, d.comment            
+        if d.origin.dns_name == cloudfront.snapyelpdisto:
+            print 'domain id:', d.id, 'domain name:', d.domain_name, 'domain status:', d.status, 'comment:', d.comment            
             for ir in c.get_invalidation_requests(d.id):
                 if ir.status != 'Completed':
-                    return 'no can do!!!'
                     print 'invalidate request:', ir.id, ir.status
-                            
+                    exit(1)
+            paths = [res[len(publish.build_dir):] for res in publish.get_publish_list()]
+            print 'paths:', paths
             c.create_invalidation_request(d.id, paths)
-            
 
-cf = 'snapyelp.com.s3.amazonaws.com'
-print cf
-standard_file = ['/index.html', '/index.js', '/require.js']        
-do_invalidate(standard_file, cf)    
+if __name__ == '__main__':    
+    do_invalidate()            

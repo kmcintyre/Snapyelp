@@ -1,0 +1,30 @@
+import boto
+from snapyelp.aws import bucket_util
+
+snapyelpdisto = bucket_util.snapyelpbucket + '.s3.amazonaws.com'
+
+def get_distro_summary():
+    for d in boto.connect_cloudfront().get_all_distributions():
+        if d.origin.dns_name == snapyelpdisto:            
+            return d
+
+def create_distro():
+    origin = boto.cloudfront.origin.S3Origin(snapyelpdisto)
+    distro = boto.connect_cloudfront().create_distribution(cnames=[bucket_util.snapyelpbucket], origin=origin, enabled=False, comment='Snapyelp Distribution')
+    return distro
+
+if __name__ == '__main__': 
+    if get_distro_summary():
+        ds = get_distro_summary()
+        print 'origin:', ds.origin.dns_name, 'enabled:', ds.enabled, 'domain name:', ds.domain_name
+        if not ds.enabled:
+            print 'enable distro'
+            ds.get_distribution().enable()
+        dc = boto.connect_cloudfront().get_distribution_config(ds.id)        
+        if dc.default_root_object != 'index.html':
+            print 'need to set Default Root Object'
+    else:
+        d = create_distro()
+        print 'create distro:', d
+    
+        

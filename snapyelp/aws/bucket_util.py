@@ -1,13 +1,7 @@
-'''
-Created on Oct 12, 2014
-
-@author: kevin
-
-Utility module for writing files to S3
-'''
-
 import boto
+import mimetypes
 
+snapyelpbucket = 'snapyelp.com'
 
 def check_key(bucket, filename):
     possible_key = bucket.get_key(filename)
@@ -23,23 +17,23 @@ def bucket_conv(bucket_name):
         print 'missing bucket?:', e, bucket_name
         raise e
 
-def snapyelp_bucket(subdomain, site):
-    if site and subdomain:
-        try:
-            return bucket_conv( subdomain + '.' + site)
-        except:
-            print 'Creating a bucket'
-            return boto.connect_s3().create_bucket(subdomain + '.' + site)
-    else:
-        print 'Null Site for Subdomain - return ', subdomain + '.snapyelp.com'
-        return bucket_conv(subdomain + '.snapyelp.com')
+def snapyelp_bucket():
+    try:
+        return bucket_conv(snapyelpbucket)
+    except:
+        print 'creating a bucket:', snapyelpbucket
+        return boto.connect_s3().create_bucket(snapyelpbucket)
                     
-def save_s3(bucket, filename, contents, systemfile, content_type=None, acl='public-read', meta=None):
+def save_s3(filename, contents, systemfile, content_type=None, acl='public-read', meta=None):
     from boto.s3.key import Key
     #print 'save s3:', bucket.name, filename, systemfile
-    key = Key(bucket,filename) 
+    key = Key(snapyelp_bucket(),filename) 
     if content_type is not None:        
         key.set_metadata('Content-Type', content_type)
+    elif systemfile:
+        gt = mimetypes.guess_type(systemfile)
+        #print 'guest type:', gt[0], systemfile
+        key.set_metadata('Content-Type', gt[0])
     if meta is not None:
         for seq in meta:
             try:
