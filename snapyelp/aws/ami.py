@@ -33,8 +33,7 @@ def region_instance(region_instance_seq):
             yield task.deferLater(reactor, 10, defer.succeed, True)
             for image in all_instances(region):
                 print 'found image:', image.id, 'state:', image.state
-                image.add_tag('App', app_util.app_name)
-                has_tag = True            
+                has_tag = True       
     else:
         print 'region mismatch'
     reactor.callLater(0, reactor.stop)        
