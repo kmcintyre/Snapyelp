@@ -1,7 +1,8 @@
 import boto
 import mimetypes
 
-snapyelpbucket = 'snapyelp.com'
+app_name = 'snapyelp.com'
+app_region = 'us-east-2'
 
 def check_key(bucket, filename):
     possible_key = bucket.get_key(filename)
@@ -17,17 +18,17 @@ def bucket_conv(bucket_name):
         print 'missing bucket?:', e, bucket_name
         raise e
 
-def snapyelp_bucket():
+def bucket():
     try:
-        return bucket_conv(snapyelpbucket)
+        return bucket_conv(app_name)
     except:
-        print 'creating a bucket:', snapyelpbucket
-        return boto.connect_s3().create_bucket(snapyelpbucket)
+        print 'creating a bucket:', app_name
+        return boto.connect_s3().create_bucket(app_name)
                     
 def save_s3(filename, contents, systemfile, content_type=None, acl='public-read', meta=None):
     from boto.s3.key import Key
     #print 'save s3:', bucket.name, filename, systemfile
-    key = Key(snapyelp_bucket(),filename) 
+    key = Key(bucket(),filename) 
     if content_type is not None:        
         key.set_metadata('Content-Type', content_type)
     elif systemfile:

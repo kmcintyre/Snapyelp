@@ -35,8 +35,8 @@ else:
     print 'create video:', target_video
     
 if len(sys.argv) > 3:
-    from snapyelp.aws import bucket_util
-    video_bucket = bucket_util.bucket_conv(sys.argv[3])
+    from snapyelp.aws import app_util
+    video_bucket = app_util.bucket_conv(sys.argv[3])
     folder = '/upload/'
     if len(sys.argv) > 4:
         folder = '/' + sys.argv[4] + '/'        
@@ -93,7 +93,7 @@ def end(ign = None, ign2 = None):
     print 'the end'
     if video_bucket:
         print 'upload to bucket:', folder + target_video
-        bucket_util.save_s3(video_bucket, folder + target_video, None, target_video)
+        app_util.save_s3(video_bucket, folder + target_video, None, target_video)
     reactor.stop()
         
 if __name__ == '__main__':

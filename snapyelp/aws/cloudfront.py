@@ -1,7 +1,7 @@
 import boto
-from snapyelp.aws import bucket_util
+from snapyelp.aws import app_util
 
-snapyelpdisto = bucket_util.snapyelpbucket + '.s3.amazonaws.com'
+snapyelpdisto = app_util.app_name + '.s3.amazonaws.com'
 
 def get_distro_summary():
     for d in boto.connect_cloudfront().get_all_distributions():
@@ -10,7 +10,7 @@ def get_distro_summary():
 
 def create_distro():
     origin = boto.cloudfront.origin.S3Origin(snapyelpdisto)
-    distro = boto.connect_cloudfront().create_distribution(cnames=[bucket_util.snapyelpbucket], origin=origin, enabled=False, comment='Snapyelp Distribution')
+    distro = boto.connect_cloudfront().create_distribution(cnames=[app_util.app_name], origin=origin, enabled=False, comment='Snapyelp Distribution')
     return distro
 
 if __name__ == '__main__': 

@@ -1,11 +1,11 @@
 import boto.ec2
 import boto.route53
-from snapyelp.aws import bucket_util
+from snapyelp.aws import app_util
 from snapyelp.aws import cloudfront
 
 def get_zone():
     for zn in boto.route53.connection.Route53Connection().get_zones():        
-        if zn.name[:-1] == bucket_util.snapyelpbucket:
+        if zn.name[:-1] == app_util.app_name:
             return zn
 def set_apex():
     z = get_zone()    
@@ -21,7 +21,7 @@ def set_apex():
     if create:
         print 'create'
         records.add_change('CREATE', 
-                           bucket_util.snapyelpbucket, 
+                           app_util.app_name, 
                            'A', 
                            alias_hosted_zone_id='Z2FDTNDATAQYW2', 
                            alias_dns_name=dn, 
