@@ -44,7 +44,9 @@ def selfie():
     instance_id = rl[1][1]
     print 'region:', region, 'instance id:', instance_id
     if region == app_util.app_region:
-        yield defer.maybeDeferred(app_routes.set_cname, 'service.' + app_util.app_name)      
+        yield defer.maybeDeferred(app_routes.set_cname, 'service.' + app_util.app_name)
+        security_groups = getPage('http://169.254.169.254/latest/meta-data/security-groups')
+        print 'security groups:', security_groups
     for service_name in service_names(region):
         fp = source_service_path(service_name)
         sp = service_path(service_name)

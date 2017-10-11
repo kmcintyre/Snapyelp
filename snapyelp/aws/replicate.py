@@ -131,5 +131,5 @@ def instances():
             print 'no ami for:', r.name
             
 if __name__ == '__main__':
-    destroy()
+    replicate()
     
