@@ -6,7 +6,7 @@ import os
 from snapyelp.aws import app_util
 
 import time
-from twisted.internet import defer
+from twisted.internet import defer, reactor
 
 from os.path import expanduser
 
