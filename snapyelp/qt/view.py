@@ -1,8 +1,10 @@
 from snapyelp.qt import qt5
-print 'view:', qt5.qt_version
+
+from snapyelp import fixed
  
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineProfile, QWebEngineSettings
 from PyQt5.QtWebChannel import QWebChannel
+from PyQt5.QtWebEngineCore import QWebEngineUrlRequestInterceptor
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineProfile, QWebEngineSettings
 from PyQt5.QtCore import QUrl
 
 from lxml import etree
@@ -15,8 +17,50 @@ import os
 import urlparse
 import re
 import urllib
+import json
 
 from twisted.internet import defer, reactor, task
+
+class FilterFactory(object):
+    
+    def __init__(self, filter_dic):
+        self.filter_dic = filter_dic
+        
+    def is_blocked(self, info):
+        if 'contains' in self.filter_dic:
+            if self.filter_dic['contains'] in info.requestUrl().toString():
+                if 'not' in self.filter_dic and self.filter_dic['not'] == True:
+                    return False
+                else:
+                    return True
+        return False
+
+class WebEngineUrlRequestInterceptor(QWebEngineUrlRequestInterceptor):
+    
+    blocked = []
+    filters = None
+    
+    def status(self, info, block):
+        print '{:6s}'.format('block' if block else 'allow'), '{:10s}'.format(info.requestMethod()), '{:15s}'.format(fixed.request_types[info.resourceType()]), info.requestUrl().toString()    
+    
+    def interceptRequest(self, info):
+        block = self.is_blocked(info)
+        self.status(info, block)
+        info.block(block)
+        
+    def is_blocked(self, info):
+        if not self.filters:
+            return False
+        blocked = False
+        for f in self.filters:
+            if FilterFactory(json.loads(f)).is_blocked(info):
+                blocked = True
+        return blocked 
+        
+    def set_filters(self, filters = None):
+        self.filters = filters
+            
+intercept = WebEngineUrlRequestInterceptor()
 
 class ChromeView(QWebEngineView):
     
@@ -222,18 +266,24 @@ def started():
     qt5.app.toVideo(24)
     
 if __name__ == '__main__':   
-    
-    print 'got here?'     
     window = ChromeView()
+    window.setFixedWidth(1366)
+    window.setFixedHeight(768)
     window.show()
+    window.page().profile().setRequestInterceptor(intercept)
     #window.page().loadStarted.connect(started)
-    url = "http://athleets.com"
+    url = "https://quickbooks.intuit.com"
     import sys
     if len(sys.argv) > 1:        
         url = sys.argv[1]
         if not urlparse.urlparse(url).scheme:
             if not sys.argv[1].startswith('chrome'):
                 url = "http://" + sys.argv[1]
+    if len(sys.argv) > 2:
+        with open(sys.argv[2], 'r') as filter_file:
+            content = filter_file.readlines()
+        content = [x.strip() for x in content]
+        intercept.set_filters(content)
     print url    
     window.load(QUrl(url))
     reactor.run()

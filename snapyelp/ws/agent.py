@@ -6,6 +6,7 @@ from twisted.internet.protocol import ReconnectingClientFactory
 from twisted.internet import defer
 
 import json
+
 from snapyelp import fixed
 
 click_period = 60 * 5
