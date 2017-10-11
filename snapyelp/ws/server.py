@@ -4,7 +4,7 @@ from autobahn.twisted.websocket import WebSocketServerProtocol
 import json
 from snapyelp import fixed
 
-from twisted.internet import reactor
+from twisted.internet import task
 
 class SnapyelpServerProtocol(WebSocketServerProtocol):
     
@@ -33,23 +33,10 @@ class SnapyelpServerProtocol(WebSocketServerProtocol):
         if not isBinary:
             try:
                 incoming = json.loads(payload.decode('utf8'))
-                if 'operator' in incoming and 'reservation' in incoming:
-                    print 'reservation response:', incoming
-                    del self.user['busy']
-                    instagator = self.factory.get_clients(incoming['reservation'])                    
-                    instagator.jsonMessage({ 'reservation':  incoming['rn'] + ' ' + incoming['ri'] + ' reserved by:' + incoming['dn']})
-                elif 'operator' in incoming:
-                    print 'set operator'
-                    self.user['operator'] = incoming['operator']                    
-                elif 'site' in incoming and 'reserve' in incoming:
-                    operator = self.factory.get_operator()
-                    if operator: 
-                        operator.jsonMessage({ 'reserve': incoming['reserve'], 'reserve_key' : self.user[fixed.ws_key]})
-                    else:
-                        self.jsonMessage({ 'reservation': 'Agent Busy' })
-                    
-                elif 'site' in incoming:
-                    self.user['site']  = incoming['site']
+                print incoming
+                if fixed.agent in incoming and fixed.agent not in self.user:
+                    print 'update as agent:', incoming
+                    self.user.update(incoming)
                 else:
                     print 'wtf?:', self.peer, incoming
             except ValueError as e:
@@ -74,10 +61,12 @@ class SnapyelpServerProtocol(WebSocketServerProtocol):
 class SnapyelpServerFactory(WebSocketServerFactory):
     
     protocol = SnapyelpServerProtocol
+    heartbeat_interval = 60
     
     def __init__(self, url):
         WebSocketServerFactory.__init__(self, url)        
-        self.clients = []        
+        self.clients = []
+        task.LoopingCall(self.heartbeat).start(self.heartbeat_interval)        
 
     def associate(self, client):        
         print 'associate client:', client.peer        
@@ -91,29 +80,14 @@ class SnapyelpServerFactory(WebSocketServerFactory):
             self.clients.remove(client)
             print 'disassociate:', client.peer
         except:
-            pass            
-
-    def get_operator(self):
-        try:
-            operator = [c for c in self.clients if 'operator' in c.user.keys() and 'busy' not in c.user.keys()][0]
-            operator.user['busy'] = True
-            return operator
-        except:
-            return None
-         
-
-    def get_clients(self, key = None):
-        if not key:
-            return [c for c in self.clients if 'site' in c.user.keys()]
-        else:
-            print 'get specific client:', key
-            try:
-                return [c for c in self.clients if 'site' in c.user.keys() and c.user[fixed.ws_key] == key][0]
-            except:
-                pass
+            pass
+        
+    def heartbeat(self):
+        print 'heartbeat interval:', self.heartbeat_interval, 'clients length:', len(self.clients)           
             
 factory = SnapyelpServerFactory("ws://localhost:8082")
 
 if __name__ == '__main__':
+    from twisted.internet import reactor
     reactor.listenTCP(8082, factory)
     reactor.run()

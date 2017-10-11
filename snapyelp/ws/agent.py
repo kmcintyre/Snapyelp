@@ -1,7 +1,7 @@
 from autobahn.twisted.websocket import WebSocketClientFactory
 from autobahn.twisted.websocket import WebSocketClientProtocol
 
-from twisted.internet.endpoints import TCP4ClientEndpoint, connectProtocol
+from twisted.internet.protocol import ReconnectingClientFactory
 
 from twisted.internet import defer
 
@@ -11,20 +11,21 @@ from snapyelp import fixed
 click_period = 60 * 5
 client_factory = WebSocketClientFactory("ws://localhost:8082")
 
-class OperatorClientProtocol(WebSocketClientProtocol):
+class AgentClientProtocol(WebSocketClientProtocol):
     
     def __init__(self):
+        super(AgentClientProtocol, self).__init__()
         self.swkey = None
         self.awaiting_message = None
-        self.connect_message = None
-        
-    def autostart(self, message):
-        
-        print 'autostart', message
-        self.connect_message = message        
-        self.awaiting_message = defer.Deferred()                
-        return self.awaiting_message     
-
+        self.connect_message = None        
+    
+    def onOpen(self):
+        print 'open'
+        self.sendMessage(json.dumps({ fixed.agent: 'localhost'}), isBinary = False)        
+    
+    def onConnect(self, response):
+        print 'connect:', response.peer
+      
     def onMessage(self, payload, isBinary):        
         if isBinary:
             print 'binary incominng'
@@ -51,20 +52,26 @@ class OperatorClientProtocol(WebSocketClientProtocol):
     def onClose(self, wasClean, code, reason):
         print 'close:', self.peer, wasClean, code, reason
 
-def new_protocol(protocol):
-    print 'new_protocol:', protocol
-    protocol.autostart({'operator':'opentable'})
+class ReconnectingWebSocketClientFactory(WebSocketClientFactory, ReconnectingClientFactory):
+    
+    protocol = AgentClientProtocol
+    
+    def clientConnectionFailed(self, connector, reason):
+        print 'clientConnectionFailed:', connector, 'reason:', reason
+        self.retry(connector)
 
-def run_operate():
-    print 'run operate:'
-    point = TCP4ClientEndpoint(reactor, "localhost", 8082)
-    operator = OperatorClientProtocol()
-    operator.factory = client_factory
-    d = connectProtocol(point, operator)
-    d.addCallback(new_protocol)            
-    return d
+    def clientConnectionLost(self, connector, reason):
+        print 'clientConnectionLost:', connector, 'reason:', reason
+        self.retry(connector)    
+
+def start_agent(host='localhost', port=8082):
+    factory = ReconnectingWebSocketClientFactory()
+    factory.host = host
+    factory.port = port
+    print 'client start:', host, port
+    reactor.connectTCP(host, port, factory)
 
 if __name__ == '__main__':
     from twisted.internet import reactor
-    reactor.callWhenRunning(run_operate) 
+    reactor.callWhenRunning(start_agent) 
     reactor.run()
