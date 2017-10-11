@@ -28,8 +28,9 @@ def region_instance(region_instance_seq):
             for service_name in identify.service_names(region):
                 os.system('sudo rm ' + identify.service_path(service_name) )
             for instance in r_conn.get_only_instances(instance_ids=[instance_id]):
+                print 'instance to tag:', instance
                 instance.add_tag(fixed.tag_state, fixed.state_replicate)
-            ami_response = r_conn.create_image(instance, app_util.app_name)
+            ami_response = r_conn.create_image(instance_id, app_util.app_name)
             print 'ami response:', ami_response
         except Exception as e:
             print 'exception:', e       
