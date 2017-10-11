@@ -17,7 +17,7 @@ def get_master_ami():
         #print 'source image:', image.id, image.name, image.tags
         return image
     
-def get_region_ami(region, ami_id, create):    
+def get_region_ami(region, ami_id, create = False):    
     r_conn = boto.ec2.connect_to_region(region)
     for r_image in r_conn.get_all_images(owners=['self'], filters={'name': app_util.app_name}):
         return (region, r_image)
@@ -32,14 +32,32 @@ def get_region_ami(region, ami_id, create):
             for replicated_image in r_conn.get_all_images(owners=['self'], filters={'name': app_util.app_name}):
                 has_replication = True
                 return (region, replicated_image)                                 
+            
+def destroy_ami(region, r_image):
+    if r_image.state == 'available':                        
+        r_image.deregister()
+        print region, 'deregister:', r_image.id
+        deregistered = False
+        while not deregistered:
+            time.sleep(10)
+            all_images = boto.ec2.connect_to_region(region).get_all_images(owners=['self'], filters={'name': app_util.app_name})
+            if len(all_images) == 0:
+                deregistered = True
+            for dr_image in all_images:
+                print region, 'waiting deregister:', dr_image.id, 'state:', dr_image.state
+    else:
+        print 'already deregisted:', r_image.state
 
+    
 #blocked = ['us-east-1']
 blocked = []
 def get_regions():
     conn = boto.ec2.connect_to_region(app_util.app_region)
     return [s for s in sorted(conn.get_all_regions(), key = lambda r: r.name) if s.name not in blocked]
 
-def destroy(instances=True, images=True, source_instances = False):    
+@defer.inlineCallbacks
+def destroy(instances=True, images=True, source_instances = False):
+    dl = []    
     for r in get_regions():
         r_conn = boto.ec2.connect_to_region(r.name)
         if instances and (source_instances or r.name != app_util.app_region):    
@@ -50,24 +68,14 @@ def destroy(instances=True, images=True, source_instances = False):
         if r.name != app_util.app_region:
             if images:  
                 for r_image in r_conn.get_all_images(owners=['self'], filters={'name': app_util.app_name}):
-                    if r_image.state == 'available':                        
-                        r_image.deregister()
-                        print r.name, 'deregister:', r_image.id
-                        deregistered = False
-                        while not deregistered:
-                            time.sleep(10)
-                            all_images = r_conn.get_all_images(owners=['self'], filters={'name': app_util.app_name})
-                            if len(all_images) == 0:
-                                deregistered = True
-                            for dr_image in all_images:
-                                print r.name, 'waiting deregister:', dr_image.id, 'state:', dr_image.state
-                                    
-                    else:
-                        print 'already deregisted:', r_image.state
+                    d = defer.maybeDeferred(destroy_ami, r.name, r_image)
+                    dl.append(d)
                 for s in r_conn.get_all_snapshots(owner='self'):
                     if get_master_ami().id in s.description:
                         delete_response = s.delete()
                         print 'delete:', delete_response, r.name, 'snapshot:', s.id, 'status:', s.status
+    yield defer.DeferredList(dl)
+    print 'destory complete'
                         
 @defer.inlineCallbacks
 def replicate():
