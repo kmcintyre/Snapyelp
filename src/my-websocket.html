@@ -1,5 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 
+<link rel="import" href="redux-mixin.html">
+
 <dom-module id="my-websocket">
    <template>
       <style>
@@ -11,21 +13,21 @@
       </div>
    </template>
    <script>
-		class MyWebsocket extends Polymer.Element {
+		class MyWebsocket extends ReduxMixin(Polymer.Element) {
 		  static get is() { return 'my-websocket'; }
 		  static get properties() {
 			  return {
-	              url: {
-	                  type: String,
-	                  reflectToAttribute: true,
-	                  value: 'ws://dev.athleets.com:8080'
-	              },
 	              readyState: {
 	              	type: Number,
-	              	reflectToAttribute: true
+	              	statePath: 'readyState'
 	              },
 	              socket: {
-	            	  type: Object
+	            	type: Object
+	              },
+	              requests: {
+	            	  type: Array,
+	            	  statePath: 'requests',
+	            	  observer: 'requestsChanged'
 	              }
 			  }		  
 		  }
@@ -37,31 +39,46 @@
 	    	  }
 	      };
 		  
-	      onError(error) {
-	          this.fire('onerror', error);
+		    static get actions() {
+		        return {
+		         websocketMessage(message) {
+		            return {
+		              type: 'WEBSOCKET_MESSAGE',
+		              message
+		            };
+		          },
+		          websocketReady(readyState) {
+		        	  console.log('readyState:', readyState)
+		            return {
+		              type: 'WEBSOCKET_READY',
+		              readyState
+		            };
+		          }
+		        };
+		      }		  
+		  
+	      onError(event) {
+	    	  	console.log('error:', event,  this.socket)
+	    	  	this.dispatch('websocketReady', this.socket.readyState)
 	      };
 	      onOpen(event) {
-	    	  //this.dispatch('websocketReady', this.socket.readyState)
-	    	  console.log('open:', event, this.ws)
-	    	  this.readyState = this.socket.readyState
-	          //this.socket.send( JSON.stringify({
-	       	  // 	website: nativeDomain()
-	          //}));    	  
+	    	  	console.log('open:', event, this.socket)
+	    	  	this.dispatch('websocketReady', this.socket.readyState)	    	  	
 	      };
 	      onMessage(event) {
-	   	   	  //this.dispatch('websocketMessage', JSON.parse(event.data))
-	          //document.querySelector('my-app').dispatchEvent(new CustomEvent('onmessage', {detail: data} ));
-	      }
+	    	  	console.log('message:', event, this.socket)
+	      }	      
 	      ready() {
 	    	  super.ready();
-			  this.socket = new WebSocket(this.url, this.protocol);
+			  this.socket = new WebSocket('ws://localhost:8082', this.protocol);
 	          this.socket.onerror = this.onError.bind(this);
 	          this.socket.onopen = this.onOpen.bind(this);
 	          this.socket.onmessage = this.onMessage.bind(this);
 	          this.socket.onclose = this.onClose.bind(this);
 	      }
-	      onClose(event) {	    	  
-	    	  //this.dispatch('websocketReady', this.socket.readyState)
+	      onClose(event) {
+	    	  	console.log('close:', event, this.socket)
+	    	  	this.dispatch('websocketReady', this.socket.readyState)
 	      }
 		}            
       	customElements.define(MyWebsocket.is, MyWebsocket);      

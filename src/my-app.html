@@ -2,17 +2,18 @@
 
 <link rel="import" href="shared-styles.html">
 
-<link rel="import" href="my-index.html">
 <link rel="import" href="my-websocket.html">
+<link rel="import" href="my-queue.html">
+<link rel="import" href="my-index.html">
 
 <dom-module id="my-app">
    <template>
       <style include="shared-styles">
-         :host {             
-         }
+      	:host {}
       </style>
       <my-websocket></my-websocket>
       <my-index></my-index>
+      <my-queue></my-queue>
    </template>
    <script> 	    
    class MyApp extends Polymer.Element {
@@ -26,6 +27,7 @@
        }
 
        ready() {
+    	   console.log(MyApp.is, 'ready')
            super.ready();
        }     	       
    }

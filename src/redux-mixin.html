@@ -1,0 +1,41 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer-redux/polymer-redux.html">
+
+<script src="../node_modules/redux/dist/redux.js"></script>
+
+<script> 	    
+ const reducer = (state, action) => {
+	  switch (action.type) {
+	    case 'WEBSOCKET_MESSAGE':
+			 console.log(action.message)	    	
+	    	 return state;
+	    case 'WEBSOCKET_READY':
+	    	 return Object.assign({}, state, { readyState: action.readyState });
+	    case 'WEBSOCKET_REQUEST':
+	    	const requests = state.requests.splice(0)
+			requests.push(action.request)	    	 			      
+	    	return Object.assign({}, state, { requests });	    	 
+	    default:
+	      return state;
+	  }
+	};
+ 
+ const store = Redux.createStore(reducer, {
+	 requests: []
+ });	            
+ const ReduxMixin = PolymerRedux(store)
+    
+ const SelectedMixin = Parent => class SelectedMixin extends ReduxMixin(Parent) {
+    
+	static get properties() {
+      return {
+      }
+    }
+    
+    static get actions() {
+       return {
+       };
+     }      
+ } 
+</script>
+

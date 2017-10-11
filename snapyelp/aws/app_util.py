@@ -27,13 +27,11 @@ def bucket():
                     
 def save_s3(filename, contents, systemfile, content_type=None, acl='public-read', meta=None):
     from boto.s3.key import Key
-    #print 'save s3:', bucket.name, filename, systemfile
     key = Key(bucket(),filename) 
     if content_type is not None:        
         key.set_metadata('Content-Type', content_type)
     elif systemfile:
         gt = mimetypes.guess_type(systemfile)
-        #print 'guest type:', gt[0], systemfile
         key.set_metadata('Content-Type', gt[0])
     if meta is not None:
         for seq in meta:
@@ -46,10 +44,7 @@ def save_s3(filename, contents, systemfile, content_type=None, acl='public-read'
         print 'set contents-direct:', len(contents), filename
         key.set_contents_from_string(contents)
     if systemfile is not None:        
-        #print 'set filesystem'
         key.set_contents_from_file(open(systemfile, 'r'))        
     if acl is not None:
-        #print 'set acl'
         key.set_acl(acl)
-        #deal_with_meta(key,meta)
-    return key     
+    return key
