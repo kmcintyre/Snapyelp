@@ -1,12 +1,12 @@
 from twisted.internet import reactor, defer
 from twisted.web.client import getPage
-from snapyelp.aws import app_util, route53
+from snapyelp.aws import app_util, app_routes
 
 @defer.inlineCallbacks
 def update_route_53(region, instance):
     print 'region:', region, 'instance:', instance
     if region == app_util.app_region:
-        yield defer.maybeDeferred(route53.set_cname, 'service.' + app_util.app_name)
+        yield defer.maybeDeferred(app_routes.set_cname, 'service.' + app_util.app_name)
     reactor.stop()
     
 def get_public_dns():
