@@ -56,12 +56,9 @@ def selfie():
             enable_start(service_name)
         for instance in boto.ec2.connect_to_region(region).get_only_instances(instance_ids=[instance_id]):
             print 'instance tags:', instance.tags
-            if fixed.tag_state in instance.tags and instance.tags[fixed.state_replicate]:
-                print 'yo'
-                replicate.replicate()
-                print 'yo1'
+            if fixed.tag_state in instance.tags and instance.tags[fixed.tag_state] == fixed.state_replicate:
+                #replicate.replicate()
                 instance.remove_tag(fixed.tag_state)
-                print 'yo2'
     except Exception as e:
         print 'exception:', e
                             
