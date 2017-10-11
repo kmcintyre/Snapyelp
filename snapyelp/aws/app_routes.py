@@ -1,6 +1,5 @@
 import boto.ec2
 import boto.route53
-from snapyelp.aws import identify
 from snapyelp.aws import app_util
 from snapyelp.aws import cloudfront
 
@@ -14,7 +13,7 @@ def get_zone():
 @defer.inlineCallbacks
 def set_cname(domain):
     zn = get_zone()
-    public_dns = yield identify.get_public_dns()
+    public_dns = yield getPage('http://169.254.169.254/latest/meta-data/public-hostname')
     if zn.find_records(domain, 'CNAME'):
         print 'update cname:', domain
         zn.update_cname(domain, public_dns, ttl=300, identifier=None)

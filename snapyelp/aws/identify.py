@@ -7,10 +7,7 @@ def update_route_53(region, instance):
     print 'region:', region, 'instance:', instance
     if region == app_util.app_region:
         yield defer.maybeDeferred(app_routes.set_cname, 'service.' + app_util.app_name)
-    reactor.stop()
-    
-def get_public_dns():
-    return getPage('http://169.254.169.254/latest/meta-data/public-hostname')    
+    reactor.stop()    
 
 def get_instance():
     return getPage('http://169.254.169.254/latest/meta-data/instance-id')
