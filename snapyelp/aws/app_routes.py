@@ -1,9 +1,11 @@
 import boto.ec2
 import boto.route53
-from snapyelp.aws import app_util
-from snapyelp.aws import cloudfront
 
 from twisted.internet import defer, reactor
+from twisted.web.client import getPage
+
+from snapyelp.aws import app_util
+from snapyelp.aws import cloudfront
 
 def get_zone():
     for zn in boto.route53.connection.Route53Connection().get_zones():        
