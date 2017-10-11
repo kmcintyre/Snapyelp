@@ -30,7 +30,7 @@ def selfie():
     default_services = ['worker', 'agent']
     if region == app_util.app_region:
         yield defer.maybeDeferred(app_routes.set_cname, 'service.' + app_util.app_name)
-        default_services.append('service')
+        default_services.append('websocket')
     for service_name in default_services:
         file_path = '/etc/systemd/system/' + service_name + '.service'
         service_path = '/home/ubuntu/Snapyelp/etc/systemd/' + service_name + '.service'
