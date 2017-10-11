@@ -51,8 +51,8 @@ def selfie():
         for service_name in service_names(region):
             fp = source_service_path(service_name)
             sp = service_path(service_name)
-            if not os.path.exists(fp) or not filecmp.cmp(fp, sp):
-                os.system('sudo cp ' + sp + ' ' + fp)
+            if not os.path.exists(sp) or not filecmp.cmp(fp, sp):
+                os.system('sudo cp ' + fp + ' ' + sp)
             enable_start(service_name)
         for instance in boto.ec2.connect_to_region(region).get_only_instances(instance_ids=[instance_id]):
             if fixed.tag_state in instance.tags and instance.tags[fixed.state_replicate]:
