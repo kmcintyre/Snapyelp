@@ -1,0 +1,13 @@
+[Unit]
+Description=Agent Service
+
+[Service]
+User=ubuntu
+EnvironmentFile=/home/ubuntu/Snapyelp/etc/default.env
+WorkingDirectory=/home/ubuntu/Snapyelp
+ExecStart=/usr/bin/python /home/ubuntu/Snapyelp/snapyelp/ws/agent.py
+Restart=always
+ExecStartPre=/bin/sleep 5
+
+[Install]
+WantedBy=multi-user.target

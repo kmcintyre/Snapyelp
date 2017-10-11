@@ -21,6 +21,7 @@ def selfie():
     print 'region:', region, 'instance:', instance
     if region == app_util.app_region:
         yield defer.maybeDeferred(app_routes.set_cname, 'service.' + app_util.app_name)
+    
     reactor.stop()
 
 if __name__ == '__main__':

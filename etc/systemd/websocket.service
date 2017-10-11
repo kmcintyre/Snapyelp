@@ -1,0 +1,12 @@
+[Unit]
+Description=Websocket Service
+
+[Service]
+User=ubuntu
+EnvironmentFile=/home/ubuntu/Snapyelp/etc/default.env
+WorkingDirectory=/home/ubuntu/Snapyelp
+ExecStart=/usr/bin/python /home/ubuntu/Snapyelp/snapyelp/ws/server.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
