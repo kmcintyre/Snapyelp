@@ -19,7 +19,7 @@ def get_master_ami():
 def get_region_ami(region, ami_id, create):    
     r_conn = boto.ec2.connect_to_region(region)
     for r_image in r_conn.get_all_images(owners=['self'], filters={'name': app_util.app_name}):
-        return r_image
+        return (region, r_image)
     if create:            
         print region, 'need to clone image:', ami_id
         replicate_response = r_conn.copy_image(app_util.app_region, ami_id, app_util.app_name)
@@ -30,7 +30,7 @@ def get_region_ami(region, ami_id, create):
             time.sleep(10)
             for replicated_image in r_conn.get_all_images(owners=['self'], filters={'name': app_util.app_name}):
                 has_replication = True
-                return replicated_image                                 
+                return (region, replicated_image)                                 
 
 #blocked = ['us-east-1']
 blocked = []
@@ -67,6 +67,7 @@ def destroy(instances=True, images=True):
                     if get_master_ami().id in s.description:
                         delete_response = s.delete()
                         print 'delete:', delete_response, r.name, 'snapshot:', s.id, 'status:', s.status
+                        
 @defer.inlineCallbacks
 def replicate():
     image = get_master_ami()
@@ -76,8 +77,8 @@ def replicate():
             d = defer.maybeDeferred(get_region_ami, r.name, image.id, True)
             dl.append(d)
     rl = yield defer.DeferredList(dl)
-    for replication_ami in [r[1] for r in rl]:
-        print replication_ami.id, replication_ami.state
+    for region_ami_seq in [r[1] for r in rl]:
+        print 'region:', region_ami_seq[0], 'ami id:', region_ami_seq[1].id, 'ami state:', region_ami_seq[1].state
 
 def instances():
     for r in get_regions():
@@ -86,7 +87,7 @@ def instances():
         if len(securitygroups) == 0:
             print 'need security group'
         subnets = boto.vpc.connect_to_region(r.name).get_all_subnets()
-        r_ami = get_region_ami(r.name, get_master_ami().id, False)
+        r_ami = get_region_ami(r.name, get_master_ami().id, False)[1]
         if r_ami:         
             print r.name, 'replication ami:', r_ami.id, 'security groups:', [(s.name, s.vpc_id) for s in securitygroups], 'subnets:', subnets
             has_instance = False
