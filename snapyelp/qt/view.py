@@ -260,12 +260,8 @@ class ChromeView(QWebEngineView):
 
     def error_view(self, err, err2 = None):
         print 'error_view:', err, err2
-
-def started():
-    print 'started'
-    qt5.app.toVideo(24)
     
-if __name__ == '__main__':   
+if __name__ == '__main__':
     window = ChromeView()
     window.setFixedWidth(1366)
     window.setFixedHeight(768)
@@ -285,5 +281,5 @@ if __name__ == '__main__':
         content = [x.strip() for x in content]
         intercept.set_filters(content)
     print url    
-    window.load(QUrl(url))
+    window.load(QUrl(url))       
     reactor.run()

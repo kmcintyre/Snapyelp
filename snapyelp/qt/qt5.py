@@ -24,6 +24,32 @@ class App(QApplication):
         self.opengl = None
         self.video = None
         self.frameCount = 0
+
+    def toImage(self, location = None):
+        png = '/home/ubuntu/Desktop/capture.png'
+        if location:            
+            png = location         
+        print 'toImage:', location
+        if not self.opengl:
+            print 'no opengl'
+            return
+        try:
+            os.makedirs(os.path.dirname(png))
+        except:
+            pass
+        print 'IMAGE CAPTURE', png, self.opengl
+        pixmap = QPixmap(self.opengl.size())
+        self.opengl.render(pixmap)
+        pixmap.save(png)
+        
+    def notify(self, receiver, event):
+        #print 'receiver:', receiver, 'event:', event
+        if self.capture and isinstance(receiver, QWidget):
+        #if self.capture and isinstance(receiver, QOpenGLWidget):
+            if self.opengl is None or self.opengl != receiver: 
+                #print '    SET OPENGL:', receiver
+                self.opengl = receiver                      
+        return super(App, self).notify(receiver, event)
         
 '''
 
@@ -59,30 +85,8 @@ class App(QApplication):
         print 'is open:', self.video.isOpened()
         self.timer.start(1000/fps)
         
-     
-    def toImage(self, location = None):
-        png = '/tmp/capture.png'
-        if location:            
-            png = location         
-        print 'toImage:', location
-        if not self.opengl:
-            print 'no opengl'
-            return
-        fixed.filesubpath(png)
-        print 'IMAGE CAPTURE', png, self.opengl
-        pixmap = QPixmap(self.opengl.size())
-        self.opengl.render(pixmap)
-        pixmap.save(png)
-        
 
-    def notify(self, receiver, event):
-        #print 'receiver:', receiver, 'event:', event
-        if self.capture and isinstance(receiver, QWidget):
-        #if self.capture and isinstance(receiver, QOpenGLWidget):
-            if self.opengl is None or self.opengl != receiver: 
-                #print '    SET OPENGL:', receiver
-                self.opengl = receiver                      
-        return super(App, self).notify(receiver, event)
+
 '''
 app = App([])
 app.initCapture()

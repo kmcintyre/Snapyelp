@@ -1,0 +1,33 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="redux-mixin.html">
+
+<dom-module id="my-queue">
+   <template>
+      <style>
+         :host {
+         }   
+      </style>
+      <template is="dom-if" if="[[hasrequests(requests)]]">
+      	{{ requests }}
+      </template>
+   </template>
+   <script>
+		class MyQueue extends ReduxMixin(Polymer.Element) {
+		  static get is() { return 'my-queue'; }
+		  static get properties() {
+			  return {
+	              requests: {
+	                  type: Array,
+	                  statePath: 'requests'
+	              }
+			  }		  
+		  }
+		  hasrequests(r) {
+			  console.log('Y3', r)
+			  return this.requests.length > 0
+		  }
+		}            
+      	customElements.define(MyQueue.is, MyQueue);      
+   </script>
+</dom-module>

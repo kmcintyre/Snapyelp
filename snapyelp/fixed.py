@@ -1,5 +1,8 @@
 ws_key = 'ws_key'
 agent = 'agent'
+job = 'job'
+url = 'url'
+result = 'result'
 
 request_types = { 
     0: 'mainframe',

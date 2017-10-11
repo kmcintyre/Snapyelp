@@ -1,22 +1,142 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/communication-icons.html">
+
 <link rel="import" href="shared-styles.html">
+<link rel="import" href="redux-mixin.html">
 
 <dom-module id="my-index">
    <template>
-      <style include="shared-styles">
-         :host {  
+      <style include="shared-styles iron-flex iron-flex-alignment paper-styles">
+         :host {
+         
          }
+         paper-fab {
+         	background-color: #2CA01C;
+         }
+	     paper-input {
+	        --paper-input-container-color: #000;
+	        --paper-input-container-focus-color: #538700;
+	        --paper-input-container-invalid-color: red;
+	        --paper-input-container-input-color: #000;
+	        @apply --layout-flex;
+	     }		 
+		 .container {
+		 	width:100%;
+		 	padding: 10px;
+		 }
+		 .container {
+    		@apply(--layout-horizontal);
+    		@apply(--layout-center);
+    	 }
+    	 .inner {
+    		@apply(--layout-horizontal);    		    		      	
+		 }
       </style>
-      	<div>
-      	index
-      	</div>
-   </template>
-   
+      	<div class="container">
+      		
+      		<paper-input
+      			id="url"
+				label="URL"
+				on-change="perform"
+			>			
+			</paper-input>				
+			<div class="inner">   											
+				<paper-item>
+					<paper-fab mini 
+						icon="[[step.icon]]" 
+						title="[[step.title]]" 												
+						on-click="add"
+						></paper-fab>   												
+				</paper-item>				
+ 			</div>
+		</div>
+		<template is="dom-if" if="[[jobready(job)]]">
+			<div class="container">
+				<div class="flex">
+					<template is="dom-repeat" items="[[job]]" as="step">
+						<paper-card>
+						  <div class="card-content">
+						    <div>
+						    {{ step.url }}
+						    </div>
+						  </div>
+						  <div class="card-actions">
+						    <div class="horizontal justified">
+						      <paper-button>button</paper-button>
+						    </div>
+						  </div>
+						</paper-card>
+					</template>
+				</div>
+				<div class="inner">													    								
+						<paper-item>
+							<paper-fab mini 
+								icon="[[queue.icon]]" 
+								title="[[queue.title]]" 												
+								on-click="enqueue"
+								></paper-fab>   												
+						</paper-item>					
+				</div>
+    		</div>			
+		</template>
+   </template>   
    <script>
-		class MyIndex extends Polymer.Element {
+		class MyIndex extends ReduxMixin(Polymer.Element) {
 		  static get is() { return 'my-index'; }
+	        static get actions() {
+	            return {
+	         	   websocketRequest(job) {
+	                    return {
+	                        type: 'WEBSOCKET_REQUEST',
+	                        request: job
+	                      };					        		   
+	         	   }
+	            }
+	        }
 		  static get properties() {
-			  return {}
+			  return {
+	   	             step: {
+	   	                 type: Object,
+	   	                 value: {
+	   	                         icon: 'add',
+	   	                         title: 'Add URL'
+	   	                     }
+	   	             },
+	   	          	 queue: {
+	   	                 type: Object,
+	   	                 value: {
+	   	                         icon: 'add',
+	   	                         title: 'Queue'
+	   	                     }
+	   	             },	   	             
+	   	             job: {
+	   	            	type: Array,
+	   	            	value: []
+	   	             }
+			  }
+		  }
+		  enqueue(e) {
+    		   this.dispatch('websocketRequest', {
+             	   job: this.job
+                })
+		  }
+		  add(e) {
+			  var v = this.$.url.value || 'https://quickbooks.intuit.com';
+			  this.job.push({ url: v })
+			  this.job = this.job.slice(0)			  			  
+		  }
+		  jobready(j) {
+			  return this.job.length > 0
 		  }
 		}            
       	customElements.define(MyIndex.is, MyIndex);      

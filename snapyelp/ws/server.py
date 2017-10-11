@@ -33,10 +33,17 @@ class SnapyelpServerProtocol(WebSocketServerProtocol):
         if not isBinary:
             try:
                 incoming = json.loads(payload.decode('utf8'))
-                print incoming
                 if fixed.agent in incoming and fixed.agent not in self.user:
                     print 'update as agent:', incoming
                     self.user.update(incoming)
+                elif fixed.result in incoming:
+                    print 'got result:', incoming
+                elif fixed.job in incoming:
+                    job = {}
+                    job.update(self.user)
+                    job.update(incoming)
+                    print 'job:', job 
+                    [c.sendMessage(json.dumps(job)) for c in self.factory.agents()]
                 else:
                     print 'wtf?:', self.peer, incoming
             except ValueError as e:
@@ -67,6 +74,9 @@ class SnapyelpServerFactory(WebSocketServerFactory):
         WebSocketServerFactory.__init__(self, url)        
         self.clients = []
         task.LoopingCall(self.heartbeat).start(self.heartbeat_interval)        
+
+    def agents(self):
+        return [c for c in self.clients if fixed.agent in c.user]
 
     def associate(self, client):        
         print 'associate client:', client.peer        

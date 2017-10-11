@@ -3,9 +3,8 @@ from autobahn.twisted.websocket import WebSocketClientProtocol
 
 from twisted.internet.protocol import ReconnectingClientFactory
 
-from twisted.internet import defer
-
 import json
+import xmlrpclib
 
 from snapyelp import fixed
 
@@ -26,6 +25,12 @@ class AgentClientProtocol(WebSocketClientProtocol):
     
     def onConnect(self, response):
         print 'connect:', response.peer
+        
+    def results(self, r):
+        print 'results:', r
+        
+    def error(self, err):
+        print 'error:', err        
       
     def onMessage(self, payload, isBinary):        
         if isBinary:
@@ -33,22 +38,15 @@ class AgentClientProtocol(WebSocketClientProtocol):
         else:
             try:
                 incoming = json.loads(payload.decode('utf8'))
-                print 'incoming:', incoming
-                if 'reserve' in incoming:
-                    def reservation_result(res, win):
-                        print 'reservation_result:', res, win
-                        reservation_msg = {'rn': res[0], 'ri': res[1], 'dn': res[2], 'reservation' : incoming['reserve_key']}
-                        reservation_msg.update(self.connect_message)
-                        self.sendMessage(json.dumps(reservation_msg))                    
+                if fixed.job in incoming:
+                    print 'job!'
+                    proxy = xmlrpclib.ServerProxy('http://localhost:7002')
+                    result = proxy.job(incoming)
+                    incoming[fixed.result] = result
+                    self.sendMessage(json.dumps(incoming))
+                print 'incoming:', incoming                             
             except ValueError as e:
-                if isinstance(payload, str):
-                    self.swkey = payload
-                    if self.connect_message:
-                        self.connect_message[fixed.ws_key] = self.swkey                    
-                        self.sendMessage(json.dumps(self.connect_message))                        
-                else:
-                    raise e
-            
+                print e
 
     def onClose(self, wasClean, code, reason):
         print 'close:', self.peer, wasClean, code, reason
