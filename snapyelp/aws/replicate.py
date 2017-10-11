@@ -73,7 +73,7 @@ def destroy(instances=True, images=True, source_instances = False):
                 for s in r_conn.get_all_snapshots(owner='self'):
                     if get_master_ami().id in s.description:
                         delete_response = s.delete()
-                        print 'delete:', delete_response, r.name, 'snapshot:', s.id, 'status:', s.status
+                        print 'delete snapshot:', delete_response, r.name, 'snapshot:', s.id, 'status:', s.status
     yield defer.DeferredList(dl)
     print 'destory complete'
                         
