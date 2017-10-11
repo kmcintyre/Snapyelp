@@ -4,6 +4,10 @@ from twisted.web.client import getPage
 def update_route_53(region, instance):
     print 'region:', region, 'instance:', instance 
     reactor.stop()
+    
+    
+def get_public_dns():
+    return getPage('http://169.254.169.254/latest/meta-data/public-hostname')    
 
 def get_instance():
     return getPage('http://169.254.169.254/latest/meta-data/instance-id')

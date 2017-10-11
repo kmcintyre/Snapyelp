@@ -1,12 +1,30 @@
 import boto.ec2
 import boto.route53
+from snapyelp.aws import identify
 from snapyelp.aws import app_util
 from snapyelp.aws import cloudfront
+
+from twisted.internet import defer, reactor
 
 def get_zone():
     for zn in boto.route53.connection.Route53Connection().get_zones():        
         if zn.name[:-1] == app_util.app_name:
             return zn
+
+
+@defer.inlineCallbacks
+def set_cname(domain):
+    zn = get_zone()
+    public_dns = yield identify.get_public_dns()
+    if zn.find_records(domain, 'CNAME'):
+        print 'update cname:', domain
+        zn.update_cname(
+            domain, public_dns, 
+            ttl=300, identifier=None)
+    else:
+        print 'add cname:', domain
+        zn.add_cname(domain, public_dns, ttl=300, identifier=None)
+        
 def set_apex():
     z = get_zone()    
     dn = cloudfront.get_distro_summary().domain_name
@@ -31,4 +49,5 @@ def set_apex():
         print 'exists'        
     
 if __name__ == '__main__': 
-    set_apex()
+    reactor.callWhenRunning(set_cname, 'service.snapyelp.com')
+    reactor.run()
