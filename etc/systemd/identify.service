@@ -5,7 +5,7 @@ Description=Identify Service
 User=ubuntu
 EnvironmentFile=/home/ubuntu/Snapyelp/etc/default.env
 WorkingDirectory=/home/ubuntu/Snapyelp
-ExecStart=/usr/bin/python /home/ubuntu/Snapyelp/snapyelp/aws/identify.py
+ExecStart=/usr/bin/python /home/ubuntu/Snapyelp/snapyelp/aws/identify.py > /home/ubuntu/logs/identify.log
 
 [Install]
 WantedBy=multi-user.target

@@ -1,11 +1,11 @@
-from snapyelp.aws import cloudfront
-from snapyelp.aws import publish
+from snapyelp.aws import publish, app_util
+import boto
 
 def do_invalidate():
-    import boto
+    
     c = boto.connect_cloudfront()
     for d in c.get_all_distributions():
-        if d.origin.dns_name == cloudfront.snapyelpdisto:
+        if d.origin.dns_name == app_util.app_bucket:
             print 'domain id:', d.id, 'domain name:', d.domain_name, 'domain status:', d.status, 'comment:', d.comment            
             for ir in c.get_invalidation_requests(d.id):
                 if ir.status != 'Completed':

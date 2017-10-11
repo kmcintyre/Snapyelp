@@ -7,7 +7,13 @@ sudo apt-get update
 sudo apt-get -y install alsa-base ant gcc git glances imagemagick libfreetype6-dev libgles2-mesa-dev libjpeg-dev libmagickwand-dev libnss3 libgl1-mesa-dev libssl-dev libx11-dev libx11-xcb-dev libxcb-glx0-dev libxcb1-dev libxext-dev libxfixes-dev libxi-dev libxrender-dev libxslt1-dev monit nginx python-dev python-lxml python-opencv python-pip python-setuptools unzip xvfb 
 
 sudo pip install --upgrade pip
-sudo pip install --upgrade autobahn boto cssselect lxml Pillow pyopenssl requests service_identity simplejson Twisted Wand psutil 
+sudo pip install --upgrade autobahn boto cssselect lxml Pillow pyopenssl requests service_identity simplejson Twisted Wand psutil
+
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs 
+
+sudo npm install -g polymer-cli
+sudo npm install -g bower
 
 git clone https://github.com/kmcintyre/Snapyelp -b demo
 
