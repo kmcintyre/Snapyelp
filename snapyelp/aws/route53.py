@@ -11,16 +11,13 @@ def get_zone():
         if zn.name[:-1] == app_util.app_name:
             return zn
 
-
 @defer.inlineCallbacks
 def set_cname(domain):
     zn = get_zone()
     public_dns = yield identify.get_public_dns()
     if zn.find_records(domain, 'CNAME'):
         print 'update cname:', domain
-        zn.update_cname(
-            domain, public_dns, 
-            ttl=300, identifier=None)
+        zn.update_cname(domain, public_dns, ttl=300, identifier=None)
     else:
         print 'add cname:', domain
         zn.add_cname(domain, public_dns, ttl=300, identifier=None)

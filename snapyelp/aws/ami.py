@@ -10,9 +10,6 @@ def all_instances(region):
 @defer.inlineCallbacks
 def region_instance(region_instance_seq):
     region, instance = region_instance_seq[0], region_instance_seq[1]
-    while region[-1:].isalpha():      
-        region = region[:-1]
-        print 'change to:', region
     print 'region:', region, 'instance:', instance
     if region == app_util.app_region:
         print 'connect to:', region
