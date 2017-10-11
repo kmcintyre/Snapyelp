@@ -57,7 +57,7 @@ def selfie():
         for instance in boto.ec2.connect_to_region(region).get_only_instances(instance_ids=[instance_id]):
             print 'instance tags:', instance.tags
             if fixed.tag_state in instance.tags and instance.tags[fixed.tag_state] == fixed.state_replicate:
-                #replicate.replicate()
+                replicate.replicate()
                 instance.remove_tag(fixed.tag_state)
     except Exception as e:
         print 'exception:', e

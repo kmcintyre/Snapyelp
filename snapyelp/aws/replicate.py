@@ -6,6 +6,7 @@ import os
 from snapyelp.aws import app_util
 
 import time
+from twisted.internet import defer
 
 from os.path import expanduser
 
@@ -18,7 +19,6 @@ def get_master_ami():
 def get_region_ami(region, ami_id, create):    
     r_conn = boto.ec2.connect_to_region(region)
     for r_image in r_conn.get_all_images(owners=['self'], filters={'name': app_util.app_name}):
-        #print region, 'replicated image:', r_image.id, r_image.name, r_image.tags
         return r_image
     if create:            
         print region, 'need to clone image:', ami_id
@@ -26,7 +26,7 @@ def get_region_ami(region, ami_id, create):
         print 'replicate_response:', replicate_response
         has_replication = False
         while not has_replication:
-            print 'waiting replication'
+            print region, ' waiting replication'
             time.sleep(10)
             for replicated_image in r_conn.get_all_images(owners=['self'], filters={'name': app_util.app_name}):
                 has_replication = True
@@ -67,12 +67,17 @@ def destroy(instances=True, images=True):
                     if get_master_ami().id in s.description:
                         delete_response = s.delete()
                         print 'delete:', delete_response, r.name, 'snapshot:', s.id, 'status:', s.status
+@defer.inlineCallbacks
 def replicate():
     image = get_master_ami()
+    dl = []
     for r in get_regions():
         if r.name != app_util.app_region:
-            replication_ami = get_region_ami(r.name, image.id, True)
-            print replication_ami.id, replication_ami.state
+            d = defer.maybeDeferred(get_region_ami, r.name, image.id, True)
+            dl.append(d)
+    rl = yield defer.DeferredList(dl)
+    for replication_ami in [r[1] for r in rl]:
+        print replication_ami.id, replication_ami.state
 
 def instances():
     for r in get_regions():
@@ -131,5 +136,6 @@ def instances():
             print 'no ami for:', r.name
             
 if __name__ == '__main__':
-    replicate()
+    reactor.callWhenRunning(replicate)
+    reactor.run()
     
