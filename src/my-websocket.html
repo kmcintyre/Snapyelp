@@ -18,40 +18,36 @@
 	              url: {
 	                  type: String,
 	                  reflectToAttribute: true,
-	                  value: 'ws://dev.athleets.com:8080'
+	                  value: 'ws://localhost:8082'
 	              },
 	              readyState: {
 	              	type: Number,
 	              	reflectToAttribute: true
 	              },
 	              socket: {
-	            	  type: Object
+	            	  	type: Object
 	              }
 			  }		  
 		  }
 		  
 	      requestsChanged(requests) {
-	    	  if ( requests && this.socket.readyState == 1 ) {
+	    	  	if ( requests && this.socket.readyState == 1 ) {
 		    	  console.log('send:', requests[requests.length -1])
 		    	  this.socket.send( JSON.stringify(requests[requests.length -1]) );	    		  
-	    	  }
+	    	  	}
 	      };
 		  
-	      onError(error) {
-	          this.fire('onerror', error);
+	      onError(event) {
+	    	  	console.log('error:', event,  this.socket)
+	    	  	this.readyState = this.socket.readyState
 	      };
 	      onOpen(event) {
-	    	  //this.dispatch('websocketReady', this.socket.readyState)
-	    	  console.log('open:', event, this.ws)
-	    	  this.readyState = this.socket.readyState
-	          //this.socket.send( JSON.stringify({
-	       	  // 	website: nativeDomain()
-	          //}));    	  
+	    	  	console.log('open:', event, this.socket)
+	    	  	this.readyState = this.socket.readyState
 	      };
 	      onMessage(event) {
-	   	   	  //this.dispatch('websocketMessage', JSON.parse(event.data))
-	          //document.querySelector('my-app').dispatchEvent(new CustomEvent('onmessage', {detail: data} ));
-	      }
+	    	  	console.log('message:', event, this.socket)
+	      }	      
 	      ready() {
 	    	  super.ready();
 			  this.socket = new WebSocket(this.url, this.protocol);
@@ -60,8 +56,8 @@
 	          this.socket.onmessage = this.onMessage.bind(this);
 	          this.socket.onclose = this.onClose.bind(this);
 	      }
-	      onClose(event) {	    	  
-	    	  //this.dispatch('websocketReady', this.socket.readyState)
+	      onClose(event) {
+	    	  	console.log('close:', event, this.socket)
 	      }
 		}            
       	customElements.define(MyWebsocket.is, MyWebsocket);      

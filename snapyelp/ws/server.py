@@ -1,10 +1,8 @@
 from autobahn.twisted.websocket import WebSocketServerFactory
 from autobahn.twisted.websocket import WebSocketServerProtocol
 
-from snapyelp import fixed
-
 import json
-import time
+from snapyelp import fixed
 
 from twisted.internet import reactor
 
@@ -15,13 +13,13 @@ class SnapyelpServerProtocol(WebSocketServerProtocol):
     def onConnect(self, request):
         print 'connect:', request.peer, 'key:', request.headers['sec-websocket-key']
         self.chk = request.headers['sec-websocket-key']
-        self.user = { fixed.swkey : self.chk }
+        self.user = { fixed.ws_key : self.chk }
 
     def onOpen(self):
         print "open:", self.peer
         WebSocketServerProtocol.onOpen(self)
         self.factory.associate(self)
-        self.sendMessage(str(self.user[fixed.swkey]))                       
+        self.sendMessage(str(self.user[fixed.ws_key]))                       
 
     def jsonMessage(self, msg = None):
         if self.user:        
@@ -46,7 +44,7 @@ class SnapyelpServerProtocol(WebSocketServerProtocol):
                 elif 'site' in incoming and 'reserve' in incoming:
                     operator = self.factory.get_operator()
                     if operator: 
-                        operator.jsonMessage({ 'reserve': incoming['reserve'], 'reserve_key' : self.user[fixed.swkey]})
+                        operator.jsonMessage({ 'reserve': incoming['reserve'], 'reserve_key' : self.user[fixed.ws_key]})
                     else:
                         self.jsonMessage({ 'reservation': 'Agent Busy' })
                     
@@ -57,7 +55,7 @@ class SnapyelpServerProtocol(WebSocketServerProtocol):
             except ValueError as e:
                 print 'value error:', e
                 if isinstance(payload, str):
-                    if self.user[fixed.swkey] == payload:
+                    if self.user[fixed.ws_key] == payload:
                         print 'string value:', payload
                         self.jsonMessage()
                 else:
@@ -77,8 +75,8 @@ class SnapyelpServerFactory(WebSocketServerFactory):
     
     protocol = SnapyelpServerProtocol
     
-    def __init__(self, url, debug=False, debugCodePaths=False):
-        WebSocketServerFactory.__init__(self, url, debug=debug, debugCodePaths=debugCodePaths)        
+    def __init__(self, url):
+        WebSocketServerFactory.__init__(self, url)        
         self.clients = []        
 
     def associate(self, client):        
@@ -110,13 +108,12 @@ class SnapyelpServerFactory(WebSocketServerFactory):
         else:
             print 'get specific client:', key
             try:
-                return [c for c in self.clients if 'site' in c.user.keys() and c.user[fixed.swkey] == key][0]
+                return [c for c in self.clients if 'site' in c.user.keys() and c.user[fixed.ws_key] == key][0]
             except:
                 pass
             
-factory = SnapyelpServerFactory("ws://localhost:8081", debug = False)
+factory = SnapyelpServerFactory("ws://localhost:8082")
 
 if __name__ == '__main__':
-    print 'start server', fixed.tmp_dir
-    reactor.listenTCP(8081, factory)
+    reactor.listenTCP(8082, factory)
     reactor.run()
