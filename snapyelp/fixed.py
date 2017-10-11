@@ -4,6 +4,9 @@ job = 'job'
 url = 'url'
 result = 'result'
 
+tag_state = 'State'
+state_replicate = 'replicate'
+
 request_types = { 
     0: 'mainframe',
     1: 'subframe',
