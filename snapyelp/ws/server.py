@@ -95,9 +95,9 @@ class SnapyelpServerFactory(WebSocketServerFactory):
     def heartbeat(self):
         print 'heartbeat interval:', self.heartbeat_interval, 'clients length:', len(self.clients)           
             
-factory = SnapyelpServerFactory("ws://localhost:8082")
+factory = SnapyelpServerFactory("ws://localhost:8080")
 
 if __name__ == '__main__':
     from twisted.internet import reactor
-    reactor.listenTCP(8082, factory)
+    reactor.listenTCP(8080, factory)
     reactor.run()

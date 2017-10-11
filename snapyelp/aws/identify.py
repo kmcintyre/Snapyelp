@@ -14,7 +14,7 @@ def az_to_region(az):
     return az    
 
 def get_region():
-    return getPage('http://169.254.169.254/latest/meta-data/placement/availability-zone').addCallback(az_to_region)
+    return getPage('http://169.254.169.254/latest/meta-data/placement/availability-zone').addCallback(az_to_region).addErrback(lambda err: defer.succeed('localhost'))
 
 def enable_start(service_name):
     print 'enable and start:', service_name
