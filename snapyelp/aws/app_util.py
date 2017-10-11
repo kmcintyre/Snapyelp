@@ -3,6 +3,7 @@ import mimetypes
 
 app_name = 'snapyelp.com'
 app_region = 'us-east-2'
+app_bucket = app_name + '.s3.amazonaws.com'
 
 def check_key(bucket, filename):
     possible_key = bucket.get_key(filename)
