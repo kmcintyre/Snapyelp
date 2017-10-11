@@ -56,6 +56,8 @@ def selfie():
             enable_start(service_name)
         for instance in boto.ec2.connect_to_region(region).get_only_instances(instance_ids=[instance_id]):
             print 'instance tags:', instance.tags
+            if fixed.tag_app not in instance.tags:
+                instance.add_tag(fixed.tag_app, app_util.app_name)
             if fixed.tag_state in instance.tags and instance.tags[fixed.tag_state] == fixed.state_replicate:
                 yield replicate.replicate()
                 instance.remove_tag(fixed.tag_state)

@@ -4,6 +4,7 @@ import boto.vpc
 import os
 
 from snapyelp.aws import app_util
+from snapyelp import fixed
 
 import time
 from twisted.internet import defer, reactor
@@ -38,10 +39,10 @@ def get_regions():
     conn = boto.ec2.connect_to_region(app_util.app_region)
     return [s for s in sorted(conn.get_all_regions(), key = lambda r: r.name) if s.name not in blocked]
 
-def destroy(instances=True, images=True):    
+def destroy(instances=True, images=True, source_instances = False):    
     for r in get_regions():
         r_conn = boto.ec2.connect_to_region(r.name)
-        if instances:    
+        if instances and (source_instances or r.name != app_util.app_region):    
             for d_instance in r_conn.get_only_instances(filters={"tag:App" : app_util.app_name}):
                 if d_instance.state != 'terminated':                    
                     d_instance.terminate()
@@ -91,7 +92,7 @@ def instances():
         if r_ami:         
             print r.name, 'replication ami:', r_ami.id, 'security groups:', [(s.name, s.vpc_id) for s in securitygroups], 'subnets:', subnets
             has_instance = False
-            for instance in r_conn.get_only_instances(filters={"tag:App" : app_util.app_name}):
+            for instance in r_conn.get_only_instances(filters={'tag:' + fixed.tag_app : app_util.app_name}):
                 if instance.state != 'terminated':
                     print 'existing instance:', instance.id, 'state:', instance.state
                     has_instance = True
@@ -119,24 +120,26 @@ def instances():
                         for instance in r_conn.get_only_instances(instance_ids=[reservation.instances[0].id]):
                             print 'instance:', instance.id, 'state:', instance.state
                             has_instance = True                            
-                            instance.add_tag('App', app_util.app_name)
+                            instance.add_tag(fixed.tag_app, app_util.app_name)
                             
                 except Exception as e:                    
                     if e.error_code == 'InvalidKeyPair.NotFound':
-                        fn = expanduser("~") + '/aws/' + r.name + '.pem'
-                        print 'create key pair:', fn
-                        pem = r_conn.create_key_pair(r.name)                        
-                        with open(fn, 'w') as text_file:
-                            print pem.material
-                            text_file.write(pem.material)
-                        text_file.close()
-                        os.chmod(fn, 0400)                                                
+                        try:
+                            fn = expanduser("~") + '/aws/' + r.name + '.pem'
+                            print 'create key pair:', fn
+                            pem = r_conn.create_key_pair(r.name)                        
+                            with open(fn, 'w') as text_file:
+                                print pem.material
+                                text_file.write(pem.material)
+                            text_file.close()
+                            os.chmod(fn, 0400)
+                        except Exception as e2:
+                            print 'key pair exception:', e2                                                                            
                     else:
-                        print 'exception:', e
+                        print 'unknown exception:', e
         else:
             print 'no ami for:', r.name
             
 if __name__ == '__main__':
-    reactor.callWhenRunning(replicate)
-    reactor.run()
-    
+    reactor.callWhenRunning(destroy)
+    reactor.run()    

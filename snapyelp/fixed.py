@@ -4,6 +4,7 @@ job = 'job'
 url = 'url'
 result = 'result'
 
+tag_app = 'App'
 tag_state = 'State'
 state_replicate = 'replicate'
 
