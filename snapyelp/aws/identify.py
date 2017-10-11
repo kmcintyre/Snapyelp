@@ -55,6 +55,7 @@ def selfie():
                 os.system('sudo cp ' + fp + ' ' + sp)
             enable_start(service_name)
         for instance in boto.ec2.connect_to_region(region).get_only_instances(instance_ids=[instance_id]):
+            print 'instance tags:', instance.tags
             if fixed.tag_state in instance.tags and instance.tags[fixed.state_replicate]:
                 print 'yo'
                 replicate.replicate()
