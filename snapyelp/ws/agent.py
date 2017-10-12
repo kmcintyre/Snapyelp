@@ -10,7 +10,12 @@ from snapyelp import fixed
 from snapyelp.aws import app_util, identify
 
 click_period = 60 * 5
-client_factory = WebSocketClientFactory('ws://' + app_util.app_service + ':8080')
+
+connection_host = app_util.app_service
+connection_host = 'localhost'
+
+#client_factory = WebSocketClientFactory('ws://' + app_util.app_service + ':8080')
+client_factory = WebSocketClientFactory('ws://' + connection_host + ':8080')
 
 class AgentClientProtocol(WebSocketClientProtocol):
     
@@ -65,7 +70,7 @@ class ReconnectingWebSocketClientFactory(WebSocketClientFactory, ReconnectingCli
         print 'clientConnectionLost:', connector, 'reason:', reason
         self.retry(connector)    
 
-def start_agent(host=app_util.app_service, port=8080):
+def start_agent(host=connection_host, port=8080):
     factory = ReconnectingWebSocketClientFactory()
     factory.host = host
     factory.port = port

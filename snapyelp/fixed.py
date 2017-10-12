@@ -1,4 +1,5 @@
 ws_key = 'ws_key'
+detect_agent = 'detect_agent'
 agent = 'agent'
 job = 'job'
 url = 'url'

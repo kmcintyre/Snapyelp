@@ -1,16 +1,49 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="../bower_components/iron-icons/maps-icons.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
 <link rel="import" href="redux-mixin.html">
 
 <dom-module id="my-websocket">
    <template>
-      <style>
+      <style include="iron-flex iron-flex-alignment">
          :host {
+         	@apply(--layout-horizontal);
          }   
+         div:first-of-type {
+         	margin-left: 32px;
+         }
+         iron-icon {
+          --iron-icon-height: 40px;
+          --iron-icon-width: 40px;        
+         }
+         .small {
+          --iron-icon-height: 20px;
+          --iron-icon-width: 20px;
+         }         
+         paper-item {
+         	margin: 10px 20px 10px 20px;
+         	cursor: pointer;
+         }
       </style>
       <div>
-      websocket: {{ readyState }}
+      websocket: {{ readyState }}     
       </div>
+      <div class="flex">
+      </div>
+		<paper-item on-top="toggle">
+		  <paper-item-body two-line>
+		    <div>{{ agents.length }} {{ lingo(agents) }}</div>
+		    <div secondary>across AWS</div>		    
+		  </paper-item-body>
+		  <iron-icon icon="maps:place">
+		</paper-item>      
    </template>
    <script>
 		class MyWebsocket extends ReduxMixin(Polymer.Element) {
@@ -21,6 +54,10 @@
 	              	type: Number,
 	              	statePath: 'readyState'
 	              },
+	              agents: {
+		              	type: Object,
+		              	statePath: 'agents'
+		          },	              
 	              socket: {
 	            	type: Object
 	              },
@@ -30,6 +67,10 @@
 	            	  observer: 'requestsChanged'
 	              }
 			  }		  
+		  }
+		  
+		  lingo(a) {
+			 return  a.length == 1 ? 'Agent' : 'Agents'
 		  }
 		  
 	      requestsChanged(requests) {
@@ -58,19 +99,17 @@
 		      }		  
 		  
 	      onError(event) {
-	    	  	console.log('error:', event,  this.socket)
 	    	  	this.dispatch('websocketReady', this.socket.readyState)
 	      };
-	      onOpen(event) {
-	    	  	console.log('open:', event, this.socket)
+	      onOpen(event) {	    	  	
 	    	  	this.dispatch('websocketReady', this.socket.readyState)	    	  	
 	      };
 	      onMessage(event) {
-	    	  	console.log('message:', event, this.socket)
+	    	  	this.dispatch('websocketMessage', event.data)	    	  	
 	      }	      
 	      ready() {
 	    	  super.ready();
-			  this.socket = new WebSocket('ws://service.snapyelp.com:8080', this.protocol);
+			  this.socket = new WebSocket('ws://localhost:8080', this.protocol);
 	          this.socket.onerror = this.onError.bind(this);
 	          this.socket.onopen = this.onOpen.bind(this);
 	          this.socket.onmessage = this.onMessage.bind(this);

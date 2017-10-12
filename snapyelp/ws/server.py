@@ -13,13 +13,16 @@ class SnapyelpServerProtocol(WebSocketServerProtocol):
     def onConnect(self, request):
         print request
         print 'connect:', request.peer, 'key:', request.headers['sec-websocket-key'] 
-        self.user = { fixed.ws_key : request.headers['sec-websocket-key']}
+        self.user = { fixed.ws_key : request.headers['sec-websocket-key'], fixed.detect_agent: request.headers['user-agent'].startswith('AutobahnPython') }
 
     def onOpen(self):
-        print "open:", self.peer
+        print 'open:', self.user
         WebSocketServerProtocol.onOpen(self)
-        self.factory.associate(self)
-        #self.sendMessage(str(self.user[fixed.ws_key]))                       
+        self.factory.associate(self)        
+        if not self.user[fixed.detect_agent]:
+            agents = [a.user[fixed.agent] for a in self.factory.agents()]
+            print 'agents:', agents
+            self.sendMessage(json.dumps({ 'agents': agents }))                       
 
     def jsonMessage(self, msg = None):
         if self.user:        
@@ -36,6 +39,7 @@ class SnapyelpServerProtocol(WebSocketServerProtocol):
                 if fixed.agent in incoming and fixed.agent not in self.user:
                     print 'update as agent:', incoming
                     self.user.update(incoming)
+                    print self.user
                     self.factory.pushagents()
                 elif fixed.result in incoming:
                     print 'got result:', incoming
@@ -83,7 +87,9 @@ class SnapyelpServerFactory(WebSocketServerFactory):
         return [c for c in self.clients if fixed.agent not in c.user]
     
     def pushagents(self):
-        agents = [a[fixed.agent] for a in self.agents()]
+        print 'pushagents'
+        agents = [a.user[fixed.agent] for a in self.agents()]
+        print 'pushagents:', agents
         [u.sendMessage(json.dumps(agents)) for u in self.users()]    
 
     def associate(self, client):        
