@@ -1,4 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="shared-styles.html">
 
@@ -10,10 +12,25 @@
    <template>
       <style include="shared-styles">
       	:host {}
+      	paper-toolbar {
+      		background-color: #8D9096
+      	}
+      	.hidden {
+      		display:none;
+      	}
       </style>
+      
       <my-websocket></my-websocket>
-      <my-index></my-index>
+      
+      <paper-toolbar>
+      		<paper-icon-button slot="top" icon="{{ collapsed_icon(collapsed) }}" on-tap="toggle"></paper-icon-button>
+  			<div slot="top" class="title">URL Analyzer</div>  			  			
+	  </paper-toolbar>
+	        
+      <my-index id="url"></my-index>            
+      
       <my-queue></my-queue>
+      
    </template>
    <script> 	    
    class MyApp extends Polymer.Element {
@@ -23,9 +40,25 @@
        
        static get properties() {
            return {
+        	collapsed: {
+				type: Boolean,
+        		value: false
+			}
          }
        }
-
+       collapsed_icon(c, button) {
+    	   return this.collapsed ? 'add' : 'remove'
+       }
+       toggle(e) {
+    	   console.log(this.$.url.classList)
+    	   	if ( this.$.url.classList.contains('hidden') ) {
+       			this.$.url.classList.remove('hidden')
+   			} else {
+   				this.$.url.classList.add('hidden')
+   			}
+   
+    	   this.collapsed = !this.collapsed;
+       }
        ready() {
     	   console.log(MyApp.is, 'ready')
            super.ready();
