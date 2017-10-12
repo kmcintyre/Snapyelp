@@ -80,6 +80,7 @@ def destroy(instances=True, images=True, source_instances = False):
 @defer.inlineCallbacks
 def replicate():
     image = get_master_ami()
+    print 'master image:', image.id
     dl = []
     for r in get_regions():
         if r.name != app_util.app_region:
