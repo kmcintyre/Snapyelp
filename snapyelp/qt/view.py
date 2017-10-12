@@ -5,7 +5,7 @@ from snapyelp import fixed
 from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtWebEngineCore import QWebEngineUrlRequestInterceptor
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineProfile, QWebEngineSettings
-from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import QUrl 
 
 from lxml import etree
 from lxml.cssselect import CSSSelector
@@ -37,15 +37,22 @@ class FilterFactory(object):
 
 class WebEngineUrlRequestInterceptor(QWebEngineUrlRequestInterceptor):
     
-    blocked = []
     filters = None
+    requests = []
     
-    def status(self, info, block):
-        print '{:6s}'.format('block' if block else 'allow'), '{:10s}'.format(info.requestMethod()), '{:15s}'.format(fixed.request_types[info.resourceType()]), info.requestUrl().toString()    
+    def status(self, request):
+        print '{:6s}'.format(request['status']), '{:10s}'.format(request['method']), '{:15s}'.format(request['type']), request['url']    
     
     def interceptRequest(self, info):
         block = self.is_blocked(info)
-        self.status(info, block)
+        r = {
+            'status': 'block' if block else 'allow',
+            'method': str(info.requestMethod()),
+            'type': fixed.request_types[info.resourceType()],
+            'url': info.requestUrl().toString()            
+        }
+        self.requests.append(r)
+        self.status(r)
         info.block(block)
         
     def is_blocked(self, info):
@@ -231,6 +238,7 @@ class ChromeView(QWebEngineView):
 
     def goto_url(self, url):
         #print 'goto url:', url, len(self.deferred_cbs), self.page()
+        intercept.requests = []
         qurl = QUrl(url)        
         d = defer.Deferred()
         self.deferred_cbs.append(d)     

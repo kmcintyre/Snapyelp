@@ -28,13 +28,13 @@ def get_region_ami(region, ami_id, create = False):
             return (region, r_image)
     if create:            
         print region, 'need to clone image:', ami_id
-        replicate_response = r_conn.copy_image(app_util.app_region, ami_id, app_util.app_name)
+        replicate_response = r_conn.copy_image(app_util.app_region, ami_id, app_util.app_name, 'Copy of ' + ami_id)
         print 'replicate_response:', replicate_response
         has_replication = False
         while not has_replication:
             print region, ' waiting replication'
             time.sleep(10)
-            for replicated_image in r_conn.get_all_images(owners=['self'], filters={'name': app_util.app_name}, description = 'Copy of ' + ami_id):
+            for replicated_image in r_conn.get_all_images(owners=['self'], filters={'name': app_util.app_name}):
                 has_replication = True
                 return (region, replicated_image)                                 
             

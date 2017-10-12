@@ -25,7 +25,7 @@ class App(QApplication):
         self.video = None
         self.frameCount = 0
 
-    def toImage(self, location = None):
+    def toImage(self, location = None, bucket = None):
         png = '/home/ubuntu/Desktop/capture.png'
         if location:            
             png = location         

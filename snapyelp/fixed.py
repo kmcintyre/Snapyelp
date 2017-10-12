@@ -5,6 +5,9 @@ job = 'job'
 url = 'url'
 result = 'result'
 
+load_time = 'load_time'
+requests = 'requests'
+
 tag_app = 'App'
 tag_state = 'State'
 state_replicate = 'replicate'

@@ -6,6 +6,10 @@ from snapyelp import fixed
 
 from twisted.web import xmlrpc, server
 from twisted.internet import reactor, defer, task
+import hashlib
+import time
+
+
 
 class AgentWorker(xmlrpc.XMLRPC):
     
@@ -27,13 +31,16 @@ class AgentWorker(xmlrpc.XMLRPC):
     @defer.inlineCallbacks
     def xmlrpc_job(self, job, location = None, bucket = None):
         print 'job:', job
-        result = []
         window = self.get_window()
-        yield self.verify_or_goto_url(window, job[fixed.job][0][fixed.url])
-        if location:
-            qt5.app.toImage(location)
-            yield task.deferLater(reactor, 2, defer.succeed, True)
-        defer.returnValue(result)
+        for j in job[fixed.job]:
+            url = j[fixed.url]
+            start_time = time.time()
+            yield self.verify_or_goto_url(window, url)
+            j[fixed.load_time] = time.time() - start_time 
+            j[fixed.requests] = view.intercept.requests            
+            if location:
+                self.snapshot(url, window, location, bucket)            
+        defer.returnValue(j)
     
     def xmlrpc_snapshot(self, url, location = None, bucket = None):
         self.snapshot(url, self.get_window(), location, bucket)        
@@ -41,6 +48,7 @@ class AgentWorker(xmlrpc.XMLRPC):
     @defer.inlineCallbacks
     def snapshot(self, url, cv = None, location = None, bucket = None):
         yield self.verify_or_goto_url(cv, url)
+        qt5.app.toImage(location, bucket)
         yield task.deferLater(reactor, 1, defer.succeed, True)
         
         #https://www.google.com/search?q=where+am+i+right+now

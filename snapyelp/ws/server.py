@@ -3,6 +3,7 @@ from autobahn.twisted.websocket import WebSocketServerProtocol
 
 import json
 from snapyelp import fixed
+from snapyelp.aws import app_util
 
 from twisted.internet import task
 
@@ -87,8 +88,7 @@ class SnapyelpServerFactory(WebSocketServerFactory):
         return [c for c in self.clients if fixed.agent not in c.user]
     
     def pushagents(self):
-        print 'pushagents'
-        agents = [a.user[fixed.agent] for a in self.agents()]
+        agents = {'agents' : [a.user[fixed.agent] for a in self.agents()]}
         print 'pushagents:', agents
         [u.sendMessage(json.dumps(agents)) for u in self.users()]    
 
@@ -102,6 +102,8 @@ class SnapyelpServerFactory(WebSocketServerFactory):
     def disassociate(self, client):    
         try:
             self.clients.remove(client)
+            if fixed.agent in client.user:
+                self.pushagents()
             print 'disassociate:', client.peer
         except:
             pass
@@ -109,9 +111,9 @@ class SnapyelpServerFactory(WebSocketServerFactory):
     def heartbeat(self):
         print 'heartbeat interval:', self.heartbeat_interval, 'clients length:', len(self.clients)           
             
-factory = SnapyelpServerFactory("ws://localhost:8080")
+factory = SnapyelpServerFactory('ws://' + app_util.connection_host + ':' + str(app_util.connection_port))
 
 if __name__ == '__main__':
     from twisted.internet import reactor
-    reactor.listenTCP(8080, factory)
+    reactor.listenTCP(app_util.connection_port, factory)
     reactor.run()
