@@ -4,7 +4,7 @@ from glob import glob
 from snapyelp.aws import app_util
 
 build_dir = '/home/ubuntu/Snapyelp/build/es5-bundled'
-publish_filters = ['*.html', 'bower_components/webcomponentsjs/webcomponents-loader.js', 'bower_components/webcomponentsjs/custom-elements-es5-adapter.js']
+publish_filters = ['*.html', 'bower_components/webcomponentsjs/webcomponents-*.js', 'bower_components/webcomponentsjs/custom-elements-es5-adapter.js']
 
 def get_publish_list():
     pl = set([])

@@ -9,11 +9,11 @@ sudo apt-get -y install alsa-base ant gcc git glances imagemagick libfreetype6-d
 sudo pip install --upgrade pip
 sudo pip install --upgrade autobahn boto cssselect lxml Pillow pyopenssl requests service_identity simplejson Twisted Wand psutil
 
-curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
 sudo apt-get install -y nodejs 
 
-sudo npm install -g polymer-cli
 sudo npm install -g bower
+sudo npm install -g polymer-cli
 
 git clone https://github.com/kmcintyre/Snapyelp -b demo
 

@@ -2,9 +2,12 @@
   "entrypoint": "index.html",
   "shell": "src/my-app.html",
   "fragments": [
-    "src/my-index.html",
-    "src/my-app.html",
-    "src/my-websocket.html"
+  	"src/my-app.html",
+    "src/my-index.html",    
+    "src/my-queue.html",
+    "src/my-websocket.html",
+    "src/shared-styles.html",
+    "src/redux-mixin.html"
   ],
   "sources": [
     "src/**/*",
