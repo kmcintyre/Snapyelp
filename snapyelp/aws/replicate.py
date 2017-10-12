@@ -17,7 +17,8 @@ def get_master_ami():
         #print 'source image:', image.id, image.name, image.tags
         return image
     
-def get_region_ami(region, ami_id, create = False):    
+def get_region_ami(region, ami_id, create = False):
+    print 'get region ami:', region, 'master ami id:', ami_id
     r_conn = boto.ec2.connect_to_region(region)
     for r_image in r_conn.get_all_images(owners=['self'], filters={'name': app_util.app_name}):
         if ami_id in r_image.description:
