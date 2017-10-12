@@ -25,7 +25,7 @@ class App(QApplication):
         self.video = None
         self.frameCount = 0
 
-    def toImage(self, location = None):
+    def toImage(self, location = None, bucket = None):
         png = '/home/ubuntu/Desktop/capture.png'
         if location:            
             png = location         
@@ -41,6 +41,7 @@ class App(QApplication):
         pixmap = QPixmap(self.opengl.size())
         self.opengl.render(pixmap)
         pixmap.save(png)
+        return png        
         
     def notify(self, receiver, event):
         #print 'receiver:', receiver, 'event:', event

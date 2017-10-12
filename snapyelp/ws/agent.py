@@ -7,9 +7,12 @@ import json
 import xmlrpclib
 
 from snapyelp import fixed
+from snapyelp.aws import app_util, identify
 
 click_period = 60 * 5
-client_factory = WebSocketClientFactory("ws://localhost:8082")
+
+#client_factory = WebSocketClientFactory('ws://' + app_util.app_service + ':8080')
+client_factory = WebSocketClientFactory('ws://' + app_util.connection_host + ':' + str(app_util.connection_port))
 
 class AgentClientProtocol(WebSocketClientProtocol):
     
@@ -21,7 +24,8 @@ class AgentClientProtocol(WebSocketClientProtocol):
     
     def onOpen(self):
         print 'open'
-        self.sendMessage(json.dumps({ fixed.agent: 'localhost'}), isBinary = False)        
+        d = identify.get_region()
+        d.addCallback(lambda region: self.sendMessage(json.dumps({ fixed.agent: region}), isBinary = False))
     
     def onConnect(self, response):
         print 'connect:', response.peer
@@ -40,7 +44,7 @@ class AgentClientProtocol(WebSocketClientProtocol):
                 incoming = json.loads(payload.decode('utf8'))
                 if fixed.job in incoming:
                     print 'job!'
-                    proxy = xmlrpclib.ServerProxy('http://localhost:7002')
+                    proxy = xmlrpclib.ServerProxy('http://localhost:7000')
                     result = proxy.job(incoming)
                     incoming[fixed.result] = result
                     self.sendMessage(json.dumps(incoming))
@@ -63,7 +67,7 @@ class ReconnectingWebSocketClientFactory(WebSocketClientFactory, ReconnectingCli
         print 'clientConnectionLost:', connector, 'reason:', reason
         self.retry(connector)    
 
-def start_agent(host='localhost', port=8082):
+def start_agent(host=app_util.connection_host, port=app_util.connection_port):
     factory = ReconnectingWebSocketClientFactory()
     factory.host = host
     factory.port = port

@@ -1,8 +1,16 @@
 ws_key = 'ws_key'
+detect_agent = 'detect_agent'
 agent = 'agent'
 job = 'job'
 url = 'url'
 result = 'result'
+
+load_time = 'load_time'
+requests = 'requests'
+
+tag_app = 'App'
+tag_state = 'State'
+state_replicate = 'replicate'
 
 request_types = { 
     0: 'mainframe',

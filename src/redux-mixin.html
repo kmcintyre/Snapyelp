@@ -7,8 +7,14 @@
  const reducer = (state, action) => {
 	  switch (action.type) {
 	    case 'WEBSOCKET_MESSAGE':
-			 console.log(action.message)	    	
-	    	 return state;
+			 console.log('message', action.message)
+			 try {
+				 var msg = JSON.parse(action.message)
+				 return Object.assign({}, state, msg);
+			 } catch (err) {
+				 console.log(err, action)
+			 }
+			 return state;
 	    case 'WEBSOCKET_READY':
 	    	 return Object.assign({}, state, { readyState: action.readyState });
 	    case 'WEBSOCKET_REQUEST':
@@ -18,7 +24,7 @@
 	    default:
 	      return state;
 	  }
-	};
+  };
  
  const store = Redux.createStore(reducer, {
 	 requests: []

@@ -1,0 +1,12 @@
+[Unit]
+Description=Worker Service
+
+[Service]
+User=ubuntu
+EnvironmentFile=/home/ubuntu/Snapyelp/etc/default.env
+WorkingDirectory=/home/ubuntu/Snapyelp
+ExecStart=/usr/bin/python /home/ubuntu/Snapyelp/snapyelp/xmlrpc/worker.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
