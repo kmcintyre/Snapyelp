@@ -20,7 +20,10 @@ def get_master_ami():
 def get_region_ami(region, ami_id, create = False):    
     r_conn = boto.ec2.connect_to_region(region)
     for r_image in r_conn.get_all_images(owners=['self'], filters={'name': app_util.app_name}):
-        return (region, r_image)
+        if ami_id in r_image.description:
+            return (region, r_image)
+        else:
+            destroy_ami(region, r_image)
     if create:            
         print region, 'need to clone image:', ami_id
         replicate_response = r_conn.copy_image(app_util.app_region, ami_id, app_util.app_name)
