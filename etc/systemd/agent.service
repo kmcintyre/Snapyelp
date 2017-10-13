@@ -7,7 +7,7 @@ EnvironmentFile=/home/ubuntu/Snapyelp/etc/default.env
 WorkingDirectory=/home/ubuntu/Snapyelp
 ExecStart=/usr/bin/python /home/ubuntu/Snapyelp/snapyelp/ws/agent.py
 Restart=always
-ExecStartPre=/bin/sleep 5
+ExecStartPre=/bin/sleep 4
 
 [Install]
 WantedBy=multi-user.target

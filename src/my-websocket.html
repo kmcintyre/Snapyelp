@@ -2,6 +2,7 @@
 
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
@@ -28,22 +29,87 @@
           --iron-icon-width: 20px;
          }         
          paper-item {
-         	margin: 10px 20px 10px 20px;
+         	margin: 10px 120px 10px 10px;
          	cursor: pointer;
          }
+         paper-button {
+         	color: #538700;
+         }
+         .agents {         	
+         	display: table;
+         }
+         .agent {         	
+         	display: table-row;
+         }
+         .agent > div {
+         	display: table-cell;
+         	padding: 10px;
+         }
+         .agent > div:nth-child(event) {
+    		background-color: #ECEEF1;
+		 }
+         .agent > span {
+         	display: table-cell;
+         	padding: 10px;
+         	background-color: #538700;
+         	color: white;
+         	font-size: 1em;
+         	font-weight: bold;
+         }         
       </style>
+
       <div>
-      websocket: {{ readyState }}     
+      	<template is="dom-if" if="{{ visible(readyState,1) }}">
+      		Connected
+      	</template>
+		<template is="dom-if" if="{{ visible(readyState,0) }}">
+      		Opening...
+      	</template>
+		<template is="dom-if" if="{{ visible(readyState,3) }}">
+      		Error
+      	</template>      	                 	      	           
       </div>
       <div class="flex">
       </div>
-		<paper-item on-top="toggle">
+		<paper-item on-tap="toggle">
 		  <paper-item-body two-line>
 		    <div>{{ agents.length }} {{ lingo(agents) }}</div>
 		    <div secondary>across AWS</div>		    
 		  </paper-item-body>
 		  <iron-icon icon="maps:place">
-		</paper-item>      
+		</paper-item>  
+
+	<paper-dialog id="modal" modal>
+		<div class="agents">	
+			<div class="agent">
+				<span>Nick</span>
+				<span>City</span>
+				<span>Region</span>
+				<span>Country</span>
+			</div>	
+		<template is="dom-repeat" items="{{agents}}" as="agent">
+			<div class="agent">
+				<div class="nickname">
+					{{ agent.nickname }}
+				</div>
+				<div class="city">				
+					{{ agent.location.city }}
+				</div>
+				<div class="region">
+					{{ agent.location.region }}
+				</div>
+				<div class="country">
+					{{ agent.location.country }}
+				</div>
+			</div>			
+		</template>
+		</div>  		
+  		<div class="buttons">
+    		<paper-button dialog-confirm autofocus>close</paper-button>
+  		</div>
+	</paper-dialog>
+
+		    
    </template>
    <script>
 		class MyWebsocket extends ReduxMixin(Polymer.Element) {
@@ -79,6 +145,13 @@
 		    	  this.socket.send( JSON.stringify(requests[requests.length -1]) );	    		  
 	    	  }
 	      };
+	      visible(rs, matchState) {
+	    	  return rs == matchState
+	      }
+	      toggle(e) {
+	    	  console.log('toggle:', this.$.modal)
+	    	  this.$.modal.open()
+	      }
 		  
 		    static get actions() {
 		        return {
@@ -109,7 +182,7 @@
 	      }	      
 	      ready() {
 	    	  super.ready();
-			  this.socket = new WebSocket('ws://localhost:8080', this.protocol);
+			  this.socket = new WebSocket('ws://localhost:8082', this.protocol);
 	          this.socket.onerror = this.onError.bind(this);
 	          this.socket.onopen = this.onOpen.bind(this);
 	          this.socket.onmessage = this.onMessage.bind(this);

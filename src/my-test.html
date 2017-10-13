@@ -1,0 +1,42 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="redux-mixin.html">
+
+<dom-module id="my-test">
+   <template>
+      <style>
+         :host {
+         }   
+      </style>
+      <div id="test">
+      ID: {{ test.test_id }}
+      <br>
+      Results: {{ len(results) }}
+      </div>
+   </template>
+   <script>
+		class MyTest extends ReduxMixin(Polymer.Element) {
+		  static get is() { return 'my-test'; }
+		  static get properties() {
+			  return {
+	              test: {
+	                  type: Object
+	              },
+	              results: {
+	                  type: Array,
+	                  statePath: 'results'
+	              }
+	              
+			  }		  
+		  }
+		  test_results(results) {
+			  var t_id = this.test.test_id;
+			  return results.filter(function (r) { return r.test_id == t_id })
+		  }		  
+		  len(results) {
+			  return this.test_results(results).length			  
+		  }		  
+		}            
+      	customElements.define(MyTest.is, MyTest);      
+   </script>
+</dom-module>

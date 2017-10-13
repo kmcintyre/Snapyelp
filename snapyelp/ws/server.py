@@ -5,11 +5,12 @@ import json
 from snapyelp import fixed
 from snapyelp.aws import app_util
 
-from twisted.internet import task
+from twisted.internet import task, defer
 
 class SnapyelpServerProtocol(WebSocketServerProtocol):
     
-    stream_delay = 1    
+    stream_delay = 1
+    deferred_job = None  
     
     def onConnect(self, request):
         print request
@@ -40,16 +41,17 @@ class SnapyelpServerProtocol(WebSocketServerProtocol):
                 if fixed.agent in incoming and fixed.agent not in self.user:
                     print 'update as agent:', incoming
                     self.user.update(incoming)
-                    print self.user
                     self.factory.pushagents()
                 elif fixed.result in incoming:
-                    print 'got result:', incoming
-                elif fixed.job in incoming:
+                    for user in [u for u in self.factory.users() if u.user[fixed.ws_key] == incoming[fixed.ws_key]]:
+                        user.sendMessage(json.dumps(incoming))
+                    self.deferred_job.callback(True)
+                elif fixed.job in incoming:                    
                     job = {}
                     job.update(self.user)
                     job.update(incoming)
-                    print 'job:', job 
-                    [c.sendMessage(json.dumps(job)) for c in self.factory.agents()]
+                    print 'queue job:', job
+                    self.factory.queue.put(job)                     
                 else:
                     print 'wtf?:', self.peer, incoming
             except ValueError as e:
@@ -73,16 +75,37 @@ class SnapyelpServerProtocol(WebSocketServerProtocol):
 
 class SnapyelpServerFactory(WebSocketServerFactory):
     
+    queue = defer.DeferredQueue()
+    test_id = 0
+    
     protocol = SnapyelpServerProtocol
     heartbeat_interval = 60
     
     def __init__(self, url):
         WebSocketServerFactory.__init__(self, url)        
         self.clients = []
-        task.LoopingCall(self.heartbeat).start(self.heartbeat_interval)        
+        task.LoopingCall(self.heartbeat).start(self.heartbeat_interval)
+        self.queue.get().addBoth(self.handle_queue)
+        
+    def handle_queue(self, queue_object):
+        self.test_id += 1
+        queue_object[fixed.test_id] = self.test_id
+        self.user(queue_object[fixed.ws_key]).sendMessage(json.dumps({ fixed.test_id: self.test_id }))
+        dl = []
+        for agent in self.agents():
+            d = defer.Deferred()
+            agent.deferred_job = d
+            agent.sendMessage(json.dumps(queue_object))
+            dl.append(d)
+        dl = defer.DeferredList(dl)
+        dl.addBoth(lambda ign: self.queue.get().addBoth(self.handle_queue))
 
     def agents(self):
         return [c for c in self.clients if fixed.agent in c.user]
+    
+    def user(self, ws_key):
+        for user in [u for u in self.users() if u.user[fixed.ws_key] == ws_key]:
+            return user
     
     def users(self):
         return [c for c in self.clients if fixed.agent not in c.user]

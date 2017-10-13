@@ -41,7 +41,8 @@ class WebEngineUrlRequestInterceptor(QWebEngineUrlRequestInterceptor):
     requests = []
     
     def status(self, request):
-        print '{:6s}'.format(request['status']), '{:10s}'.format(request['method']), '{:15s}'.format(request['type']), request['url']    
+        pass
+        #print '{:6s}'.format(request['status']), '{:10s}'.format(request['method']), '{:15s}'.format(request['type']), request['url']    
     
     def interceptRequest(self, info):
         block = self.is_blocked(info)
