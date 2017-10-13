@@ -12,6 +12,10 @@
       ID: {{ test.test_id }}
       <br>
       Results: {{ len(results) }}
+      <br>
+		<template is="dom-repeat" items="{{ test_results(results) }}" as="result">
+      		{{ result.agent.nickname }}      		      		
+      	</template>      
       </div>
    </template>
    <script>
@@ -32,9 +36,9 @@
 			  var t_id = this.test.test_id;
 			  return results.filter(function (r) { return r.test_id == t_id })
 		  }		  
-		  len(results) {
-			  return this.test_results(results).length			  
-		  }		  
+		  len(r) {
+			  return r.length
+		  }
 		}            
       	customElements.define(MyTest.is, MyTest);      
    </script>

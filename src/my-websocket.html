@@ -56,11 +56,18 @@
          	font-size: 1em;
          	font-weight: bold;
          }         
+         .lead {
+         	 font-family: 'Permanent Marker', cursive;
+             font-size: 32px;
+             padding-top: 20px
+         }
       </style>
 
       <div>
       	<template is="dom-if" if="{{ visible(readyState,1) }}">
-      		Connected
+      		<div class="lead">
+      			Tuneable Funnel Testing
+      		</div>      		
       	</template>
 		<template is="dom-if" if="{{ visible(readyState,0) }}">
       		Opening...
@@ -74,7 +81,7 @@
 		<paper-item on-tap="toggle">
 		  <paper-item-body two-line>
 		    <div>{{ agents.length }} {{ lingo(agents) }}</div>
-		    <div secondary>across AWS</div>		    
+		    <div secondary>via AWS</div>		    
 		  </paper-item-body>
 		  <iron-icon icon="maps:place">
 		</paper-item>  
@@ -182,7 +189,7 @@
 	      }	      
 	      ready() {
 	    	  super.ready();
-			  this.socket = new WebSocket('ws://service.snapyelp.com:8080', this.protocol);
+			  this.socket = new WebSocket('ws://localhost:8082', this.protocol);
 	          this.socket.onerror = this.onError.bind(this);
 	          this.socket.onopen = this.onOpen.bind(this);
 	          this.socket.onmessage = this.onMessage.bind(this);
