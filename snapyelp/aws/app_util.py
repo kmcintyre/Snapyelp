@@ -6,9 +6,9 @@ app_region = 'us-east-2'
 app_bucket = app_name + '.s3.amazonaws.com'
 app_service = 'service.' + app_name
 
-#connection_host = app_service
-connection_host = 'localhost'
-connection_port = 8082
+connection_host = app_service
+#connection_host = 'localhost'
+connection_port = 8080
 
 def check_key(bucket, filename):
     possible_key = bucket.get_key(filename)

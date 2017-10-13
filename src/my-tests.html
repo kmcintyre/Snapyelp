@@ -11,10 +11,10 @@
       <style include="iron-flex iron-flex-alignment">
          :host {
          	@apply(--layout-vertical);
-         }   
-         my-test {
-         	background-color: blue;
          }
+		 my-test2:nth-of-type(odd) {
+    		background-color: #ECEEF1;
+		 }
       </style>
       <template is="dom-if" if="{{ visible(tests) }}">
       	<template is="dom-repeat" items="{{tests}}" as="test">

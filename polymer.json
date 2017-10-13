@@ -4,7 +4,9 @@
   "fragments": [
   	"src/my-app.html",
     "src/my-index.html",    
-    "src/my-queue.html",
+    "src/my-funnels.html",
+    "src/my-tests.html",
+    "src/my-test.html",
     "src/my-websocket.html",
     "src/shared-styles.html",
     "src/redux-mixin.html"

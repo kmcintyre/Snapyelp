@@ -44,6 +44,7 @@ class SnapyelpServerProtocol(WebSocketServerProtocol):
                     self.factory.pushagents()
                 elif fixed.result in incoming:
                     for user in [u for u in self.factory.users() if u.user[fixed.ws_key] == incoming[fixed.ws_key]]:
+                        incoming.update({ fixed.agent: self.user[fixed.agent]})
                         user.sendMessage(json.dumps(incoming))
                     self.deferred_job.callback(True)
                 elif fixed.job in incoming:                    
