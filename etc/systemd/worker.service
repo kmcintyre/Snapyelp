@@ -7,6 +7,7 @@ EnvironmentFile=/home/ubuntu/Snapyelp/etc/default.env
 WorkingDirectory=/home/ubuntu/Snapyelp
 ExecStart=/usr/bin/python /home/ubuntu/Snapyelp/snapyelp/xmlrpc/worker.py
 Restart=always
+ExecStartPre=/bin/sleep 2
 
 [Install]
 WantedBy=multi-user.target

@@ -10,7 +10,6 @@ import hashlib
 import time
 
 
-
 class AgentWorker(xmlrpc.XMLRPC):
     
     def get_window(self, width = 1366, height = 768):
@@ -25,22 +24,22 @@ class AgentWorker(xmlrpc.XMLRPC):
         if window.page().url().toString() == url:
             return defer.succeed(True)
         else:
-            return window.goto_url(url)
-        
+            return window.goto_url(url)        
     
     @defer.inlineCallbacks
     def xmlrpc_job(self, job, location = None, bucket = None):
         print 'job:', job
-        window = self.get_window()
+        window = self.get_window()        
         for j in job[fixed.job]:
             url = j[fixed.url]
             start_time = time.time()
             yield self.verify_or_goto_url(window, url)
-            j[fixed.load_time] = time.time() - start_time 
+            j[fixed.load_time] = time.time() - start_time
             j[fixed.requests] = view.intercept.requests            
             if location:
-                self.snapshot(url, window, location, bucket)            
-        defer.returnValue(j)
+                self.snapshot(url, window, location, bucket)
+        job[fixed.result] = True                    
+        defer.returnValue(job)
     
     def xmlrpc_snapshot(self, url, location = None, bucket = None):
         self.snapshot(url, self.get_window(), location, bucket)        

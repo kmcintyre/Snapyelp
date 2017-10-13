@@ -1,10 +1,15 @@
 ws_key = 'ws_key'
 detect_agent = 'detect_agent'
 agent = 'agent'
+test_id = 'test_id'
 job = 'job'
 url = 'url'
 result = 'result'
+location = 'location'
+nickname = 'nickname'
 
+start_time = 'start_time'
+end_time = 'end_time'
 load_time = 'load_time'
 requests = 'requests'
 
