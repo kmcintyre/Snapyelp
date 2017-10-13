@@ -9,6 +9,8 @@
 <link rel="import" href="my-tests.html">
 <link rel="import" href="my-index.html">
 
+<link rel="import" href="redux-mixin.html">
+
 <dom-module id="my-app">
    <template>
       <style include="shared-styles">
@@ -32,46 +34,72 @@
       <my-websocket></my-websocket>
       
       <paper-toolbar>
-      		<paper-icon-button slot="top" icon="{{ collapsed_icon(collapsed) }}" on-tap="toggle"></paper-icon-button>
+      		<paper-icon-button slot="top" icon="{{ creator_icon(creator) }}" on-tap="creator_toggle"></paper-icon-button>
   			<div slot="top" class="title">Funnel Creator</div>  			  			
 	  </paper-toolbar>
 	        
-      <my-index id="url"></my-index>            
+      <my-index id="creator"></my-index>            
       
       <my-funnels></my-funnels>
-      
-      <my-tests></my-tests>
-      
+
+	  <template is="dom-if" if="{{ visible(tests) }}">
+	  	<paper-toolbar>
+      		<paper-icon-button slot="top" icon="{{ results_icon(results) }}" on-tap="results_toggle"></paper-icon-button>
+  			<div slot="top" class="title">Test Results</div>  			  			
+	  	</paper-toolbar>
+	  	<my-tests id="results"></my-tests>
+	  </template>
    </template>
    <script> 	    
-   class MyApp extends Polymer.Element {
+   class MyApp extends ReduxMixin(Polymer.Element) {
        static get is() {
            return 'my-app';
        }
        
        static get properties() {
            return {
-        	collapsed: {
+        		creator: {
 				type: Boolean,
-        		value: false
+        			value: false
+			},
+    			results: {
+				type: Boolean,
+        			value: false
+			},			
+    			tests: {
+				type: Array,
+        			statePath: 'tests'
 			}
          }
        }
-       collapsed_icon(c, button) {
-    	   return this.collapsed ? 'add' : 'remove'
+       
+       results_icon(c, button) {
+   	   	return this.results ? 'add' : 'remove'
        }
-       toggle(e) {
-    	   console.log(this.$.url.classList)
-    	   	if ( this.$.url.classList.contains('hidden') ) {
-       			this.$.url.classList.remove('hidden')
-   			} else {
-   				this.$.url.classList.add('hidden')
-   			}
-   
-    	   this.collapsed = !this.collapsed;
+       results_toggle(e) {
+  	   		if ( this.$.results.classList.contains('hidden') ) {
+      			this.$.results.classList.remove('hidden')
+  			} else {
+  				this.$.results.classList.add('hidden')
+  			}
+  			this.results = !this.results;    	   
+       }       
+       creator_icon(c, button) {
+    	   	return this.creator ? 'add' : 'remove'
        }
+       creator_toggle(e) {
+   	   		if ( this.$.creator.classList.contains('hidden') ) {
+      			this.$.creator.classList.remove('hidden')
+  			} else {
+  				this.$.creator.classList.add('hidden')
+  			}
+  			this.creator = !this.creator;
+       }
+       visible(tests) {
+   	   		return tests.length > 0;
+       }       
        ready() {
-    	   console.log(MyApp.is, 'ready')
+    	   		console.log(MyApp.is, 'ready')
            super.ready();
        }     	       
    }

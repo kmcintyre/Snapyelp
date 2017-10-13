@@ -25,7 +25,7 @@
 						 return Object.assign({}, state, { tests: nt });	 
 					 } else {
 						 var nr = state.results.slice(0);
-						 nr.push(msg)
+						 nr.unshift(msg)
 						 return Object.assign({}, state, { results: nr });
 					 }
 					 

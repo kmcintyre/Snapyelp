@@ -87,7 +87,15 @@ class SnapyelpServerFactory(WebSocketServerFactory):
         self.clients = []
         task.LoopingCall(self.heartbeat).start(self.heartbeat_interval)
         self.queue.get().addBoth(self.handle_queue)
-        
+    
+    
+    def maybe_cancel(self, dl):
+        if not dl.called:
+            print 'timeout erroring'
+            dl.errback(False)
+        else:
+            print 'deferred fired successfully'        
+    
     def handle_queue(self, queue_object):
         self.test_id += 1
         queue_object[fixed.test_id] = self.test_id
@@ -100,6 +108,7 @@ class SnapyelpServerFactory(WebSocketServerFactory):
             dl.append(d)
         dl = defer.DeferredList(dl)
         dl.addBoth(lambda ign: self.queue.get().addBoth(self.handle_queue))
+        reactor.callLater(30, self.maybe_cancel, dl)
 
     def agents(self):
         return [c for c in self.clients if fixed.agent in c.user]

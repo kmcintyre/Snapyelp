@@ -25,7 +25,8 @@ class AgentClientProtocol(WebSocketClientProtocol):
         self.connect_message = None        
     
     def defineAgent(self, region):
-        response = requests.get('http://ip-api.com/json')        
+        response = requests.get('http://ip-api.com/json') 
+        print 'define agent:', region, response.json()        
         return { fixed.agent: { fixed.nickname: region, fixed.location: response.json() }}
     
     def onOpen(self):
