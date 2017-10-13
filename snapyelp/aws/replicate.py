@@ -21,6 +21,8 @@ def get_region_ami(region, ami_id, create = False):
     print 'get region ami:', region, 'master ami id:', ami_id
     r_conn = boto.ec2.connect_to_region(region)
     for r_image in r_conn.get_all_images(owners=['self'], filters={'name': app_util.app_name}):
+        if region == app_util.app_region:
+            return (region, r_image)
         print region, r_image.description
         if not r_image.description or ami_id not in r_image.description:
             destroy_ami(region, r_image)            
@@ -155,5 +157,5 @@ def instances():
             print 'no ami for:', r.name
             
 if __name__ == '__main__':
-    reactor.callWhenRunning(destroy)
+    reactor.callWhenRunning(instances)
     reactor.run()    
