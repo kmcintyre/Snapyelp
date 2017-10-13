@@ -10,10 +10,6 @@
       <style include="shared-styles iron-flex iron-flex-alignment">
          :host {
          }   
-         .job {
-         	padding: 2px;
-         	width: 100px;
-         }
          .result {
          	@apply(--layout-vertical);
          }
@@ -30,7 +26,7 @@
 	      <div class="results">
 		      <template is="dom-repeat" items="{{ test_results(results) }}" as="result">
 		      	<div class="layout horizontal">
-		      		<div class="job">
+		      		<div style="padding:2px; width:100px">
 	      				{{ result.agent.nickname }}
 	      			</div>
 	      			<div class="flex">
