@@ -20,14 +20,13 @@
 		  static get properties() {
 			  return {
 	              test: {
-	                  type: Object
+					type: Object
 	              },
 	              results: {
-	                  type: Array,
-	                  statePath: 'results'
-	              }
-	              
-			  }		  
+					type: Array,
+					statePath: 'results'
+	              }	              
+			  }  
 		  }
 		  test_results(results) {
 			  var t_id = this.test.test_id;
