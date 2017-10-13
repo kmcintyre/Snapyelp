@@ -3,14 +3,35 @@
 
 <script src="../node_modules/redux/dist/redux.js"></script>
 
-<script> 	    
+<script>
  const reducer = (state, action) => {
 	  switch (action.type) {
 	    case 'WEBSOCKET_MESSAGE':
-			 console.log('message', action.message)
+			 //console.log('message', action.message)
 			 try {
 				 var msg = JSON.parse(action.message)
-				 return Object.assign({}, state, msg);
+				 if ( msg.test_id ) {
+					 //console.log('existing state:', state)
+					 var is_result = false;
+					 state.tests.forEach(function (t) {						 
+						 if ( t.test_id == msg.test_id ) {							 
+							 is_result = true
+							 console.log('update:', msg.test_id)
+						 }						 
+					 })
+					 if ( !is_result ) {
+						 var nt = state.tests.slice(0);
+						 nt.push({test_id: msg.test_id, results: [] })
+						 return Object.assign({}, state, { tests: nt });	 
+					 } else {
+						 var nr = state.results.slice(0);
+						 nr.push(msg)
+						 return Object.assign({}, state, { results: nr });
+					 }
+					 
+				 } else {
+					 return Object.assign({}, state, msg);	 
+				 }				 
 			 } catch (err) {
 				 console.log(err, action)
 			 }
@@ -27,7 +48,9 @@
   };
  
  const store = Redux.createStore(reducer, {
-	 requests: []
+	 requests: [],
+	 tests: [],
+	 results: []
  });	            
  const ReduxMixin = PolymerRedux(store)
     

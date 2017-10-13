@@ -2,32 +2,32 @@
 
 <link rel="import" href="redux-mixin.html">
 
-<dom-module id="my-queue">
+<dom-module id="my-funnels">
    <template>
       <style>
          :host {
          }   
       </style>
-      <template is="dom-if" if="[[hasrequests(requests)]]">
-      	{{ requests }}
+      <template is="dom-if" if="[[visible(funnels)]]">
+      	{{ funnels }}
       </template>
    </template>
    <script>
-		class MyQueue extends ReduxMixin(Polymer.Element) {
-		  static get is() { return 'my-queue'; }
+		class MyFunnels extends ReduxMixin(Polymer.Element) {
+		  static get is() { return 'my-funnels'; }
 		  static get properties() {
 			  return {
 	              requests: {
 	                  type: Array,
-	                  statePath: 'requests'
+	                  statePath: 'funnels'
 	              }
 			  }		  
 		  }
-		  hasrequests(r) {
-			  console.log('Y3', r)
-			  return this.requests.length > 0
+		  visible(f) {
+			  return this.funnels.length > 0
 		  }
+		  
 		}            
-      	customElements.define(MyQueue.is, MyQueue);      
+      	customElements.define(MyFunnels.is, MyFunnels);      
    </script>
 </dom-module>

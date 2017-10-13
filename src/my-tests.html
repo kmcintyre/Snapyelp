@@ -1,0 +1,43 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="my-test.html">
+
+<link rel="import" href="redux-mixin.html">
+
+<dom-module id="my-tests">
+   <template>
+      <style include="iron-flex iron-flex-alignment">
+         :host {
+         	@apply(--layout-vertical);
+         }   
+         my-test {
+         	background-color: blue;
+         }
+      </style>
+      <template is="dom-if" if="{{ visible(tests) }}">
+      	<template is="dom-repeat" items="{{tests}}" as="test">
+      		<my-test test="{{test}}"></my-test>      		      		
+      	</template>      	
+      </template>
+   </template>
+   <script>
+		class MyTests extends ReduxMixin(Polymer.Element) {
+		  static get is() { return 'my-tests'; }
+		  static get properties() {
+			  return {
+	              tests: {
+	                  type: Array,
+	                  statePath: 'tests'
+	              }
+			  }		  
+		  }
+		  visible(f) {
+			  return this.tests.length > 0
+		  }
+		  
+		}            
+      	customElements.define(MyTests.is, MyTests);      
+   </script>
+</dom-module>
