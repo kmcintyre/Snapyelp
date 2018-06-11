@@ -47,22 +47,19 @@ def selfie():
         yield defer.maybeDeferred(app_routes.set_cname, 'service.' + app_util.app_name)
         security_groups = yield getPage('http://169.254.169.254/latest/meta-data/security-groups')
         print 'security groups:', security_groups
-    try:
-        for service_name in service_names(region):
-            fp = source_service_path(service_name)
-            sp = service_path(service_name)
-            if not os.path.exists(sp) or not filecmp.cmp(fp, sp):
-                os.system('sudo cp ' + fp + ' ' + sp)
-            enable_start(service_name)
-        for instance in boto.ec2.connect_to_region(region).get_only_instances(instance_ids=[instance_id]):
-            print 'instance tags:', instance.tags
-            if fixed.tag_app not in instance.tags:
-                instance.add_tag(fixed.tag_app, app_util.app_name)
-            if fixed.tag_state in instance.tags and instance.tags[fixed.tag_state] == fixed.state_replicate:
-                yield replicate.replicate()
-                instance.remove_tag(fixed.tag_state)
-    except Exception as e:
-        print 'exception:', e
+    for service_name in service_names(region):
+        fp = source_service_path(service_name)
+        sp = service_path(service_name)
+        if not os.path.exists(sp) or not filecmp.cmp(fp, sp):
+            os.system('sudo cp ' + fp + ' ' + sp)
+        enable_start(service_name)
+    for instance in boto.ec2.connect_to_region(region).get_only_instances(instance_ids=[instance_id]):
+        print 'instance tags:', instance.tags
+        if fixed.tag_app not in instance.tags:
+            instance.add_tag(fixed.tag_app, app_util.app_name)
+        if fixed.tag_state in instance.tags and instance.tags[fixed.tag_state] == fixed.state_replicate:
+            yield replicate.replicate()
+            instance.remove_tag(fixed.tag_state)
                             
     reactor.stop()
 
