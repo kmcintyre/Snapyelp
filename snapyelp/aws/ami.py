@@ -1,6 +1,5 @@
 from twisted.internet import reactor, defer, task
 
-import os
 import boto.ec2
 from snapyelp.aws import app_util, identify
 from snapyelp import fixed
@@ -25,8 +24,8 @@ def region_instance(region_instance_seq):
         print 'create image:', app_util.app_name
         r_conn = boto.ec2.connect_to_region(region)
         try:
-            for service_name in identify.service_names(region):
-                os.system('sudo rm ' + identify.service_path(service_name) )
+            #for service_name in identify.service_names(region):
+            #    os.system('sudo rm ' + identify.service_path(service_name) )
             for instance in r_conn.get_only_instances(instance_ids=[instance_id]):
                 print 'instance to tag:', instance
                 instance.add_tag(fixed.tag_state, fixed.state_replicate)

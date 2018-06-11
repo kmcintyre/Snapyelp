@@ -32,11 +32,11 @@ def service_names(region):
     return sns
 
 def service_path(sn):
-    return '/home/ubuntu/Snapyelp/etc/systemd/' + sn + '.service'
-
-def source_service_path(sn):
     return '/etc/systemd/system/' + sn + '.service'
 
+def source_service_path(sn):
+    return '/home/ubuntu/Snapyelp/etc/systemd/' + sn + '.service'
+    
 @defer.inlineCallbacks
 def selfie():
     rl = yield defer.DeferredList([get_region(), get_instance()])
@@ -50,8 +50,8 @@ def selfie():
     try:
         for service_name in service_names(region):
             print 'service name:', service_name
-            fp = source_service_path(service_name)
-            ep = service_path(service_name)
+            fp = service_path(service_name)
+            ep = source_service_path(service_name)
             if not os.path.exists(fp) or not filecmp.cmp(fp, ep):
                 print 'copy:', ep, 'to:', fp
                 os.system('sudo cp ' + ep + ' ' + fp)
