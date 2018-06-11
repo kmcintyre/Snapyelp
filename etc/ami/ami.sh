@@ -9,15 +9,15 @@ sudo apt-get -y install alsa-base ant gcc git glances imagemagick libfreetype6-d
 sudo pip install --upgrade pip
 sudo pip install --upgrade autobahn boto cssselect lxml Pillow pyopenssl requests service_identity simplejson Twisted Wand psutil
 
-curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
-sudo apt-get install -y nodejs 
-
+curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+sudo apt-get install -y nodejs
+	
 sudo npm install -g bower
 sudo npm install -g polymer-cli
 
-git clone https://github.com/kmcintyre/Snapyelp -b demo
+git clone https://github.com/kmcintyre/Snapyelp
 
-cd Snapyelp
+cd ~/Snapyelp
 git config credential.helper 'store'
 
 sudo cp etc/systemd/xvfb.service /etc/systemd/system
@@ -41,21 +41,23 @@ chmod +x qt-opensource-linux-x64-5.11.0.run
 export DISPLAY=:2
 ./qt-opensource-linux-x64-5.11.0.run --script ~/Snapyelp/etc/ami/qt.install.js
 
-wget https://www.riverbankcomputing.com/static/Downloads/sip/sip-4.19.4.dev1710092233.tar.gz
-gzip -df sip-4.19.4.dev1710092233.tar.gz
-tar -xvf sip-4.19.4.dev1710092233.tar
+
+wget https://www.riverbankcomputing.com/static/Downloads/sip/sip-4.19.9.dev1806101717.tar.gz
+gzip -df sip-4.19.9.dev1806101717.tar.gz
+tar -xvf sip-4.19.9.dev1806101717.tar
 rm *.tar
-cd sip-4.19.4.dev1710092233
+cd sip-4.19.9.dev1806101717
 python configure.py
 make
 sudo make install
 cd ..
 
-wget https://www.riverbankcomputing.com/static/Downloads/PyQt5/PyQt5_gpl-5.9.1.dev1710071532.tar.gz
-gzip -df PyQt5_gpl-5.9.1.dev1710071532.tar.gz
-tar -xvf PyQt5_gpl-5.9.1.dev1710071532.tar
-rm PyQt5_gpl-5.9.1.dev1710071532.tar 
-cd PyQt5_gpl-5.9.1.dev1710071532
+
+wget https://www.riverbankcomputing.com/static/Downloads/PyQt5/PyQt5_gpl-5.11.dev1806101728.tar.gz
+gzip -df PyQt5_gpl-5.11.dev1806101728.tar.gz
+tar -xvf PyQt5_gpl-5.11.dev1806101728.tar
+rm PyQt5_gpl-5.11.dev1806101728.tar 
+cd PyQt5_gpl-5.11.dev1806101728
 python configure.py --qmake=/home/ubuntu/Qt/5.7/gcc_64/bin/qmake 
 make
 sudo make install
