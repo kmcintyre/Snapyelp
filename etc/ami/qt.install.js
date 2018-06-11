@@ -26,9 +26,9 @@ Controller.prototype.ComponentSelectionPageCallback = function() {
 	console.log(widget)
 	widget.selectAll()
 	console.log('entering deselects')
-	widget.deselectComponent("qt.qt5.5110.src")
-	widget.deselectComponent("qt.qt5.5110.android_armv7")
-	widget.deselectComponent("qt.qt5.5110.android_x86")
+	widget.deselectComponent("qt.qt5.5101.src")
+	widget.deselectComponent("qt.qt5.5101.android_armv7")
+	widget.deselectComponent("qt.qt5.5101.android_x86")
     gui.clickButton(buttons.NextButton, 3000);    
 }
 Controller.prototype.LicenseAgreementPageCallback = function() {

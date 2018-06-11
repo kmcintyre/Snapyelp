@@ -13,7 +13,7 @@ curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 sudo apt-get install -y nodejs
 	
 sudo npm install -g bower
-sudo npm install -g polymer-cli
+sudo npm install -g --unsafe-perm polymer-cli
 
 git clone https://github.com/kmcintyre/Snapyelp
 
@@ -35,11 +35,11 @@ sudo systemctl start swap
 
 cd
 
-wget http://download.qt.io/official_releases/qt/5.11/5.11.0/qt-opensource-linux-x64-5.11.0.run
+wget http://download.qt.io/official_releases/qt/5.10/5.10.1/qt-opensource-linux-x64-5.10.1.run
 
-chmod +x qt-opensource-linux-x64-5.11.0.run
+chmod +x qt-opensource-linux-x64-5.10.1.run
 export DISPLAY=:2
-./qt-opensource-linux-x64-5.11.0.run --script ~/Snapyelp/etc/ami/qt.install.js
+./qt-opensource-linux-x64-5.10.1.run --script ~/Snapyelp/etc/ami/qt.install.js
 
 
 wget https://www.riverbankcomputing.com/static/Downloads/sip/sip-4.19.9.dev1806101717.tar.gz
@@ -52,12 +52,11 @@ make
 sudo make install
 cd ..
 
-
-wget https://www.riverbankcomputing.com/static/Downloads/PyQt5/PyQt5_gpl-5.11.dev1806101728.tar.gz
-gzip -df PyQt5_gpl-5.11.dev1806101728.tar.gz
-tar -xvf PyQt5_gpl-5.11.dev1806101728.tar
-rm PyQt5_gpl-5.11.dev1806101728.tar 
-cd PyQt5_gpl-5.11.dev1806101728
+wget https://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.10.1/PyQt5_gpl-5.10.1.tar.gz
+gzip -df PyQt5_gpl-5.10.1.tar.gz
+tar -xvf PyQt5_gpl-5.10.1.tar
+rm PyQt5_gpl-5.10.1.tar 
+cd PyQt5_gpl-5.10.1
 python configure.py --qmake=/home/ubuntu/Qt/5.7/gcc_64/bin/qmake 
 make
 sudo make install
