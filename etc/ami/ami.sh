@@ -35,11 +35,11 @@ sudo systemctl start swap
 
 cd
 
-wget http://download.qt.io/official_releases/qt/5.9/5.9.2/qt-opensource-linux-x64-5.9.2.run
+wget http://download.qt.io/official_releases/qt/5.10/5.10.1/qt-opensource-linux-x64-5.10.1.run
 
-chmod +x qt-opensource-linux-x64-5.9.2.run
+chmod +x qt-opensource-linux-x64-5.10.1.run
 export DISPLAY=:2
-./qt-opensource-linux-x64-5.9.2.run --script ~/Snapyelp/etc/ami/qt.install.js
+./qt-opensource-linux-x64-5.10.1.run --script ~/Snapyelp/etc/ami/qt.install.js
 
 wget https://www.riverbankcomputing.com/static/Downloads/sip/sip-4.19.4.dev1710092233.tar.gz
 gzip -df sip-4.19.4.dev1710092233.tar.gz
