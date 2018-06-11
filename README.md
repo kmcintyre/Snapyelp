@@ -25,3 +25,7 @@ See [AMI script](repo/blob/master/etc/ami.sh) for additional libraries
 * [website](http://snapyelp.com) - published assets via [Cloudfront](https://aws.amazon.com/cloudfront/)
 * [service](http://service.snapyelp.com) - choreographs tests 
 * agent - test running 
+
+## Install
+
+* ./etc/ami/ami.sh (create AMI for distribution)

@@ -157,5 +157,5 @@ def instances():
             print 'no ami for:', r.name
             
 if __name__ == '__main__':
-    reactor.callWhenRunning(destroy)
+    reactor.callWhenRunning(instances)
     reactor.run()    

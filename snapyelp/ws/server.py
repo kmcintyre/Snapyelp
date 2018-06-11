@@ -97,11 +97,13 @@ class SnapyelpServerFactory(WebSocketServerFactory):
             print 'deferred fired successfully'        
     
     def handle_queue(self, queue_object):
+        print 'handle queue:', self.test_id
         self.test_id += 1
         queue_object[fixed.test_id] = self.test_id
         self.user(queue_object[fixed.ws_key]).sendMessage(json.dumps({ fixed.test_id: self.test_id }))
         dl = []
         for agent in self.agents():
+            print 'push to agent:', agent
             d = defer.Deferred()
             agent.deferred_job = d
             agent.sendMessage(json.dumps(queue_object))
@@ -144,7 +146,9 @@ class SnapyelpServerFactory(WebSocketServerFactory):
     def heartbeat(self):
         print 'heartbeat interval:', self.heartbeat_interval, 'clients length:', len(self.clients)           
             
-factory = SnapyelpServerFactory('ws://' + app_util.connection_host + ':' + str(app_util.connection_port))
+factor_host = 'ws://' + app_util.connection_host + ':' + str(app_util.connection_port)
+print 'factor host:', factor_host
+factory = SnapyelpServerFactory(factor_host)
 
 if __name__ == '__main__':
     from twisted.internet import reactor

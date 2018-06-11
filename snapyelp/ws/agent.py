@@ -48,18 +48,20 @@ class AgentClientProtocol(WebSocketClientProtocol):
         proxy = xmlrpclib.ServerProxy('http://localhost:7000')
         return proxy.job(incoming)                    
       
-    def onMessage(self, payload, isBinary):        
+    def onMessage(self, payload, isBinary):
+        print 'got message:', payload
         if isBinary:
             print 'binary incominng'
         else:
             try:
                 incoming = json.loads(payload.decode('utf8'))
+                print 'inomcing:', incoming
                 if fixed.job in incoming:
                     print 'agent job:', incoming
                     incoming.update(self.runJob(incoming))
                     self.sendMessage(json.dumps(incoming))                             
             except ValueError as e:
-                print e
+                print 'incoming exception:', e
 
     def onClose(self, wasClean, code, reason):
         print 'close:', self.peer, wasClean, code, reason
@@ -79,9 +81,11 @@ class ReconnectingWebSocketClientFactory(WebSocketClientFactory, ReconnectingCli
 def start_agent(host=app_util.connection_host, port=app_util.connection_port):
     factory = ReconnectingWebSocketClientFactory()
     factory.host = host
+    #factory.host = 'localhost'
+    print factory.host 
     factory.port = port
-    print 'client start:', host, port
-    reactor.connectTCP(host, port, factory)
+    print 'client start:', factory.host, factory.port
+    reactor.connectTCP(factory.host, factory.port, factory)
 
 if __name__ == '__main__':
     from twisted.internet import reactor
