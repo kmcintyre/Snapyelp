@@ -42,11 +42,11 @@ export DISPLAY=:2
 ./qt-opensource-linux-x64-5.10.1.run --script ~/Snapyelp/etc/ami/qt.install.js
 
 
-wget https://www.riverbankcomputing.com/static/Downloads/sip/sip-4.19.9.dev1806101717.tar.gz
-gzip -df sip-4.19.9.dev1806101717.tar.gz
-tar -xvf sip-4.19.9.dev1806101717.tar
+wget https://sourceforge.net/projects/pyqt/files/sip/sip-4.19.8/sip-4.19.8.tar.gz
+gzip -df sip-4.19.8.tar.gz
+tar -xvf sip-4.19.8.tar
 rm *.tar
-cd sip-4.19.9.dev1806101717
+cd sip-4.19.8
 python configure.py
 make
 sudo make install
@@ -57,7 +57,7 @@ gzip -df PyQt5_gpl-5.10.1.tar.gz
 tar -xvf PyQt5_gpl-5.10.1.tar
 rm PyQt5_gpl-5.10.1.tar 
 cd PyQt5_gpl-5.10.1
-python configure.py --qmake=/home/ubuntu/Qt/5.7/gcc_64/bin/qmake 
+python configure.py --qmake=/home/ubuntu/Qt/5.10.1/gcc_64/bin/qmake 
 make
 sudo make install
 cd ..
