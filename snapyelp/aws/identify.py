@@ -52,7 +52,7 @@ def selfie():
             print 'service name:', service_name
             fp = source_service_path(service_name)
             ep = service_path(service_name)
-            if not os.path.exists(fp): #or not filecmp.cmp(fp, sp):
+            if not os.path.exists(fp) or not filecmp.cmp(fp, ep):
                 print 'copy:', ep, 'to:', fp
                 os.system('sudo cp ' + ep + ' ' + fp)
             enable_start(service_name)
