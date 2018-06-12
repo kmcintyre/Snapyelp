@@ -22,6 +22,9 @@
          
          }
          paper-fab {
+         	background-color: #393A3D;
+         }
+         paper-fab[action="add"] {
          	background-color: #2CA01C;
          }
 	     paper-input {
@@ -30,17 +33,20 @@
 	        --paper-input-container-invalid-color: red;
 	        --paper-input-container-input-color: #000;
 	     }		 
-	     paper-item paper-fab {
+	     paper-fab {
 	     	margin-left: 5px
 	     }
-		 .container {
-		 	width: 99%;
+		 .job {
+		 	@apply(--layout-horizontal);
+		 	@apply(--layout-start);		 			 
+		 }	     
+		 .container {		 	
 		 	padding: 10px;
 		 	maring: 10px 30px 10px 30px;		 	
 		 }
 		 .container {
-    			@apply(--layout-horizontal);
-    			@apply(--layout-wrap);
+    		@apply(--layout-horizontal);
+    		@apply(--layout-wrap);
     	 }
     	 .inner {
     			@apply(--layout-horizontal);    		    		      	
@@ -52,84 +58,83 @@
 		 	min-height: 100px;
 		 	width: 300px;
 		 }
-.with-margin {
-  --paper-card:{
-    margin: 10px;
-  }
-} 
+		.with-margin {
+		  --paper-card:{
+		    margin: 10px;
+		  }
+		} 
 		 paper-input[disabled="true"] {
 		 	color: red;
 		 }
       </style>
-	  <div class="container">
-			<template is="dom-repeat" items="[[job]]" as="step">
+        <div class="job">
+		  	<div class="container">
+				<template is="dom-repeat" items="[[job]]" as="step">
+					<paper-card class="with-margin">
+					  <div class="card-content">
+					    <paper-input
+		      				label="URL"
+							value$="{{ step.url }}"
+							on-change="modstep"
+							index$="{{ index }}"
+							action="update"
+						>				    
+					    </div>
+					  </div>
+					  <div class="card-actions">
+					    <div class="layout horizontal justified">
+								<paper-fab
+									hidden$="{{ !step.left }}"
+									mini 
+									icon="[[left.icon]]" 
+									title="[[left.title]]" 												
+									on-click="modstep"
+									index$="{{ index }}"
+									action="left"									
+								></paper-fab>
+								<div class="flex"></div>
+								<paper-fab
+									hidden$="{{ !step.right }}" 
+									mini 
+									icon="[[right.icon]]" 
+									title="[[right.title]]" 												
+									on-click="modstep"
+									index$="{{ index }}"
+									action="right"									
+								></paper-fab>							
+								<paper-fab mini 
+									icon="[[remove.icon]]" 
+									title="[[remove.title]]" 												
+									on-click="modstep"
+									index$="{{ index }}"
+									action="remove"									
+								></paper-fab>
+					    </div>
+					  </div>
+					</paper-card>
+				</template>		
 				<paper-card class="with-margin">
 				  <div class="card-content">
 				    <paper-input
-	      				label="URL"
-						value$="{{ step.url }}"
+				    	id="url"
+						label="URL"
 						on-change="modstep"
-						index$="{{ index }}"
-						action="update"
-					>				    
-				    </div>
+						action="add"
+					>			
+					</paper-input>
 				  </div>
 				  <div class="card-actions">
-				    <div class="horizontal justified">
-						<paper-item>
-							<paper-fab mini 
-								icon="[[remove.icon]]" 
-								title="[[remove.title]]" 												
+				    <div class="layout horizontal justified">					
+						<paper-fab mini 
+								icon="[[step.icon]]" 
+								title="[[step.title]]" 												
 								on-click="modstep"
-								index$="{{ index }}"
-								action="remove"									
-							></paper-fab>   												
-							<paper-fab
-								hidden$="{{ !step.left }}"
-								mini 
-								icon="[[left.icon]]" 
-								title="[[left.title]]" 												
-								on-click="modstep"
-								index$="{{ index }}"
-								action="left"									
-							></paper-fab>
-							<paper-fab
-								hidden$="{{ !step.right }}" 
-								mini 
-								icon="[[right.icon]]" 
-								title="[[right.title]]" 												
-								on-click="modstep"
-								index$="{{ index }}"
-								action="right"									
-							></paper-fab>							
-						</paper-item>
+								action="add"
+								></paper-fab>								
 				    </div>
 				  </div>
-				</paper-card>
-			</template>		
-			<paper-card class="with-margin">
-			  <div class="card-content">
-			    <paper-input
-			    	id="url"
-					label="URL"
-					on-change="modstep"
-					action="add"
-				>			
-				</paper-input>
-			  </div>
-			  <div class="card-actions">
-			    <div class="horizontal justified">
-					<paper-item>
-					<paper-fab mini 
-							icon="[[step.icon]]" 
-							title="[[step.title]]" 												
-							on-click="modstep"
-							action="add"
-							></paper-fab>			
-					</paper-item>
-			    </div>
-			  </div>
-			</paper-card>				
+				</paper-card>				
+			</div>
 			<paper-item>
 				<paper-fab mini 
 					icon="[[queue.icon]]" 
