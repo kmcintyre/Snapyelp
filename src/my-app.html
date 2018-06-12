@@ -1,6 +1,9 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
 <link rel="import" href="shared-styles.html">
 
@@ -13,7 +16,7 @@
 
 <dom-module id="my-app">
    <template>
-      <style include="shared-styles">
+      <style include="shared-styles iron-flex iron-flex-alignment">
       	:host {
       		
       	}
@@ -27,6 +30,9 @@
       	.hidden {
       		display:none;
       	}
+      	.toolbar-tools > ::slotted(.title) {
+      		@apply(--layout-horizontal);
+      	}
       </style>
       
       <a href="https://github.com/kmcintyre/Snapyelp"><img style="position: absolute; top: 0; right: 0; border: 0; z-index:1" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
@@ -35,19 +41,31 @@
       
       <paper-toolbar>
       		<paper-icon-button slot="top" icon="{{ creator_icon(creator) }}" on-tap="creator_toggle"></paper-icon-button>
-  			<div slot="top" class="title">Funnel Creator</div>  			  			
+  			<div slot="top" class="title">
+  				<div class="layout horizontal">
+	  				<span>
+	  					Funnel Creator
+	  				</span>
+	  				<div class="flex"></div>
+	  				<div>
+	  					{{ funnels.length }}
+	  				</div>
+					<div class="flex"></div>
+  				</div>
+  			</div>  
 	  </paper-toolbar>
 	        
       <my-index id="creator"></my-index>            
+      <div id="creator_space" class="hidden">&nbsp;</div>
       
       <my-funnels></my-funnels>
 
-	  <div hidden$="{{ !visible(tests) }}">	  
-	  	<paper-toolbar>
-      		<paper-icon-button slot="top" icon="{{ results_icon(results) }}" on-tap="results_toggle"></paper-icon-button>
-  			<div slot="top" class="title">Test Results</div>  			  			
-	  	</paper-toolbar>
-	  	<my-tests id="results"></my-tests>
+	  <div hidden$="{{ !visible(tests) }}">
+		  <paper-toolbar>
+	      		<paper-icon-button slot="top" icon="{{ results_icon(results) }}" on-tap="results_toggle"></paper-icon-button>
+	  			<div slot="top" class="title">Test Results</div>  			  			
+		  </paper-toolbar>
+	  	  <my-tests id="results"></my-tests>
 	  </div>
    </template>
    <script> 	    
@@ -57,24 +75,28 @@
        }
        
        static get properties() {
-           return {
-        		creator: {
-				type: Boolean,
+    	   return {
+        		results: {
+					type: Boolean,
         			value: false
-			},
-    			results: {
-				type: Boolean,
+				},			
+				creator: {
+					type: Boolean,
         			value: false
-			},			
+				},				
     			tests: {
-				type: Array,
+					type: Array,
         			statePath: 'tests'
-			}
-         }
+				},
+    			funnels: {
+					type: Array, 
+        			statePath: 'funnels'
+				}				
+         	}
        }
        
        results_icon(c, button) {
-   	   	return this.results ? 'add' : 'remove'
+   	   		return this.results ? 'add' : 'remove'
        }
        results_toggle(e) {
   	   		if ( this.$.results.classList.contains('hidden') ) {
@@ -84,23 +106,26 @@
   			}
   			this.results = !this.results;    	   
        }       
-       creator_icon(c, button) {
+       creator_icon(c) {
     	   	return this.creator ? 'add' : 'remove'
        }
        creator_toggle(e) {
-   	   		if ( this.$.creator.classList.contains('hidden') ) {
-      			this.$.creator.classList.remove('hidden')
-  			} else {
-  				this.$.creator.classList.add('hidden')
-  			}
-  			this.creator = !this.creator;
+    	    ['creator', 'creator_space'].forEach(c => {
+    	    	if ( this.$[c].classList.contains('hidden') ) {
+    	    		this.$[c].classList.remove('hidden')
+      			} else {
+      				this.$[c].classList.add('hidden')
+      			}	
+    	    })
+   	   		this.creator = !this.creator;
        }
        visible(tests) {
    	   		return tests.length > 0;
        }       
-       ready() {
-    	   		console.log(MyApp.is, 'ready')
+       ready() {    	  
            super.ready();
+           this.set('funnels', this.getState().funnels)
+           console.log(MyApp.is, this.funnels)
        }     	       
    }
    customElements.define(MyApp.is, MyApp);

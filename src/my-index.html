@@ -11,6 +11,8 @@
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../bower_components/iron-icons/hardware-icons.html">
+<link rel="import" href="../bower_components/iron-icons/social-icons.html">
+
 
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="redux-mixin.html">
@@ -59,13 +61,10 @@
 		 	width: 300px;
 		 }
 		.with-margin {
-		  --paper-card:{
+		   --paper-card:{
 		    margin: 10px;
-		  }
-		} 
-		 paper-input[disabled="true"] {
-		 	color: red;
-		 }
+		   }
+		 } 
       </style>
         <div class="job">
 		  	<div class="container">
@@ -115,7 +114,7 @@
 				</template>		
 				<paper-card class="with-margin">
 				  <div class="card-content">
-				    <paper-input
+				  	<paper-input
 				    	id="url"
 						label="URL"
 						on-change="modstep"
@@ -124,7 +123,8 @@
 					</paper-input>
 				  </div>
 				  <div class="card-actions">
-				    <div class="layout horizontal justified">					
+				    <div class="layout horizontal">
+				    	<div class="flex"></div>					
 						<paper-fab mini 
 								icon="[[step.icon]]" 
 								title="[[step.title]]" 												
@@ -140,13 +140,27 @@
 					icon="[[queue.icon]]" 
 					title="[[queue.title]]" 												
 					on-click="enqueue"
+					disabled$="{{ !enabled }}"
 					>
 				</paper-fab>
 				<paper-fab mini 
-					icon="[[save.icon]]" 
-					title="[[save.title]]" 												
-					on-click="enqueue"
+					icon="[[serialize.icon]]" 
+					title="[[serialize.title]]" 												
+					on-click="save"
+					disabled$="{{ !enabled }}"
 					></paper-fab>
+				<paper-fab mini 
+					icon="[[clone.icon]]" 
+					title="[[clone.title]]" 												
+					on-click="copy"
+					disabled$="{{ !enabled }}"
+					></paper-fab>					
+				<paper-fab mini 
+					icon="[[publish.icon]]" 
+					title="[[publish.title]]" 												
+					on-click="share"
+					disabled$="{{ !enabled }}"
+					></paper-fab>					
 			</paper-item>
 		</div>      
    </template>   
@@ -166,32 +180,40 @@
 		  static get properties() {
 			  return {
 	   	             step: {
-	   	                 type: Object,
 	   	                 value: {
 	   	                         icon: 'add',
 	   	                         title: 'Add URL'
 	   	                     }
 	   	             },
 	   	             remove: {
-	   	                 type: Object,
 	   	                 value: {
 	   	                         icon: 'delete',
 	   	                         title: 'Remove URL'
 	   	                     }
 	   	             },	   	             
 	   	          	 queue: {
-	   	                 type: Object,
 	   	                 value: {
 	   	                         icon: 'av:play-arrow',
 	   	                         title: 'Queue'
 	   	                     }
 	   	             },	   	             
-	   	          	 save: {
-	   	                 type: Object,
+	   	          	 serialize: {
 	   	                 value: {
 	   	                         icon: 'save',
 	   	                         title: 'Save Funnel'
 	   	                     }
+	   	             },
+	   	          	 clone: {
+	   	                 value: {
+	   	                   icon: 'content-copy',
+	   	                   title: 'Copy Funnel'
+	   	                 }
+	   	             },
+	   	          	 publish: {
+	   	                 value: {
+	   	                   icon: 'social:share',
+	   	                   title: 'Export Funnel'
+	   	                 }
 	   	             },	   	             
 	   	          	 right: {
 	   	                 type: Object,
@@ -221,6 +243,15 @@
              	   job: this.job
                 })
 		  }
+		  copy(e) {
+   		   	console.log('copy:', e.target)
+		  }
+		  save(e) {
+			console.log('save:', e.target)
+		  }
+		  share(e) {
+			console.log('share:', e.target)
+		  }		  
 		  modstep(e) {
 			  let nj = this.job.slice(0);
 			  if ( e.target.getAttribute('action') == 'right' ) {

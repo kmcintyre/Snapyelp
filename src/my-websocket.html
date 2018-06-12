@@ -150,7 +150,7 @@
 		  }
 		  
 	      requestsChanged(requests) {
-	    	  if ( requests && this.socket.readyState == 1 ) {
+	    	  if ( requests && this.socket && this.socket.readyState == 1 ) {
 		    	  console.log('send:', requests[requests.length -1])
 		    	  this.socket.send( JSON.stringify(requests[requests.length -1]) );	    		  
 	    	  }

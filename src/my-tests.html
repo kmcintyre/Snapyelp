@@ -18,7 +18,7 @@
       </style>
       <template is="dom-if" if="{{ visible(tests) }}">
       	<template is="dom-repeat" items="{{tests}}" as="test">
-      		<my-test test="{{test}}"></my-test>      		      		
+      		<my-test test="{{test}}" results="{{ filtered_results(test, results) }}"></my-test>      		      		
       	</template>      	
       </template>
    </template>
@@ -30,13 +30,19 @@
 	              tests: {
 	                  type: Array,
 	                  statePath: 'tests'
-	              }
+	              },
+			  	  results: {
+                      type: Array,
+                      statePath: 'results'
+              	  }			  
 			  }		  
 		  }
 		  visible(f) {
 			  return this.tests.length > 0
 		  }
-		  
+		  filtered_results(test, results) {
+			  return this.results.filter(function (r) { return r.test_id == test.test_id })
+		  }
 		}            
       	customElements.define(MyTests.is, MyTests);      
    </script>

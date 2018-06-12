@@ -33,7 +33,7 @@
       	</h4>
       	<div class="flex">
 	      <div class="results">
-		      <template is="dom-repeat" items="{{ test_results(results) }}" as="result">
+		      <template is="dom-repeat" items="{{ results }}" as="result">
 		      	<div class="layout horizontal">
 		      		<div style="padding:2px; width:125px">
 	      				{{ result.agent.nickname }}
@@ -95,15 +95,14 @@
 				type: Object
               },
               results: {
-				type: Array,
-				statePath: 'results'
+				type: Array
               },
               remove: {
                  type: Object,
                  value: {
-                         icon: 'delete',
-                         title: 'Delete Test'
-                     }
+                    icon: 'delete',
+                    title: 'Delete Test'
+                 }
   	          }              
 		  }  
 	  }
@@ -114,13 +113,9 @@
           })
 	  }
 	  format_load_time(f) {
-		  return f.toFixed(3);
+		  return f.toFixed(2);
 	  }
-	  test_results(results) {
-		  var t_id = this.test.test_id;
-		  return results.filter(function (r) { return r.test_id == t_id })
-	  }
-	  test_domains(requests) {
+	  len_domains(requests) {
 		  var domains = [];
 		  requests.forEach(function (r) {
 			  //console.log(r.url)
@@ -129,19 +124,16 @@
 				  domains.push(hostname)
 			  }			   
 		  })
-		  return domains;
-	  }
-	  len_domains(requests) {
-		  return this.test_domains(requests).length
+		  return domains.length;
 	  }
 	  len_results(results) {
-		  return this.test_results(results).length
+		  return this.results.length
 	  }
 	  len(a) {
 		  return a.length
 	  }	  
 	  ts(r) {
-		  //console.log('result:', r)
+		  console.log('result:', r)
 	  }
 	}            
     customElements.define(MyTest.is, MyTest);      

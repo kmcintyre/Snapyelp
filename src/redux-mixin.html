@@ -4,6 +4,13 @@
 <script src="../node_modules/redux/dist/redux.js"></script>
 
 <script>
+ let f = JSON.parse(localStorage.getItem('funnels'));
+ if ( !f ||  true ) {
+	 f = localStorage.setItem('funnels', JSON.stringify(['test', 'test2']));
+	 f = JSON.parse(localStorage.getItem('funnels'));
+ }
+ console.log('funnels:', f, typeof f)
+
  const reducer = (state, action) => {
 	  switch (action.type) {
 	    case 'WEBSOCKET_MESSAGE':
@@ -21,7 +28,7 @@
 					 })
 					 if ( !is_result ) {
 						 let nt = state.tests.slice(0);
-						 nt.push({test_id: msg.test_id, results: [] })
+						 nt.unshift({test_id: msg.test_id, results: [] })
 						 return Object.assign({}, state, { tests: nt });	 
 					 } else {
 						 let nr = state.results.slice(0);
@@ -42,10 +49,10 @@
 	    	const requests = state.requests.splice(0)
 			requests.push(action.request)	    	 			      
 	    	return Object.assign({}, state, { requests });
-	    case 'DELETE_TEST':
-	    	console.log('delete test:', action.request.test)  
+	    case 'DELETE_TEST':  
 	    	let _nt = state.tests.slice(0).filter( t => { return t.test_id != action.request.test_id} );
 	    	let _nr = state.results.slice(0).filter( r => { return r.test_id != action.request.test_id} );
+	    	console.log('delete test:', action.request, _nt, _nr )
 	    	return Object.assign({}, state, { tests: _nt, results: _nr });
 	    default:
 	      return state;
@@ -55,7 +62,8 @@
  const store = Redux.createStore(reducer, {
 	 requests: [],
 	 tests: [],
-	 results: []
+	 results: [],
+	 funnels: f
  });	            
  const ReduxMixin = PolymerRedux(store)
     
