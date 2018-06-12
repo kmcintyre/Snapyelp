@@ -42,13 +42,13 @@
       
       <my-funnels></my-funnels>
 
-	  <template is="dom-if" if="{{ visible(tests) }}">
+	  <div hidden$="{{ !visible(tests) }}">	  
 	  	<paper-toolbar>
       		<paper-icon-button slot="top" icon="{{ results_icon(results) }}" on-tap="results_toggle"></paper-icon-button>
   			<div slot="top" class="title">Test Results</div>  			  			
 	  	</paper-toolbar>
 	  	<my-tests id="results"></my-tests>
-	  </template>
+	  </div>
    </template>
    <script> 	    
    class MyApp extends ReduxMixin(Polymer.Element) {

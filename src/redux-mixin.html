@@ -12,7 +12,7 @@
 				 var msg = JSON.parse(action.message)
 				 if ( msg.test_id ) {
 					 //console.log('existing state:', state)
-					 var is_result = false;
+					 let is_result = false;
 					 state.tests.forEach(function (t) {						 
 						 if ( t.test_id == msg.test_id ) {							 
 							 is_result = true
@@ -20,11 +20,11 @@
 						 }						 
 					 })
 					 if ( !is_result ) {
-						 var nt = state.tests.slice(0);
+						 let nt = state.tests.slice(0);
 						 nt.push({test_id: msg.test_id, results: [] })
 						 return Object.assign({}, state, { tests: nt });	 
 					 } else {
-						 var nr = state.results.slice(0);
+						 let nr = state.results.slice(0);
 						 nr.unshift(msg)
 						 return Object.assign({}, state, { results: nr });
 					 }
@@ -41,7 +41,12 @@
 	    case 'WEBSOCKET_REQUEST':
 	    	const requests = state.requests.splice(0)
 			requests.push(action.request)	    	 			      
-	    	return Object.assign({}, state, { requests });	    	 
+	    	return Object.assign({}, state, { requests });
+	    case 'DELETE_TEST':
+	    	console.log('delete test:', action.request.test)  
+	    	let _nt = state.tests.slice(0).filter( t => { return t.test_id != action.request.test_id} );
+	    	let _nr = state.results.slice(0).filter( r => { return r.test_id != action.request.test_id} );
+	    	return Object.assign({}, state, { tests: _nt, results: _nr });
 	    default:
 	      return state;
 	  }

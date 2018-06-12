@@ -99,62 +99,68 @@ def replicate():
 
 def instances():
     for r in get_regions():
+        print 'region:', r.name
         r_conn = boto.ec2.connect_to_region(r.name)
-        securitygroups = [sg for sg in r_conn.get_all_security_groups() if sg.vpc_id and sg.name == 'default']
-        if len(securitygroups) == 0:
-            print 'need security group'
-        subnets = boto.vpc.connect_to_region(r.name).get_all_subnets()
-        r_ami = get_region_ami(r.name, get_master_ami().id, False)[1]
-        if r_ami:         
-            print r.name, 'replication ami:', r_ami.id, 'security groups:', [(s.name, s.vpc_id) for s in securitygroups], 'subnets:', subnets
-            has_instance = False
-            for instance in r_conn.get_only_instances(filters={'tag:' + fixed.tag_app : app_util.app_name}):
-                if instance.state != 'terminated':
-                    print 'existing instance:', instance.id, 'state:', instance.state
-                    has_instance = True
-            if not has_instance:
-                print r.name, 'need instance:', r_ami
-                interface = boto.ec2.networkinterface.NetworkInterfaceSpecification(
-                    subnet_id=subnets[0].id,
-                    groups=[securitygroups[0].id],
-                    associate_public_ip_address=True
-                )
-                interfaces = boto.ec2.networkinterface.NetworkInterfaceCollection(interface)
-                _it = 't2.nano'
-                print 'instance type:', _it                
-                try:
-                    reservation = r_conn.run_instances(
-                        image_id=r_ami.id,
-                        instance_type=_it,
-                        network_interfaces=interfaces,
-                        key_name=r.name
+        print 'region connection:', r_conn
+        if r_conn:
+            print 'security groups:', r_conn.get_all_security_groups()
+            securitygroups = [sg for sg in r_conn.get_all_security_groups() if sg.vpc_id and sg.name == 'default']
+            if len(securitygroups) == 0:
+                print 'need security group'
+            subnets = boto.vpc.connect_to_region(r.name).get_all_subnets()
+            r_ami = get_region_ami(r.name, get_master_ami().id, False)[1]
+            if r_ami:         
+                print r.name, 'replication ami:', r_ami.id, 'security groups:', [(s.name, s.vpc_id) for s in securitygroups], 'subnets:', subnets
+                has_instance = False
+                for instance in r_conn.get_only_instances(filters={'tag:' + fixed.tag_app : app_util.app_name}):
+                    if instance.state != 'terminated':
+                        print 'existing instance:', instance.id, 'state:', instance.state
+                        has_instance = True
+                if not has_instance:
+                    print r.name, 'need instance:', r_ami
+                    interface = boto.ec2.networkinterface.NetworkInterfaceSpecification(
+                        subnet_id=subnets[0].id,
+                        groups=[securitygroups[0].id],
+                        associate_public_ip_address=True
                     )
-                    print 'reservation:', reservation.id, reservation.instances
-                    while not has_instance:
-                        print 'waiting instance'
-                        time.sleep(10)
-                        for instance in r_conn.get_only_instances(instance_ids=[reservation.instances[0].id]):
-                            print 'instance:', instance.id, 'state:', instance.state
-                            has_instance = True                            
-                            instance.add_tag(fixed.tag_app, app_util.app_name)
-                            
-                except Exception as e:                    
-                    if e.error_code == 'InvalidKeyPair.NotFound':
-                        try:
-                            fn = expanduser("~") + '/aws/' + r.name + '.pem'
-                            print 'create key pair:', fn
-                            pem = r_conn.create_key_pair(r.name)                        
-                            with open(fn, 'w') as text_file:
-                                print pem.material
-                                text_file.write(pem.material)
-                            text_file.close()
-                            os.chmod(fn, 0400)
-                        except Exception as e2:
-                            print 'key pair exception:', e2                                                                            
-                    else:
-                        print 'unknown exception:', e
+                    interfaces = boto.ec2.networkinterface.NetworkInterfaceCollection(interface)
+                    _it = 't2.nano'
+                    print 'instance type:', _it                
+                    try:
+                        reservation = r_conn.run_instances(
+                            image_id=r_ami.id,
+                            instance_type=_it,
+                            network_interfaces=interfaces,
+                            key_name=r.name
+                        )
+                        print 'reservation:', reservation.id, reservation.instances
+                        while not has_instance:
+                            print 'waiting instance'
+                            time.sleep(10)
+                            for instance in r_conn.get_only_instances(instance_ids=[reservation.instances[0].id]):
+                                print 'instance:', instance.id, 'state:', instance.state
+                                has_instance = True                            
+                                instance.add_tag(fixed.tag_app, app_util.app_name)
+                                
+                    except Exception as e:                    
+                        if e.error_code == 'InvalidKeyPair.NotFound':
+                            try:
+                                fn = expanduser("~") + '/aws/' + r.name + '.pem'
+                                print 'create key pair:', fn
+                                pem = r_conn.create_key_pair(r.name)                        
+                                with open(fn, 'w') as text_file:
+                                    print pem.material
+                                    text_file.write(pem.material)
+                                text_file.close()
+                                os.chmod(fn, 0400)
+                            except Exception as e2:
+                                print 'key pair exception:', e2                                                                            
+                        else:
+                            print 'unknown exception:', e
+            else:
+                print 'no ami for:', r.name
         else:
-            print 'no ami for:', r.name
+            print 'no region access:', r.name
             
 if __name__ == '__main__':
     reactor.callWhenRunning(instances)
