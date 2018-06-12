@@ -7,9 +7,10 @@
   "dependencies": {
     "polymer": "latest",
     "polymer-redux": "latest",
-    "iron-selector": "latest",
+    "paper-dropdown-menu": "latest",
     "paper-input": "latest",
     "paper-fab": "latest",
+    "paper-listbox": "latest",
     "paper-item": "latest",
     "paper-styles": "latest",
     "iron-icons": "latest",

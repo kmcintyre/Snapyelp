@@ -100,13 +100,19 @@
 									on-click="modstep"
 									index$="{{ index }}"
 									action="right"									
-								></paper-fab>							
+								></paper-fab>																						
 								<paper-fab mini 
 									icon="[[remove.icon]]" 
 									title="[[remove.title]]" 												
 									on-click="modstep"
 									index$="{{ index }}"
 									action="remove"									
+								></paper-fab>
+								<paper-fab mini 
+									icon="[[open.icon]]" 
+									title="[[open.title]]" 												
+									on-click="launch"
+									url$="{{ step.url }}"									
 								></paper-fab>
 					    </div>
 					  </div>
@@ -148,18 +154,21 @@
 					title="[[serialize.title]]" 												
 					on-click="save"
 					disabled$="{{ !enabled }}"
+					hidden$="{{ hidden }}"
 					></paper-fab>
 				<paper-fab mini 
 					icon="[[clone.icon]]" 
 					title="[[clone.title]]" 												
 					on-click="copy"
 					disabled$="{{ !enabled }}"
+					hidden$="{{ hidden }}"
 					></paper-fab>					
 				<paper-fab mini 
 					icon="[[publish.icon]]" 
 					title="[[publish.title]]" 												
 					on-click="share"
 					disabled$="{{ !enabled }}"
+					hidden$="{{ hidden }}"
 					></paper-fab>					
 			</paper-item>
 		</div>      
@@ -179,55 +188,32 @@
 	        }
 		  static get properties() {
 			  return {
+	   	             open: {
+	   	                 value: { icon: 'launch', title: 'Open URL'}
+	   	             },				  
 	   	             step: {
-	   	                 value: {
-	   	                         icon: 'add',
-	   	                         title: 'Add URL'
-	   	                     }
+	   	                 value: { icon: 'add', title: 'Add URL'}
 	   	             },
 	   	             remove: {
-	   	                 value: {
-	   	                         icon: 'delete',
-	   	                         title: 'Remove URL'
-	   	                     }
+	   	                 value: { icon: 'delete', title: 'Remove URL'}
 	   	             },	   	             
 	   	          	 queue: {
-	   	                 value: {
-	   	                         icon: 'av:play-arrow',
-	   	                         title: 'Queue'
-	   	                     }
+	   	                 value: { icon: 'av:play-arrow', title: 'Queue'}
 	   	             },	   	             
 	   	          	 serialize: {
-	   	                 value: {
-	   	                         icon: 'save',
-	   	                         title: 'Save Funnel'
-	   	                     }
+	   	                 value: { icon: 'save', title: 'Save Funnel'}
 	   	             },
 	   	          	 clone: {
-	   	                 value: {
-	   	                   icon: 'content-copy',
-	   	                   title: 'Copy Funnel'
-	   	                 }
+	   	                 value: { icon: 'content-copy', title: 'Copy Funnel' }
 	   	             },
 	   	          	 publish: {
-	   	                 value: {
-	   	                   icon: 'social:share',
-	   	                   title: 'Export Funnel'
-	   	                 }
+	   	                 value: { icon: 'social:share', title: 'Export Funnel' }
 	   	             },	   	             
 	   	          	 right: {
-	   	                 type: Object,
-	   	                 value: {
-	   	                         icon: 'hardware:keyboard-arrow-right',
-	   	                         title: 'Save Funnel'
-	   	                     }
+	   	                 value: { icon: 'hardware:keyboard-arrow-right', title: 'Save Funnel' }
 	   	             },	   	             
 	   	          	 left: {
-	   	                 type: Object,
-	   	                 value: {
-	   	                         icon: 'hardware:keyboard-arrow-left',
-	   	                         title: 'Save Funnel'
-	   	                     }
+	   	                 value: { icon: 'hardware:keyboard-arrow-left', title: 'Save Funnel' }
 	   	             },	   	             
 	   	             job: {
 	   	            	type: Array,
@@ -235,7 +221,10 @@
 	   	             },	   	             
 	   	             enabled: {
 	   	            	value: false
-		   	         }
+		   	         },	   	             
+	   	             hidden: {
+		   	            value: true
+			   	     }
 			  }
 		  }
 		  enqueue(e) {
@@ -251,6 +240,10 @@
 		  }
 		  share(e) {
 			console.log('share:', e.target)
+		  }		  
+		  launch(e) {
+			console.log('launch:', e.target.getAttribute('url'))
+			window.open(e.target.getAttribute('url'),'_blank');
 		  }		  
 		  modstep(e) {
 			  let nj = this.job.slice(0);
