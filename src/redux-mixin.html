@@ -29,7 +29,8 @@
 					 if ( !is_result ) {
 						 let nt = state.tests.slice(0);
 						 nt.unshift({test_id: msg.test_id, results: [] })
-						 return Object.assign({}, state, { tests: nt });	 
+						 let nr = state.requests.slice(1);
+						 return Object.assign({}, state, { tests: nt, requests: nr });	 
 					 } else {
 						 let nr = state.results.slice(0);
 						 nr.unshift(msg)
