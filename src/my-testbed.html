@@ -1,0 +1,153 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/iron-dropdown/iron-dropdown.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="my-bed.html">
+<link rel="import" href="my-requests.html">
+<link rel="import" href="redux-mixin.html">
+<dom-module id="my-testbed">
+   <template>
+      <style include="shared-styles iron-flex iron-flex-alignment">
+         :host {
+         }   	
+         app-toolbar {
+         background-color: #6B6C72;
+         color: white;
+         padding-right:32px;
+         }
+         app-toolbar.collapse {
+         margin-bottom: 5px;	
+         }		   
+         app-toolbar.collapse + * {
+         display:none
+         }
+         paper-dropdown-menu {
+         background-color:white;  
+         color:black;"
+         }
+         .enqueue {
+         width:150px;
+         padding-top: 75px;
+         }
+      </style>
+      <app-toolbar class$="{{ visible(hidden) }}">
+         <paper-icon-button icon="{{ icon(hidden) }}" on-click="hide"></paper-icon-button>
+         <div main-title>Test Creator/Excutor</div>
+      </app-toolbar>
+      <div>
+	      <div class="layout horizontal start">
+		      <div class="layout vertical flex">
+			      <div class="layout horizontal">
+			         <div class="layout vertical enqueue">
+			            <paper-fab
+			               icon="[[queue.icon]]" 
+			               title="[[queue.title]]" 												
+			               on-click="enqueue"
+			               disabled$="{{ !enabled }}"
+			               class="self-center big"		               
+			               >
+			            </paper-fab>            
+			         </div>
+			         <my-bed id="bed" class="flex"></my-bed>
+			      </div>      
+		      	  <my-requests></my-requests>
+		      </div>
+		      <div class="layout vertical">
+		         <paper-fab mini 
+		            icon="[[serialize.icon]]" 
+		            title="[[serialize.title]]" 												
+		            on-click="save"
+		            disabled$="{{ !enabled }}"
+		            hidden$="{{ hidden }}"
+		            ></paper-fab>
+		         <paper-fab mini 
+		            icon="[[clone.icon]]" 
+		            title="[[clone.title]]" 												
+		            on-click="copy"
+		            disabled$="{{ !enabled }}"
+		            hidden$="{{ hidden }}"
+		            ></paper-fab>	      
+		      </div>
+	      </div>      
+      </div>
+   </template>
+   <script>
+   class MyTestbed extends ReduxMixin(Polymer.Element) {
+       static get is() {
+           return 'my-testbed';
+       }
+       static get actions() {
+           return {
+               websocketRequest(job) {
+                   return {
+                       type: 'WEBSOCKET_REQUEST',
+                       request: job
+                   };
+               }
+           }
+       }
+       static get properties() {
+           return {
+               hidden: {
+                   value: false
+               },
+               enabled: {
+                   value: true
+               },
+               tests: {
+                   type: Array,
+                   statePath: 'tests'
+               },
+               queue: {
+                   value: {
+                       icon: 'av:play-arrow',
+                       title: 'Queue'
+                   }
+               },
+               serialize: {
+                   value: {
+                       icon: 'save',
+                       title: 'Save Funnel'
+                   }
+               },
+               clone: {
+                   value: {
+                       icon: 'content-copy',
+                       title: 'Copy Funnel'
+                   }
+               }
+
+           }
+       }
+       copy(e) {
+           console.log('copy:', e.target)
+       }
+       save(e) {
+           console.log('save:', e.target)
+       }
+       share(e) {
+           console.log('share:', e.target)
+       }
+       enqueue(e) {
+           this.dispatch('websocketRequest', {
+               job: this.$.bed.job
+           })
+       }
+       visible(hidden) {
+           return this.hidden ? 'collapse' : '';
+       }
+       hide(e) {
+           this.hidden = !this.hidden;
+       }
+       icon(h) {
+           return this.hidden ? 'add' : 'remove';
+       }
+       ready() {
+           console.log('my testbed')
+           super.ready()
+       }
+   }
+   customElements.define(MyTestbed.is, MyTestbed);
+   </script>
+</dom-module>

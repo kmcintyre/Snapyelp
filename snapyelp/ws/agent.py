@@ -14,7 +14,9 @@ import requests
 click_period = 60 * 5
 
 #client_factory = WebSocketClientFactory('ws://' + app_util.app_service + ':8080')
-client_factory = WebSocketClientFactory('ws://' + app_util.connection_host + ':' + str(app_util.connection_port))
+#client_factory = WebSocketClientFactory('ws://' + app_util.connection_host + ':' + str(app_util.connection_port))
+
+client_factory = WebSocketClientFactory('ws://localhost:8080')
 
 class AgentClientProtocol(WebSocketClientProtocol):
     
@@ -81,7 +83,7 @@ class ReconnectingWebSocketClientFactory(WebSocketClientFactory, ReconnectingCli
 def start_agent(host=app_util.connection_host, port=app_util.connection_port):
     factory = ReconnectingWebSocketClientFactory()
     factory.host = host
-    #factory.host = 'localhost'
+    factory.host = 'localhost'
     print factory.host 
     factory.port = port
     print 'client start:', factory.host, factory.port

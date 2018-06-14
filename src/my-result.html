@@ -1,0 +1,135 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="redux-mixin.html">
+<dom-module id="my-result">
+   <template>
+      <style include="shared-styles iron-flex iron-flex-alignment">
+         :host {
+         	padding: 5px;
+         }   
+         paper-fab {
+         background-color: #8D9096;
+         transform: scale(0.7);         
+         }         
+      </style>
+      <div class="layout horizontal start">
+         <div>
+            ID: {{ test.test_id }}
+         </div>
+         <div>
+            Agents: {{ test.agents }}
+         </div>         
+         <div class="flex">
+               <template is="dom-repeat" items="{{ results }}" as="result">
+                  <div class="layout horizontal">
+                     <div>
+                        {{ result.agent.nickname }}
+                     </div>
+                     <div class="flex">
+                        <template is="dom-repeat" items="{{ result.job }}" as="job">
+                           <div class="job flex layout horizontal">
+                              <div class="flex">
+                                 url: {{ job.url }}
+                              </div>
+                              <div>
+                                 load time: {{ format_load_time(job.load_time) }}
+                              </div>
+                              <div>
+                                 domains: {{ len_domains(job.requests) }}
+                              </div>
+                              <div>
+                                 requests: {{ len(job.requests) }}
+                              </div>
+                           </div>
+                        </template>
+                     </div>
+                  </div>
+               </template>
+         </div>
+         <div>
+            Results: {{ results.length }}    		      		
+         </div>
+         <paper-fab mini 
+            icon="[[remove.icon]]" 
+            title="[[remove.title]]" 												
+            on-click="clear"
+            test$="{{ test.test_id }}"
+            ></paper-fab>
+      </div>
+   </template>
+   <script>
+   class MyResult extends ReduxMixin(Polymer.Element) {
+       static get is() {
+           return 'my-result';
+       }
+       static get actions() {
+           return {
+               deleteTest(test) {
+                   return {
+                       type: 'DELETE_TEST',
+                       request: test
+                   };
+               }
+           }
+       }
+       static get properties() {
+           return {
+               test_id: {
+                   type: Number
+               },
+               test: {
+            	   type: Object,
+            	   statePath(state) {
+            		   return state.tests.filter(t => { return t.test_id == this.test_id})[0];
+            	   }            	   
+               },
+               results: {
+            	   type: Array,
+            	   statePath(state) {
+            		   try {
+            			   return state.tests.filter(t => { return t.test_id == this.test_id})[0].results;   
+            		   } catch (err) {
+            			   return []
+            		   }            		   
+            	   }            	   
+               },
+               remove: {
+                   type: Object,
+                   value: {
+                       icon: 'clear',
+                       title: 'Delete Test'
+                   }
+               }
+           }
+       }
+       clear(e) {
+           console.log(e.target, e.target.getAttribute('test'))
+           this.dispatch('deleteTest', {
+               test_id: e.target.getAttribute('test')
+           })
+       }
+       format_load_time(f) {
+           return f.toFixed(2);
+       } 
+       len_domains(requests) {
+           var domains = [];
+           requests.forEach(function(r) {
+               //console.log(r.url)
+               var hostname = (new URL(r.url)).hostname;
+               if (domains.indexOf(hostname) == -1) {
+                   domains.push(hostname)
+               }
+           })
+           return domains.length;
+       }
+       ready() {
+    	   super.ready();
+       }
+   }
+   customElements.define(MyResult.is, MyResult);
+   </script>
+</dom-module>

@@ -24,7 +24,7 @@ class SnapyelpServerProtocol(WebSocketServerProtocol):
         if not self.user[fixed.detect_agent]:
             agents = [a.user[fixed.agent] for a in self.factory.agents()]
             print 'agents:', agents
-            self.sendMessage(json.dumps({ 'agents': agents }))                       
+            self.sendMessage(json.dumps({ fixed.agents: agents }))                       
 
     def jsonMessage(self, msg = None):
         if self.user:        
@@ -99,8 +99,7 @@ class SnapyelpServerFactory(WebSocketServerFactory):
     def handle_queue(self, queue_object):
         print 'handle queue:', self.test_id
         self.test_id += 1
-        queue_object[fixed.test_id] = self.test_id
-        self.user(queue_object[fixed.ws_key]).sendMessage(json.dumps({ fixed.test_id: self.test_id }))
+        queue_object[fixed.test_id] = self.test_id        
         dl = []
         for agent in self.agents():
             print 'push to agent:', agent
@@ -108,6 +107,7 @@ class SnapyelpServerFactory(WebSocketServerFactory):
             agent.deferred_job = d
             agent.sendMessage(json.dumps(queue_object))
             dl.append(d)
+        self.user(queue_object[fixed.ws_key]).sendMessage(json.dumps({ fixed.test_id: self.test_id, fixed.agents: len(dl) }))
         dl = defer.DeferredList(dl)
         dl.addBoth(lambda ign: self.queue.get().addBoth(self.handle_queue))
         reactor.callLater(30, self.maybe_cancel, dl)

@@ -1,0 +1,39 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="redux-mixin.html">
+<dom-module id="my-requests">
+   <template>
+      <style>
+         :host {
+         }   
+      </style>
+      <div>
+         Length {{ requests.length }}
+         <template is="dom-if" if="[[visible(requests)]]">
+            {{ requests }}
+         </template>
+      </div>
+   </template>
+   <script>
+   class MyRequests extends ReduxMixin(Polymer.Element) {
+       static get is() {
+           return 'my-requests';
+       }
+       static get properties() {
+           return {
+               requests: {
+                   type: Array,
+                   statePath: 'requests'
+               }
+           }
+       }
+       visible(f) {
+           return this.requests.length > 0
+       }
+       ready() {
+           console.log('my requests')
+           super.ready()
+       }
+   }
+   customElements.define(MyRequests.is, MyRequests);
+   </script>
+</dom-module>

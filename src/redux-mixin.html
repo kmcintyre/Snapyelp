@@ -6,7 +6,10 @@
 <script>
  let f = JSON.parse(localStorage.getItem('funnels'));
  if ( !f ||  true ) {
-	 f = localStorage.setItem('funnels', JSON.stringify(['test', 'test2']));
+	 f = localStorage.setItem('funnels', JSON.stringify([{
+		 name: 'demo',
+		 job: [{ url: 'https://quickbooks.intuit.com' }] 
+	 }]));
 	 f = JSON.parse(localStorage.getItem('funnels'));
  }
  console.log('funnels:', f, typeof f)
@@ -27,14 +30,18 @@
 						 }						 
 					 })
 					 if ( !is_result ) {
+						 console.log('test:', msg)
 						 let nt = state.tests.slice(0);
-						 nt.unshift({test_id: msg.test_id, results: [] })
-						 let nr = state.requests.slice(1);
-						 return Object.assign({}, state, { tests: nt, requests: nr });	 
+						 nt.unshift({test_id: msg.test_id, agents: msg.agents, results: [] })
+						 
+						 return Object.assign({}, state, { tests: nt, requests: state.requests.slice(1) });	 
 					 } else {
-						 let nr = state.results.slice(0);
+						 let nt =  state.tests.slice(0)
+						 let t = nt.filter(t => { return t.test_id == msg.test_id})[0]
+						 let nr = t.results.slice(0)
 						 nr.unshift(msg)
-						 return Object.assign({}, state, { results: nr });
+						 t.results = nr;
+						 return Object.assign({}, state, { tests: nt});
 					 }
 					 
 				 } else {
@@ -52,9 +59,8 @@
 	    	return Object.assign({}, state, { requests });
 	    case 'DELETE_TEST':  
 	    	let _nt = state.tests.slice(0).filter( t => { return t.test_id != action.request.test_id} );
-	    	let _nr = state.results.slice(0).filter( r => { return r.test_id != action.request.test_id} );
-	    	console.log('delete test:', action.request, _nt, _nr )
-	    	return Object.assign({}, state, { tests: _nt, results: _nr });
+	    	console.log('delete test:', action.request, _nt )
+	    	return Object.assign({}, state, { tests: _nt });
 	    default:
 	      return state;
 	  }
@@ -63,7 +69,6 @@
  const store = Redux.createStore(reducer, {
 	 requests: [],
 	 tests: [],
-	 results: [],
 	 funnels: f
  });	            
  const ReduxMixin = PolymerRedux(store)

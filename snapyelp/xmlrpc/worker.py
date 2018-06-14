@@ -9,7 +9,6 @@ from twisted.internet import reactor, defer, task
 import hashlib
 import time
 
-
 class AgentWorker(xmlrpc.XMLRPC):
     
     def get_window(self, width = 1366, height = 768):
@@ -18,6 +17,7 @@ class AgentWorker(xmlrpc.XMLRPC):
         window.setFixedHeight(height)
         window.show()
         window.page().profile().setRequestInterceptor(view.intercept)
+        print 'launched'
         return window
     
     def verify_or_goto_url(self, window, url):
@@ -29,15 +29,19 @@ class AgentWorker(xmlrpc.XMLRPC):
     @defer.inlineCallbacks
     def xmlrpc_job(self, job, location = None, bucket = None):
         print 'job:', job
-        window = self.get_window()        
+        self.worker = self.get_window() 
+               
         for j in job[fixed.job]:
             url = j[fixed.url]
             start_time = time.time()
-            yield self.verify_or_goto_url(window, url)
+            print 'goto:', url
+            yield self.verify_or_goto_url(self.worker, url)
             j[fixed.load_time] = time.time() - start_time
             j[fixed.requests] = view.intercept.requests            
             if location:
-                self.snapshot(url, window, location, bucket)
+                print 'take snapshot'
+                self.snapshot(url, self.worker, location, bucket)
+        self.worker.deleteLater()
         job[fixed.result] = True                    
         defer.returnValue(job)
     
@@ -54,5 +58,6 @@ class AgentWorker(xmlrpc.XMLRPC):
     
 if __name__ == '__main__':
     aw = AgentWorker(allowNone=True)
+    aw.worker = None
     reactor.listenTCP(7000, server.Site(aw))
     reactor.run()

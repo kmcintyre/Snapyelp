@@ -116,6 +116,7 @@ def instances():
                     if instance.state != 'terminated':
                         print 'existing instance:', instance.id, 'state:', instance.state
                         has_instance = True
+                        r_conn.reboot_instances(instance_ids=[instance.id])
                 if not has_instance:
                     print r.name, 'need instance:', r_ami
                     interface = boto.ec2.networkinterface.NetworkInterfaceSpecification(

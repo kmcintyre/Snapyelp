@@ -1,0 +1,71 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="my-result.html">
+<link rel="import" href="redux-mixin.html">
+<dom-module id="my-results">
+   <template>
+      <style include="shared-styles iron-flex iron-flex-alignment">
+         :host {
+         }   	
+         app-toolbar {
+         background-color: #6B6C72;
+         color: white;
+         padding-right:32px;
+         }
+         app-toolbar.collapse {
+         margin-bottom: 5px;	
+         }		   
+         app-toolbar.collapse + * {
+         display:none
+         }
+         paper-dropdown-menu {
+         background-color:white;  
+         color:black;"
+         }
+         my-test:nth-of-type(even) {
+         background-color: #ECEEF1;
+         }		   
+      </style>
+      <app-toolbar class$="{{ visible(hidden) }}">
+         <paper-icon-button icon="{{ icon(hidden) }}" on-click="hide"></paper-icon-button>
+         <div main-title>Results</div>
+      </app-toolbar>
+      <template is="dom-repeat" items="{{ tests }}" as="test" mutable-data>
+      	 <div>
+      	 {{ test.test_id }}
+      	 </div>
+         <my-result test_id$="{{ test.test_id }}"></my-result>
+      </template>
+   </template>
+   <script>
+   class MyResults extends Polymer.MutableData(ReduxMixin(Polymer.Element)) {
+       static get is() {
+           return 'my-results';
+       }
+       static get properties() {
+           return {
+               hidden: {
+                   value: false
+               },
+               tests: {
+                   type: Array,
+                   statePath(state) {
+            		   return state.tests || []
+            	   }
+               }
+           }
+       }
+       hide(e) {
+           this.hidden = !this.hidden;
+       }
+       icon(h) {
+           return this.hidden ? 'add' : 'remove';
+       }
+       visible(hidden) {
+           return this.hidden ? 'collapse' : '';
+       }
+   }
+   customElements.define(MyResults.is, MyResults);
+   </script>
+</dom-module>

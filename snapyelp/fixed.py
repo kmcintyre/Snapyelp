@@ -7,6 +7,7 @@ url = 'url'
 result = 'result'
 location = 'location'
 nickname = 'nickname'
+agents = 'agents'
 
 start_time = 'start_time'
 end_time = 'end_time'

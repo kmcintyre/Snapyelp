@@ -15,195 +15,194 @@
    <template>
       <style include="iron-flex iron-flex-alignment">
          :host {
-         	@apply(--layout-horizontal);
+         @apply(--layout-horizontal);
          }   
          div:first-of-type {
-         	margin-left: 32px;
+         margin-left: 32px;
          }
          iron-icon {
-          --iron-icon-height: 40px;
-          --iron-icon-width: 40px;        
+         --iron-icon-height: 40px;
+         --iron-icon-width: 40px;        
          }
          .small {
-          --iron-icon-height: 20px;
-          --iron-icon-width: 20px;
+         --iron-icon-height: 20px;
+         --iron-icon-width: 20px;
          }         
          paper-item {
-         	margin: 10px 120px 10px 10px;
-         	cursor: pointer;
+         margin: 10px 120px 10px 10px;
+         cursor: pointer;
          }
          paper-button {
-         	color: #538700;
+         color: #538700;
          }
          .agents {         	
-         	display: table;
+         display: table;
          }
          .agent {         	
-         	display: table-row;
+         display: table-row;
          }
          .agent > div {
-         	display: table-cell;
-         	padding: 10px;
+         display: table-cell;
+         padding: 10px;
          }
          .agent > div:nth-child(event) {
-    		background-color: #ECEEF1;
-		 }
+         background-color: #ECEEF1;
+         }
          .agent > span {
-         	display: table-cell;
-         	padding: 10px;
-         	background-color: #538700;
-         	color: white;
-         	font-size: 1em;
-         	font-weight: bold;
+         display: table-cell;
+         padding: 10px;
+         background-color: #538700;
+         color: white;
+         font-size: 1em;
+         font-weight: bold;
          }         
          .lead {
-         	 font-family: 'Permanent Marker', cursive;
-             font-size: 32px;
-             padding-top: 20px
+         font-family: 'Permanent Marker', cursive;
+         font-size: 32px;
+         padding-top: 48px;
+         padding-bottom: 16px
          }
          div[secondary] {
-         	float:right;
+         float:right;
          }
       </style>
-
       <div>
-      	<template is="dom-if" if="{{ visible(readyState,1) }}">
-      		<div class="lead">
-      			Tuneable Funnel Testing
-      		</div>      		
-      	</template>
-		<template is="dom-if" if="{{ visible(readyState,0) }}">
-      		Opening...
-      	</template>
-		<template is="dom-if" if="{{ visible(readyState,3) }}">
-      		Error
-      	</template>      	                 	      	           
+         <template is="dom-if" if="{{ visible(readyState,1) }}">
+            <div class="lead">
+               Tuneable Funnel Testing
+            </div>
+         </template>
+         <template is="dom-if" if="{{ visible(readyState,0) }}">
+            Opening...
+         </template>
+         <template is="dom-if" if="{{ visible(readyState,3) }}">
+            Error
+         </template>
       </div>
       <div class="flex">
       </div>
-		<paper-item on-tap="toggle">
-		  <paper-item-body two-line>
-		    <div>{{ agents.length }} {{ lingo(agents) }}</div>
-		    <div secondary>via AWS</div>		    
-		  </paper-item-body>
-		  <iron-icon icon="maps:place">
-		</paper-item>  
-
-	<paper-dialog id="modal" modal>
-		<div class="agents">	
-			<div class="agent">
-				<span>Nick</span>
-				<span>City</span>
-				<span>Region</span>
-				<span>Country</span>
-			</div>	
-		<template is="dom-repeat" items="{{agents}}" as="agent">
-			<div class="agent">
-				<div class="nickname">
-					{{ agent.nickname }}
-				</div>
-				<div class="city">				
-					{{ agent.location.city }}
-				</div>
-				<div class="region">
-					{{ agent.location.region }}
-				</div>
-				<div class="country">
-					{{ agent.location.country }}
-				</div>
-			</div>			
-		</template>
-		</div>  		
-  		<div class="buttons">
-    		<paper-button dialog-confirm autofocus>close</paper-button>
-  		</div>
-	</paper-dialog>
-
-		    
+      <paper-item on-tap="toggle">
+         <paper-item-body two-line>
+            <div>{{ agents.length }} {{ lingo(agents) }}</div>
+            <div secondary>via AWS</div>
+         </paper-item-body>
+         <iron-icon icon="maps:place">
+      </paper-item>
+      <paper-dialog id="modal" modal>
+         <div class="agents">
+            <div class="agent">
+               <span>Nick</span>
+               <span>City</span>
+               <span>Region</span>
+               <span>Country</span>
+            </div>
+            <template is="dom-repeat" items="{{agents}}" as="agent">
+               <div class="agent">
+                  <div class="nickname">
+                     {{ agent.nickname }}
+                  </div>
+                  <div class="city">				
+                     {{ agent.location.city }}
+                  </div>
+                  <div class="region">
+                     {{ agent.location.region }}
+                  </div>
+                  <div class="country">
+                     {{ agent.location.country }}
+                  </div>
+               </div>
+            </template>
+         </div>
+         <div class="buttons">
+            <paper-button dialog-confirm autofocus>close</paper-button>
+         </div>
+      </paper-dialog>
    </template>
    <script>
-		class MyWebsocket extends ReduxMixin(Polymer.Element) {
-		  static get is() { return 'my-websocket'; }
-		  static get properties() {
-			  return {
-	              readyState: {
-	              	type: Number,
-	              	statePath: 'readyState'
-	              },
-	              agents: {
-		              	type: Object,
-		              	statePath: 'agents'
-		          },	              
-	              socket: {
-	            	type: Object
-	              },
-	              requests: {
-	            	  type: Array,
-	            	  statePath: 'requests',
-	            	  observer: 'requestsChanged'
-	              }
-			  }		  
-		  }
-		  
-		  lingo(a) {
-			 return  a.length == 1 ? 'Agent' : 'Agents'
-		  }
-		  
-	      requestsChanged(requests) {
-	    	  if ( requests && this.socket && this.socket.readyState == 1 ) {
-		    	  console.log('send:', requests[requests.length -1])
-		    	  this.socket.send( JSON.stringify(requests[requests.length -1]) );	    		  
-	    	  }
-	      };
-	      visible(rs, matchState) {
-	    	  return rs == matchState
-	      }
-	      toggle(e) {
-	    	  console.log('toggle:', this.$.modal)
-	    	  this.$.modal.open()
-	      }
-		  
-		    static get actions() {
-		        return {
-		         websocketMessage(message) {
-		            return {
-		              type: 'WEBSOCKET_MESSAGE',
-		              message
-		            };
-		          },
-		          websocketReady(readyState) {
-		        	  console.log('readyState:', readyState)
-		            return {
-		              type: 'WEBSOCKET_READY',
-		              readyState
-		            };
-		          }
-		        };
-		      }		  
-		  
-	      onError(event) {
-	    	  	this.dispatch('websocketReady', this.socket.readyState)
-	      };
-	      onOpen(event) {	    	  	
-	    	  	this.dispatch('websocketReady', this.socket.readyState)	    	  	
-	      };
-	      onMessage(event) {
-	    	  	this.dispatch('websocketMessage', event.data)	    	  	
-	      }	      
-	      ready() {
-	    	  super.ready();
-			  this.socket = new WebSocket('ws://service.snapyelp.com:8080', this.protocol);
-			  //this.socket = new WebSocket('ws://localhost:8080', this.protocol);
-	          this.socket.onerror = this.onError.bind(this);
-	          this.socket.onopen = this.onOpen.bind(this);
-	          this.socket.onmessage = this.onMessage.bind(this);
-	          this.socket.onclose = this.onClose.bind(this);
-	      }
-	      onClose(event) {
-	    	  	console.log('close:', event, this.socket)
-	    	  	this.dispatch('websocketReady', this.socket.readyState)
-	      }
-		}            
-      	customElements.define(MyWebsocket.is, MyWebsocket);      
+   class MyWebsocket extends ReduxMixin(Polymer.Element) {
+       static get is() {
+           return 'my-websocket';
+       }
+       static get properties() {
+           return {
+               readyState: {
+                   type: Number,
+                   statePath: 'readyState'
+               },
+               agents: {
+                   type: Object,
+                   statePath: 'agents'
+               },
+               socket: {
+                   type: Object
+               },
+               requests: {
+                   type: Array,
+                   statePath: 'requests',
+                   observer: 'requestsChanged'
+               }
+           }
+       }
+
+       lingo(a) {
+           return a.length == 1 ? 'Agent' : 'Agents'
+       }
+
+       requestsChanged(requests) {
+           if (requests && this.socket && this.socket.readyState == 1 && requests.length > 0) {
+               console.log('send:', requests[requests.length - 1])
+               this.socket.send(JSON.stringify(requests[requests.length - 1]));
+           }
+       };
+       visible(rs, matchState) {
+           return rs == matchState
+       }
+       toggle(e) {
+           console.log('toggle:', this.$.modal)
+           this.$.modal.open()
+       }
+
+       static get actions() {
+           return {
+               websocketMessage(message) {
+                   return {
+                       type: 'WEBSOCKET_MESSAGE',
+                       message
+                   };
+               },
+               websocketReady(readyState) {
+                   console.log('readyState:', readyState)
+                   return {
+                       type: 'WEBSOCKET_READY',
+                       readyState
+                   };
+               }
+           };
+       }
+
+       onError(event) {
+           this.dispatch('websocketReady', this.socket.readyState)
+       };
+       onOpen(event) {
+           this.dispatch('websocketReady', this.socket.readyState)
+       };
+       onMessage(event) {
+           this.dispatch('websocketMessage', event.data)
+       }
+       ready() {
+           super.ready();
+           //this.socket = new WebSocket('ws://service.snapyelp.com:8080', this.protocol);
+           this.socket = new WebSocket('ws://localhost:8080', this.protocol);
+           this.socket.onerror = this.onError.bind(this);
+           this.socket.onopen = this.onOpen.bind(this);
+           this.socket.onmessage = this.onMessage.bind(this);
+           this.socket.onclose = this.onClose.bind(this);
+       }
+       onClose(event) {
+           console.log('close:', event, this.socket)
+           this.dispatch('websocketReady', this.socket.readyState)
+       }
+   }
+   customElements.define(MyWebsocket.is, MyWebsocket);
    </script>
 </dom-module>
