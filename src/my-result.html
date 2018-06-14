@@ -2,6 +2,7 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="redux-mixin.html">
@@ -13,52 +14,54 @@
          }   
          paper-fab {
          background-color: #8D9096;
-         transform: scale(0.7);         
+         transform: scale(0.7) translateY(-10px);         
          }         
+         .control > div {
+         	margin-right: 10px
+         }
       </style>
-      <div class="layout horizontal start">
-         <div>
-            ID: {{ test.test_id }}
+      <div class="layout vertical">
+      	 <div class="layout horizontal control">
+      	 	<div>
+            	ID: {{ test.test_id }}
+         	</div>
+      	 	<div class="flex"></div>
+      	 	<div hidden$="{{ complete(results) }}">
+            	Results: {{ results.length }} of {{ test.agents }}    		      		
+         	</div>            
+	        <paper-icon-button 
+	        	hidden$="{{ !complete(results) }}" 
+	            icon="[[remove.icon]]" 
+	            title="[[remove.title]]" 												
+	            on-click="clear"
+	            test$="{{ test.test_id }}"
+	            ></paper-icon-button>			         		            
          </div>
-         <div>
-            Agents: {{ test.agents }}
-         </div>         
-         <div class="flex">
-               <template is="dom-repeat" items="{{ results }}" as="result">
-                  <div class="layout horizontal">
-                     <div>
-                        {{ result.agent.nickname }}
-                     </div>
-                     <div class="flex">
-                        <template is="dom-repeat" items="{{ result.job }}" as="job">
-                           <div class="job flex layout horizontal">
-                              <div class="flex">
-                                 url: {{ job.url }}
-                              </div>
-                              <div>
-                                 load time: {{ format_load_time(job.load_time) }}
-                              </div>
-                              <div>
-                                 domains: {{ len_domains(job.requests) }}
-                              </div>
-                              <div>
-                                 requests: {{ len(job.requests) }}
-                              </div>
-                           </div>
-                        </template>
-                     </div>
-                  </div>
-               </template>
-         </div>
-         <div>
-            Results: {{ results.length }}    		      		
-         </div>
-         <paper-fab mini 
-            icon="[[remove.icon]]" 
-            title="[[remove.title]]" 												
-            on-click="clear"
-            test$="{{ test.test_id }}"
-            ></paper-fab>
+          <template is="dom-repeat" items="{{ results }}" as="result">
+             <div class="layout horizontal">
+                <div>
+                   {{ result.agent.nickname }}
+                </div>
+                <div class="flex">
+                   <template is="dom-repeat" items="{{ result.job }}" as="job">
+                      <div class="job flex layout horizontal">
+                         <div class="flex">
+                            url: {{ job.url }}
+                         </div>
+                         <div>
+                            load time: {{ format_load_time(job.load_time) }}
+                         </div>
+                         <div>
+                            domains: {{ len_domains(job.requests) }}
+                         </div>
+                         <div>
+                            requests: {{ len(job.requests) }}
+                         </div>
+                      </div>
+                   </template>
+                </div>
+             </div>
+          </template>
       </div>
    </template>
    <script>
@@ -106,11 +109,17 @@
                }
            }
        }
+       complete(r) {
+    	   return this.test && this.results ? this.test.agents == this.results.length: false; 
+       }
        clear(e) {
-           console.log(e.target, e.target.getAttribute('test'))
-           this.dispatch('deleteTest', {
-               test_id: e.target.getAttribute('test')
-           })
+    	   let t = e.target.getAttribute('test')
+           setTimeout(() => {
+        	   console.log('delete')
+        	   this.dispatch('deleteTest', {
+                   test_id: t
+               })        	   
+           }, 500);           
        }
        format_load_time(f) {
            return f.toFixed(2);
@@ -127,6 +136,7 @@
            return domains.length;
        }
        ready() {
+    	   console.log('YO')
     	   super.ready();
        }
    }

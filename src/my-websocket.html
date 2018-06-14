@@ -8,12 +8,13 @@
 
 <link rel="import" href="../bower_components/iron-icons/maps-icons.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="shared-styles.html">
 
 <link rel="import" href="redux-mixin.html">
 
 <dom-module id="my-websocket">
    <template>
-      <style include="iron-flex iron-flex-alignment">
+      <style include="shared-styles iron-flex iron-flex-alignment">
          :host {
          @apply(--layout-horizontal);
          }   
@@ -59,25 +60,20 @@
          .lead {
          font-family: 'Permanent Marker', cursive;
          font-size: 32px;
-         padding-top: 48px;
-         padding-bottom: 16px
+         padding: 32px;         
          }
          div[secondary] {
          float:right;
          }
       </style>
-      <div>
-         <template is="dom-if" if="{{ visible(readyState,1) }}">
-            <div class="lead">
-               Tuneable Funnel Testing
-            </div>
-         </template>
-         <template is="dom-if" if="{{ visible(readyState,0) }}">
-            Opening...
-         </template>
-         <template is="dom-if" if="{{ visible(readyState,3) }}">
-            Error
-         </template>
+      <div hidden$="{{ !visible(readyState,1) }}" class="lead">
+      	Tuneable Funnel Testing
+      </div>
+      <div hidden$="{{ !visible(readyState,0) }}" class="lead">
+      	Opening...
+      </div>
+      <div hidden$="{{ !visible(readyState,3) }}" class="lead">
+        Error
       </div>
       <div class="flex">
       </div>
@@ -155,7 +151,7 @@
            }
        };
        visible(rs, matchState) {
-           return rs == matchState
+           return this.readyState == matchState
        }
        toggle(e) {
            console.log('toggle:', this.$.modal)

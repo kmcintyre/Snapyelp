@@ -54,9 +54,6 @@
          .inner {
          @apply(--layout-horizontal);    		    		      	
          }
-         [hidden] {
-         display: none !important;
-         }
          .card-content {
          min-height: 100px;
          width: 300px;
@@ -73,7 +70,7 @@
                <paper-card class="with-margin">
                   <div class="card-content">
                      <iron-icon
-                        style="float:right;transform: translate(15px, -15px)"
+                        style="cursor: pointer;float:right;transform: translate(15px, -15px)"
                         icon="[[open.icon]]" 
                         title="[[open.title]]" 												
                         on-click="launch"

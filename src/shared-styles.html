@@ -1,103 +1,26 @@
 <dom-module id="shared-styles">
    <template>
       <style>
+         app-toolbar {
+         background-color: #6B6C72;
+         color: white;		
+         padding-right:32px;   		
+         }
+         app-toolbar.collapse {
+         margin-bottom: 5px;	
+         }
+         app-toolbar + * {
+         margin: 16px 8px 16px 8px
+         }
+         app-toolbar.collapse + * {
+         display:none
+         }      
          paper-fab {
          margin: 5px;
          background-color: #0077C5;
          }      
-         .instance::before {
-         color: black;
-         font-family: FontAwesome;
-         content: "\f0a0 ";
-         font-size: 28px;
-         }
-         .calendar::before {
-         color: black;
-         font-family: FontAwesome;
-         content: "\f073 ";
-         font-size: 18px;
-         }    	    	
-         .twitter::before {
-         color: #55acee;
-         font-family: FontAwesome;
-         content: "\f099 ";
-         font-size: 28px;
-         }
-         .google::before {
-         color: #dd4b39;
-         font-family: FontAwesome;
-         content: "\f0d5 ";
-         font-size: 28px;
-         }
-         .youtube::before {
-         color: #cd201f;
-         font-family: FontAwesome;
-         content: "\f167 ";
-         font-size: 28px;
-         }
-         .wikipedia::before {
-         font-family: FontAwesome;
-         content: "\f266 ";
-         font-size: 28px;
-         }
-         .url::before {
-         font-family: FontAwesome;
-         content: "\f0c1 ";
-         font-size: 28px;
-         }
-         .website::before {
-         color: #37474f;
-         font-family: FontAwesome;
-         content: "\f14c ";
-         font-size: 28px;
-         }
-         .instagram::before {
-         color: #3f729b;
-         font-family: FontAwesome;
-         content: "\f16d ";
-         font-size: 28px;
-         }	
-         .facebook::before {
-         color: #3b5998;
-         font-family: FontAwesome;
-         content: "\f230 ";
-         font-size: 28px;
-         }
-         .linkedin::before {
-         color: #0077b5;
-         font-family: FontAwesome;
-         content: "\f08c ";
-         font-size: 28px;
-         }
-         .angelco::before {
-         font-family: FontAwesome;
-         content: "\f209 ";
-         font-size: 28px;
-         }
-         .pinterest::before {
-         color: #cb2027;
-         font-family: FontAwesome;
-         content: "\f0d2 ";
-         font-size: 28px;
-         }
-         .vine::before {
-         color: #00bf8f;
-         font-family: FontAwesome;
-         content: "\f1ca ";
-         font-size: 28px;
-         }
-         .snapchat::before {
-         font-family: FontAwesome;
-         content: "\f2ab ";
-         font-size: 28px;
-         }      
-         .entity::before {
-         font-family: FontAwesome;
-         content: "\f2bd ";
-         font-size: 28px;
-         }		     
-         .rspace {
-         margin-right: 5px;
+         [hidden] {
+         display: none !important;
          }
       </style>
    </template>
