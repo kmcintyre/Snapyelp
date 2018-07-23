@@ -67,20 +67,21 @@ def destroy(instances=True, images=True, source_instances = False):
     dl = []    
     for r in get_regions():
         r_conn = boto.ec2.connect_to_region(r.name)
-        if instances and (source_instances or r.name != app_util.app_region):    
-            for d_instance in r_conn.get_only_instances(filters={"tag:App" : app_util.app_name}):
-                if d_instance.state != 'terminated':                    
-                    d_instance.terminate()
-                    print r.name, 'terminate instance:', d_instance.id
-        if r.name != app_util.app_region:
-            if images:  
-                for r_image in r_conn.get_all_images(owners=['self'], filters={'name': app_util.app_name}):
-                    d = defer.maybeDeferred(destroy_ami, r.name, r_image)
-                    dl.append(d)
-                for s in r_conn.get_all_snapshots(owner='self'):
-                    if get_master_ami().id in s.description:
-                        delete_response = s.delete()
-                        print 'delete snapshot:', delete_response, r.name, 'snapshot:', s.id, 'status:', s.status
+        if r_conn:
+            if instances and (source_instances or r.name != app_util.app_region):    
+                for d_instance in r_conn.get_only_instances(filters={"tag:App" : app_util.app_name}):
+                    if d_instance.state != 'terminated':                    
+                        d_instance.terminate()
+                        print r.name, 'terminate instance:', d_instance.id
+            if r.name != app_util.app_region:
+                if images:  
+                    for r_image in r_conn.get_all_images(owners=['self'], filters={'name': app_util.app_name}):
+                        d = defer.maybeDeferred(destroy_ami, r.name, r_image)
+                        dl.append(d)
+                    for s in r_conn.get_all_snapshots(owner='self'):
+                        if get_master_ami().id in s.description:
+                            delete_response = s.delete()
+                            print 'delete snapshot:', delete_response, r.name, 'snapshot:', s.id, 'status:', s.status
     yield defer.DeferredList(dl)
     print 'destory complete'
                         
@@ -164,5 +165,5 @@ def instances():
             print 'no region access:', r.name
             
 if __name__ == '__main__':
-    reactor.callWhenRunning(instances)
+    reactor.callWhenRunning(destroy)
     reactor.run()    
