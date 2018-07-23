@@ -4,15 +4,19 @@
 <script src="../node_modules/redux/dist/redux.js"></script>
 
 <script>
- let f = JSON.parse(localStorage.getItem('funnels'));
- if ( !f ||  true ) {
-	 f = localStorage.setItem('funnels', JSON.stringify([{
-		 name: 'demo',
-		 job: [{ url: 'https://quickbooks.intuit.com' }] 
-	 }]));
-	 f = JSON.parse(localStorage.getItem('funnels'));
+ function add_funnel(nf) {
+	 let ef = JSON.parse(localStorage.getItem('funnels'))
+	 if (nf.name === undefined) {
+		 nf.name = 'Untitled'
+	 }
+	 ef.push(nf)
+	 localStorage.setItem('funnels', JSON.stringify(ef))
+	 return ef
  }
- console.log('funnels:', f, typeof f)
+ function save_funnels(nf) {
+	 localStorage.setItem('funnels', JSON.stringify(nf))
+	 return nf 
+ }
 
  const reducer = (state, action) => {
 	  switch (action.type) {
@@ -53,6 +57,18 @@
 			 return state;
 	    case 'WEBSOCKET_READY':
 	    	 return Object.assign({}, state, { readyState: action.readyState });
+	    case 'ADD_JOB':
+	    	console.log('add job:', action.job);
+	    	let nf = add_funnel(action.job)
+	    	console.log(nf.length)
+	    	return Object.assign({}, state, { funnels: nf.slice(0) });
+	    case 'SAVE_FUNNELS':
+	    	save_funnels(action.funnels)
+	    	console.log('save funnels new length:', action.funnels.length);
+	    	return Object.assign({}, state, { funnels: action.funnels.slice(0) });	    	 	    	
+	    case 'EDIT_JOB':
+	    	console.log('edit job!')
+	    	return Object.assign({}, state, { });	    	
 	    case 'WEBSOCKET_REQUEST':
 	    	const requests = state.requests.splice(0)
 			requests.push(action.request)	    	 			      
@@ -66,10 +82,22 @@
 	  }
   };
  
+  function init_funnels() {
+	  let f = JSON.parse(localStorage.getItem('funnels'));
+	  if ( !f ) {
+	 	 f = localStorage.setItem('funnels', JSON.stringify([{
+	 		 name: 'demo',
+	 		 job: [{ url: 'https://quickbooks.intuit.com' }] 
+	 	 }]));
+	 	 f = JSON.parse(localStorage.getItem('funnels'));
+	  }	
+	  return f
+  }
+  
  const store = Redux.createStore(reducer, {
 	 requests: [],
 	 tests: [],
-	 funnels: f
+	 funnels: init_funnels()
  });	            
  const ReduxMixin = PolymerRedux(store)
     

@@ -98,7 +98,7 @@ def append_url(response, url, referrer = None):
         add_url(clean_url(a['location'], url), referrer)        
         scrape_collection.update_one(
             { '_id': url_obj['_id'] },
-            {'$push': a }
+            {'$push': { 'referrer': referrer } }
         )
     scrape_collection.update_one(
         { '_id': url_obj['_id'] },
