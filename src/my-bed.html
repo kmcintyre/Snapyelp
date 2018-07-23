@@ -38,21 +38,10 @@
          }		 
          paper-fab {
          margin-left: 5px
-         }
-         .job {
-         @apply(--layout-horizontal);
-         @apply(--layout-start);		 			 
-         }	     
+         }     
          .container {		 	
          padding: 10px;
          maring: 10px 30px 10px 30px;		 	
-         }
-         .container {
-         @apply(--layout-horizontal);
-         @apply(--layout-wrap);
-         }
-         .inner {
-         @apply(--layout-horizontal);    		    		      	
          }
          .card-content {
          min-height: 100px;
@@ -64,54 +53,25 @@
          }
          } 
       </style>
-      <div class="job">
-         <div class="container">
+         <div class="layout horizontal wrap container">
             <template is="dom-repeat" items="[[job]]" as="step">
                <paper-card class="with-margin">
                   <div class="card-content">
-                     <iron-icon
-                        style="cursor: pointer;float:right;transform: translate(15px, -15px)"
-                        icon="[[open.icon]]" 
-                        title="[[open.title]]" 												
-                        on-click="launch"
-                        url$="{{ step.url }}"									
-                        ></iron-icon>
+                     <iron-icon style="cursor: pointer;float:right;transform: translate(15px, -15px)" icon="[[open.icon]]" title="[[open.title]]" on-click="launch" url$="{{ step.url }}" ></iron-icon>
                      <paper-input
                         label="URL"
                         value$="{{ step.url }}"
-                        on-change="modstep"
+                        on-change="modify"
                         index$="{{ index }}"
                         action="update"
                         >
                   </div>
                   <div class="card-actions">
                      <div class="layout horizontal justified">
-                        <paper-fab
-                           hidden$="{{ !step.left }}"
-                           mini 
-                           icon="[[left.icon]]" 
-                           title="[[left.title]]" 												
-                           on-click="modstep"
-                           index$="{{ index }}"
-                           action="left"									
-                           ></paper-fab>
+                        <paper-fab hidden$="{{ !step.left }}" mini icon="[[left.icon]]" title="[[left.title]]" on-click="modify" index$="{{ index }}" action="left"></paper-fab>
                         <div class="flex"></div>
-                        <paper-fab
-                           hidden$="{{ !step.right }}" 
-                           mini 
-                           icon="[[right.icon]]" 
-                           title="[[right.title]]" 												
-                           on-click="modstep"
-                           index$="{{ index }}"
-                           action="right"									
-                           ></paper-fab>
-                        <paper-fab mini 
-                           icon="[[remove.icon]]" 
-                           title="[[remove.title]]" 												
-                           on-click="modstep"
-                           index$="{{ index }}"
-                           action="remove"									
-                           ></paper-fab>
+                        <paper-fab hidden$="{{ !step.right }}" mini icon="[[right.icon]]" title="[[right.title]]" on-click="modify" index$="{{ index }}" action="right"></paper-fab>
+                        <paper-fab mini icon="[[remove.icon]]" title="[[remove.title]]" on-click="modify" index$="{{ index }}" action="remove"></paper-fab>
                      </div>
                   </div>
                </paper-card>
@@ -121,25 +81,16 @@
                   <paper-input
                      id="url"
                      label="URL"
-                     on-change="modstep"
+                     on-change="modify"
                      action="add"
                      >			
                   </paper-input>
                </div>
-               <div class="card-actions layout horizontal">
-                  <div class="flex"></div>
-                  <paper-fab mini
-                     class="self-center" 
-                     icon="[[step.icon]]" 
-                     title="[[step.title]]" 												
-                     on-click="modstep"
-                     action="add"
-                     ></paper-fab>
-                  <div class="flex"></div>
+               <div class="card-actions layout horizontal center-justified">
+                  <paper-fab mini icon="[[step.icon]]" title="[[step.title]]" on-click="modify" action="add" ></paper-fab>
                </div>
             </paper-card>
-         </div>
-      </div>
+         </div>      
    </template>
    <script>
    class MyBed extends ReduxMixin(Polymer.Element) {
@@ -148,52 +99,31 @@
        }
        static get actions() {
            return {
-               websocketRequest(job) {
-                   return {
-                       type: 'WEBSOCKET_REQUEST',
-                       request: job
-                   };
-               }
+               websocketRequest(job) { return { type: 'WEBSOCKET_REQUEST', request: job }; }
            }
        }
        static get properties() {
            return {
                open: {
-                   value: {
-                       icon: 'launch',
-                       title: 'Open URL'
-                   }
+                   value: { icon: 'launch', title: 'Open URL' }
                },
                step: {
-                   value: {
-                       icon: 'add',
-                       title: 'Add URL'
-                   }
+                   value: { icon: 'add', title: 'Add URL' }
                },
                remove: {
-                   value: {
-                       icon: 'delete',
-                       title: 'Remove URL'
-                   }
+                   value: { icon: 'delete', title: 'Remove URL' }
                },
                right: {
-                   value: {
-                       icon: 'hardware:keyboard-arrow-right',
-                       title: 'Shift Right'
+                   value: { icon: 'hardware:keyboard-arrow-right', title: 'Shift Right'
                    }
                },
                left: {
-                   value: {
-                       icon: 'hardware:keyboard-arrow-left',
-                       title: 'Shift Left'
-                   }
+                   value: { icon: 'hardware:keyboard-arrow-left', title: 'Shift Left' }
                },
                job: {
                    type: Array,
-                   reflectToAttribute: true,
-                   value: [{
-                       url: 'https://quickbooks.intuit.com'
-                   }]
+                   value: [],
+                   reflectToAttribute: true
                },
                enabled: {
                    value: true
@@ -207,7 +137,7 @@
            console.log('launch:', e.target.getAttribute('url'))
            window.open(e.target.getAttribute('url'), '_blank');
        }
-       modstep(e) {
+       modify(e) {
            let nj = this.job.slice(0);
            if (e.target.getAttribute('action') == 'right') {
                let i = parseInt(e.target.getAttribute('index'));
@@ -244,11 +174,7 @@
                this.set('job.' + i, ns)
            });
 
-           this.enabled = this.can_run();
-       }
-       can_run() {
-           console.log('can run:', this.job.length)
-           return this.job.length > 0
+           this.enabled = this.job.length > 0;
        }
    }
    customElements.define(MyBed.is, MyBed);

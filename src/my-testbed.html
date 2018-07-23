@@ -39,33 +39,14 @@
 		      <div class="layout vertical flex">
 			      <div class="layout horizontal">
 			         <div class="layout vertical enqueue">
-			            <paper-fab
-			               icon="[[queue.icon]]" 
-			               title="[[queue.title]]" 												
-			               on-click="enqueue"
-			               disabled$="{{ !enabled }}"
-			               class="self-center big"		               
-			               >
-			            </paper-fab>            
+			            <paper-fab icon="[[queue.icon]]" title="[[queue.title]]" on-click="enqueue" disabled$="{{ !enabled }}" class="self-center big"></paper-fab>            
 			         </div>
 			         <my-bed id="bed" class="flex"></my-bed>
 			      </div>      		      	  
 		      </div>
 		      <div class="layout vertical">
-		         <paper-fab mini 
-		            icon="[[serialize.icon]]" 
-		            title="[[serialize.title]]" 												
-		            on-click="save"
-		            disabled$="{{ !enabled }}"
-		            hidden$="{{ hidden }}"
-		            ></paper-fab>
-		         <paper-fab mini 
-		            icon="[[clone.icon]]" 
-		            title="[[clone.title]]" 												
-		            on-click="copy"
-		            disabled$="{{ !enabled }}"
-		            hidden$="{{ hidden }}"
-		            ></paper-fab>	      
+		         <paper-fab mini icon="[[serialize.icon]]" title="[[serialize.title]]" on-click="save" disabled$="{{ !enabled }}" hidden$="{{ hidden }}"></paper-fab>
+		         <paper-fab mini icon="[[clone.icon]]" title="[[clone.title]]" on-click="copy" disabled$="{{ !enabled }}" hidden$="{{ hidden }}"></paper-fab>	      
 		      </div>
 	      </div>      
       </div>
@@ -78,11 +59,11 @@
        static get actions() {
            return {
                websocketRequest(job) {
-                   return {
-                       type: 'WEBSOCKET_REQUEST',
-                       request: job
-                   };
-               }
+                   return { type: 'WEBSOCKET_REQUEST', request: job };
+               },
+               addJob(job) {
+                   return { type: 'ADD_JOB', job: job };
+               }               
            }
        }
        static get properties() {
@@ -98,31 +79,24 @@
                    statePath: 'tests'
                },
                queue: {
-                   value: {
-                       icon: 'av:play-arrow',
-                       title: 'Queue'
-                   }
+                   value: { icon: 'av:play-arrow', title: 'Queue' }
                },
                serialize: {
-                   value: {
-                       icon: 'save',
-                       title: 'Save Funnel'
-                   }
+                   value: { icon: 'save', title: 'Save Funnel' }
                },
                clone: {
-                   value: {
-                       icon: 'content-copy',
-                       title: 'Copy Funnel'
-                   }
+                   value: { icon: 'content-copy', title: 'Copy Funnel' }
                }
-
            }
        }
        copy(e) {
            console.log('copy:', e.target)
        }
        save(e) {
-           console.log('save:', e.target)
+    	   console.log(this.$.bed)
+           this.dispatch('addJob', {        	   
+               job: this.$.bed.job
+           })    	              
        }
        share(e) {
            console.log('share:', e.target)
